@@ -30,7 +30,7 @@ uint64_t nextDifficultyV5(std::vector<uint64_t> timestamps, std::vector<uint64_t
     {  
         ST = static_cast<int64_t>(timestamps[i]) - static_cast<int64_t>(timestamps[i-1]);
 
-        ST = std::max(-4 * T, std::min(ST, 6 * T));
+        ST = std::min(ST, 6 * T);
 
         L +=  ST * i; 
 
