@@ -22,7 +22,7 @@ const uint32_t CRYPTONOTE_MAX_BLOCK_NUMBER                   = 500000000;
 const size_t   CRYPTONOTE_MAX_BLOCK_BLOB_SIZE                = 500000000;
 const size_t   CRYPTONOTE_MAX_TX_SIZE                        = 1000000000;
 const uint64_t CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX       = 0x1bf3c9;
-const uint32_t CRYPTONOTE_MINED_MONEY_UNLOCK_WINDOW          = 20;
+const uint32_t CRYPTONOTE_MINED_MONEY_UNLOCK_WINDOW          = 600;  //12 hours
 const uint64_t CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT            = 60 * 60 * 2;
 const uint64_t CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT_V3         = 3 * DIFFICULTY_TARGET;
 const uint64_t CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT_V4         = CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT_V3;
@@ -89,19 +89,19 @@ const uint64_t MINIMUM_MIXIN_V1                              = 0;
 const uint64_t MAXIMUM_MIXIN_V1                              = 10;
 
 const uint64_t MINIMUM_MIXIN_V2                              = 3;
-const uint64_t MAXIMUM_MIXIN_V2                              = 7;
+const uint64_t MAXIMUM_MIXIN_V2                              = 3;
 
-const uint64_t MINIMUM_MIXIN_V3                              = 5;
-const uint64_t MAXIMUM_MIXIN_V3                              = 5;
+const uint64_t MINIMUM_MIXIN_V3                              = 3;
+const uint64_t MAXIMUM_MIXIN_V3                              = 3;
 
 /* The heights to activate the mixin limits at */
-const uint32_t MIXIN_LIMITS_V1_HEIGHT                        = 1;
-const uint32_t MIXIN_LIMITS_V2_HEIGHT                        = 2;
-const uint32_t MIXIN_LIMITS_V3_HEIGHT                        = 3;
+const uint32_t MIXIN_LIMITS_V1_HEIGHT                        = 1000;
+const uint32_t MIXIN_LIMITS_V2_HEIGHT                        = 2000;
+const uint32_t MIXIN_LIMITS_V3_HEIGHT                        = 3000;
 
 /* The mixin to use by default with zedwallet and turtle-service */
 /* DEFAULT_MIXIN_V0 is the mixin used before MIXIN_LIMITS_V1_HEIGHT is started */
-const uint64_t DEFAULT_MIXIN_V0                              = 3;
+const uint64_t DEFAULT_MIXIN_V0                              = 0;
 const uint64_t DEFAULT_MIXIN_V1                              = MAXIMUM_MIXIN_V1;
 const uint64_t DEFAULT_MIXIN_V2                              = MAXIMUM_MIXIN_V2;
 const uint64_t DEFAULT_MIXIN_V3                              = MAXIMUM_MIXIN_V3;
@@ -158,11 +158,14 @@ const uint64_t FORK_HEIGHTS[] =
     1,  // 0
     2,  // 1
     3,  // 2
-    4  // 3
+    4,  // 3
+    1000, // 4
+    2000, // 5
+    3000  // 6
 };
 
 /* MAKE SURE TO UPDATE THIS VALUE WITH EVERY MAJOR RELEASE BEFORE A FORK */
-const uint64_t SOFTWARE_SUPPORTED_FORK_INDEX                 = 3;
+const uint64_t SOFTWARE_SUPPORTED_FORK_INDEX                 = 6;
 
 const uint64_t FORK_HEIGHTS_SIZE = sizeof(FORK_HEIGHTS) / sizeof(*FORK_HEIGHTS);
 
