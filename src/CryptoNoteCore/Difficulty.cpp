@@ -26,18 +26,17 @@ uint64_t nextDifficultyV5(std::vector<uint64_t> timestamps, std::vector<uint64_t
         return 5000;
     }
 
-    for (int64_t i = 1; i <= N; i++)
-    {  
-        ST = static_cast<int64_t>(timestamps[i]) - static_cast<int64_t>(timestamps[i-1]);
+    for ( int64_t i = 1; i <= N; i++) {  
+      if (static_cast<int64_t>(timestamps[i]) > prev_max_TS  ) {   
+            max_TS = timestamps[i];
+      } else { max_TS = prev_max_TS+1 ; }
 
-        ST = std::min(ST, 6 * T);
+      ST = std::min(6*T,max_TS - prev_max_TS);
+      previous_max_TS = max_TS;
 
-        L +=  ST * i; 
+      L +=  ST * i ;
 
-        if (i > N-3)
-        {
-            sum_3_ST += ST;
-        } 
+      if ( i > N-3 ) { sum_3_ST += ST; } 
     }
 
     next_D = (static_cast<int64_t>(cumulativeDifficulties[N] - cumulativeDifficulties[0]) * T * (N+1) * 99) / (100 * 2 * L);
