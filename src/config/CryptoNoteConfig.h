@@ -69,12 +69,12 @@ TurtleCoind --print-genesis-tx --genesis-block-reward-address TRTLv2Fyavy8CXG8BP
 * You should see your premine appear in the previously generated wallet.
 
 */
-const char     GENESIS_COINBASE_TX_HEX[]                     = "011401ff000180f4f6905d026fc508e8dbc07adf2736bbaced890b946fc095a70eb638d5baae4df670ba9c012101f15d8520a9e9daed6b4ef43e0cd75eb3bf31dd2a56708579204d45ed71b64139";
+const char     GENESIS_COINBASE_TX_HEX[]                     = "01d80401ff000180f4f6905d02b4ff81b1578dcec592a41e377a4abbe43839dcf6e4dd9b92eb208d024d7732212101763e64e215b1311f6e45002145329898a3d8bf59d0fa43a3ca3d044c4f206246";
 
 /* This is the unix timestamp of the first "mined" block (technically block 2, not the genesis block)
    You can get this value by doing "print_block 2" in TurtleCoind. It is used to know what timestamp
    to import from when the block height cannot be found in the node or the node is offline. */
-const uint64_t GENESIS_BLOCK_TIMESTAMP                       = 1512800692;
+const uint64_t GENESIS_BLOCK_TIMESTAMP                       = 1540222033;
 
 const size_t   CRYPTONOTE_REWARD_BLOCKS_WINDOW               = 232.8305;
 const size_t   CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE     = 100000; //size of block (bytes) after which reward for block calculated using block size
