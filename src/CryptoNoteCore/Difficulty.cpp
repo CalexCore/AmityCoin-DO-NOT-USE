@@ -17,9 +17,9 @@ uint64_t nextDifficultyV5(std::vector<uint64_t> timestamps, std::vector<uint64_t
     int64_t T = CryptoNote::parameters::DIFFICULTY_TARGET;
     int64_t N = CryptoNote::parameters::DIFFICULTY_WINDOW_V3;
     int64_t L(0), ST, sum_3_ST(0), next_D, prev_D;
-	int64_t nextTime, lastTime;
+    int64_t nextTime, lastTime;
 
-	lastTime = timestamps[0];
+    lastTime = timestamps[0];
 
     /* If we are starting up, returning a difficulty guess. If you are a
        new coin, you might want to set this to a decent estimate of your
@@ -37,9 +37,9 @@ uint64_t nextDifficultyV5(std::vector<uint64_t> timestamps, std::vector<uint64_t
       ST = std::min(6*T,nextTime - lastTime);
       lastTime = nextTime;
 
-      L +=  ST * i ;
+      L +=  ST * i;
 
-      if ( i > N-3 ) { sum_3_ST += ST; } 
+      if ( i > N-3 ) { sum_3_ST += ST; }
     }
 
     next_D = (static_cast<int64_t>(cumulativeDifficulties[N] - cumulativeDifficulties[0]) * T * (N+1) * 99) / (100 * 2 * L);
