@@ -1,9 +1,12 @@
 // Copyright (c) 2018, The TurtleCoin Developers
+// Copyright (c) 2018, The Calex Developers
 // 
 // Please see the included LICENSE file for more information.
 
 #include <stdint.h>
 #include <vector>
+
+uint64_t nextDifficultyV6(std::vector<uint64_t> timestamps, std::vector<uint64_t> cumulativeDifficulties);
 
 uint64_t nextDifficultyV5(std::vector<uint64_t> timestamps, std::vector<uint64_t> cumulativeDifficulties);
 
