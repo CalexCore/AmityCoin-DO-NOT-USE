@@ -22,7 +22,7 @@ const uint32_t CRYPTONOTE_MAX_BLOCK_NUMBER                   = 500000000;
 const size_t   CRYPTONOTE_MAX_BLOCK_BLOB_SIZE                = 500000000;
 const size_t   CRYPTONOTE_MAX_TX_SIZE                        = 1000000000;
 const uint64_t CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX       = 0x1bf3c9;
-const uint32_t CRYPTONOTE_MINED_MONEY_UNLOCK_WINDOW          = 600;  //12 hours
+const uint32_t CRYPTONOTE_MINED_MONEY_UNLOCK_WINDOW          = 20;
 const uint64_t CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT            = 60 * 60 * 2;
 const uint64_t CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT_V3         = 3 * DIFFICULTY_TARGET;
 const uint64_t CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT_V4         = CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT_V3;
@@ -39,6 +39,7 @@ const uint8_t ZAWY_DIFFICULTY_DIFFICULTY_BLOCK_VERSION       = 3;
 const uint64_t LWMA_2_DIFFICULTY_BLOCK_INDEX                 = 5;
 const uint64_t LWMA_2_DIFFICULTY_BLOCK_INDEX_V2              = 6;
 const uint64_t LWMA_2_DIFFICULTY_BLOCK_INDEX_V3              = 7;
+const uint64_t LWMA_3_DIFFICULTY_BLOCK_INDEX                 = 750;
 
 const uint64_t DIFFICULTY_WINDOW_V3                          = 60;
 const uint64_t DIFFICULTY_BLOCKS_COUNT_V3                    = DIFFICULTY_WINDOW_V3 + 1;
@@ -69,12 +70,12 @@ TurtleCoind --print-genesis-tx --genesis-block-reward-address TRTLv2Fyavy8CXG8BP
 * You should see your premine appear in the previously generated wallet.
 
 */
-const char     GENESIS_COINBASE_TX_HEX[]                     = "01d80401ff000180f4f6905d02b4ff81b1578dcec592a41e377a4abbe43839dcf6e4dd9b92eb208d024d7732212101763e64e215b1311f6e45002145329898a3d8bf59d0fa43a3ca3d044c4f206246";
+const char     GENESIS_COINBASE_TX_HEX[]                     = "011401ff000180f4f6905d026fc508e8dbc07adf2736bbaced890b946fc095a70eb638d5baae4df670ba9c012101f15d8520a9e9daed6b4ef43e0cd75eb3bf31dd2a56708579204d45ed71b64139";
 
 /* This is the unix timestamp of the first "mined" block (technically block 2, not the genesis block)
    You can get this value by doing "print_block 2" in TurtleCoind. It is used to know what timestamp
    to import from when the block height cannot be found in the node or the node is offline. */
-const uint64_t GENESIS_BLOCK_TIMESTAMP                       = 1540225195;
+const uint64_t GENESIS_BLOCK_TIMESTAMP                       = 1512800692;
 
 const size_t   CRYPTONOTE_REWARD_BLOCKS_WINDOW               = 232.8305;
 const size_t   CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE     = 100000; //size of block (bytes) after which reward for block calculated using block size
@@ -89,19 +90,19 @@ const uint64_t MINIMUM_MIXIN_V1                              = 0;
 const uint64_t MAXIMUM_MIXIN_V1                              = 10;
 
 const uint64_t MINIMUM_MIXIN_V2                              = 3;
-const uint64_t MAXIMUM_MIXIN_V2                              = 3;
+const uint64_t MAXIMUM_MIXIN_V2                              = 7;
 
-const uint64_t MINIMUM_MIXIN_V3                              = 3;
-const uint64_t MAXIMUM_MIXIN_V3                              = 3;
+const uint64_t MINIMUM_MIXIN_V3                              = 5;
+const uint64_t MAXIMUM_MIXIN_V3                              = 5;
 
 /* The heights to activate the mixin limits at */
-const uint32_t MIXIN_LIMITS_V1_HEIGHT                        = 1000;
-const uint32_t MIXIN_LIMITS_V2_HEIGHT                        = 2000;
-const uint32_t MIXIN_LIMITS_V3_HEIGHT                        = 3000;
+const uint32_t MIXIN_LIMITS_V1_HEIGHT                        = 1;
+const uint32_t MIXIN_LIMITS_V2_HEIGHT                        = 2;
+const uint32_t MIXIN_LIMITS_V3_HEIGHT                        = 3;
 
 /* The mixin to use by default with zedwallet and turtle-service */
 /* DEFAULT_MIXIN_V0 is the mixin used before MIXIN_LIMITS_V1_HEIGHT is started */
-const uint64_t DEFAULT_MIXIN_V0                              = 0;
+const uint64_t DEFAULT_MIXIN_V0                              = 3;
 const uint64_t DEFAULT_MIXIN_V1                              = MAXIMUM_MIXIN_V1;
 const uint64_t DEFAULT_MIXIN_V2                              = MAXIMUM_MIXIN_V2;
 const uint64_t DEFAULT_MIXIN_V3                              = MAXIMUM_MIXIN_V3;
@@ -158,14 +159,11 @@ const uint64_t FORK_HEIGHTS[] =
     1,  // 0
     2,  // 1
     3,  // 2
-    4,  // 3
-    1000, // 4
-    2000, // 5
-    3000  // 6
+    4  // 3
 };
 
 /* MAKE SURE TO UPDATE THIS VALUE WITH EVERY MAJOR RELEASE BEFORE A FORK */
-const uint64_t SOFTWARE_SUPPORTED_FORK_INDEX                 = 6;
+const uint64_t SOFTWARE_SUPPORTED_FORK_INDEX                 = 3;
 
 const uint64_t FORK_HEIGHTS_SIZE = sizeof(FORK_HEIGHTS) / sizeof(*FORK_HEIGHTS);
 
@@ -214,7 +212,7 @@ const size_t   P2P_LOCAL_GRAY_PEERLIST_LIMIT                 =  5000;
 
 // P2P Network Configuration Section - This defines our current P2P network version
 // and the minimum version for communication between nodes
-const uint8_t  P2P_CURRENT_VERSION                           = 3;
+const uint8_t  P2P_CURRENT_VERSION                           = 1;
 const uint8_t  P2P_MINIMUM_VERSION                           = 2;
 // This defines the number of versions ahead we must see peers before we start displaying
 // warning messages that we need to upgrade our software.
