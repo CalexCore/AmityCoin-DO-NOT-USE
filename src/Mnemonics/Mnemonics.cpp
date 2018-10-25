@@ -182,7 +182,7 @@ namespace Mnemonics
 
         uint64_t hash = CRC32::crc32(trimmed);
 
-        return words[crc32.checksum() % words.size()];
+        return words[hash % words.size()];
     }
 
     std::vector<int> GetWordIndexes(const std::vector<std::string> words)
