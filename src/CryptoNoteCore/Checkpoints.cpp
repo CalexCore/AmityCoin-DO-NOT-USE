@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2018, The Calex Developers
 //
 // This file is part of Bytecoin.
 //
@@ -115,7 +116,7 @@ bool Checkpoints::checkBlock(uint32_t index, const Crypto::Hash &h,
 
   if (it->second == h) {
     if (index % 100 == 0) {
-      logger(Logging::INFO, BRIGHT_GREEN)
+      logger(Logging::INFO, BRIGHT_BLUE)
         << "CHECKPOINT PASSED FOR INDEX " << index << " " << h;
     }
     return true;

@@ -1,6 +1,7 @@
 // Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2018, The TurtleCoin Developers
 // Copyright (c) 2018, The Karai Developers
+// Copyright (c) 2018, The Calex Developers
 // 
 // Please see the included LICENSE file for more information.
 
@@ -232,9 +233,9 @@ int main(int argc, char* argv[])
     logManager.configure(buildLoggerConfiguration(cfgLogLevel, cfgLogFile));
 
     /* Yay, ascii art ^__^ */
-    logger(INFO, BRIGHT_GREEN) << asciiArt << ENDL;
+    logger(INFO, BRIGHT_BLUE) << asciiArt << ENDL;
 
-    logger(INFO, BRIGHT_GREEN) << "Welcome to " << CryptoNote::CRYPTONOTE_NAME << " v" << PROJECT_VERSION_LONG;
+    logger(INFO, BRIGHT_BLUE) << "Welcome to " << CryptoNote::CRYPTONOTE_NAME << " v" << PROJECT_VERSION_LONG;
 
     if (command_line_preprocessor(vm, logger)) {
       return 0;

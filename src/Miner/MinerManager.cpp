@@ -1,6 +1,7 @@
 // Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2014-2018, The Monero Project
 // Copyright (c) 2018, The TurtleCoin Developers
+// Copyright (c) 2018, The Calex Developers
 //
 // Please see the included LICENSE file for more information.
 
@@ -113,7 +114,7 @@ void MinerManager::printHashRate() {
     uint64_t current_hash_count = m_miner.getHashCount();
     double hashes = static_cast<double>((current_hash_count - last_hash_count) / 60);
     last_hash_count = current_hash_count;
-    m_logger(Logging::INFO, BRIGHT_GREEN) << "Mining at " << hashes << " H/s";
+    m_logger(Logging::INFO, BRIGHT_BLUE) << "Mining at " << hashes << " H/s";
   }
 }
 

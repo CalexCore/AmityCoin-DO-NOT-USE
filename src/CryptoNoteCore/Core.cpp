@@ -1,6 +1,7 @@
 // Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2014-2018, The Monero Project
 // Copyright (c) 2018, The TurtleCoin Developers
+// Copyright (c) 2018, The Calex Developers
 //
 // Please see the included LICENSE file for more information.
 
@@ -1198,7 +1199,7 @@ bool Core::getBlockTemplate(BlockTemplate& b, const AccountPublicAddress& adr, c
           continue;
         }
 
-        logger(Logging::DEBUGGING, Logging::BRIGHT_GREEN)
+        logger(Logging::DEBUGGING, Logging::BRIGHT_BLUE)
             << "Setting extra for block: " << b.baseTransaction.extra.size() << ", try_count=" << tryCount;
       }
     }
