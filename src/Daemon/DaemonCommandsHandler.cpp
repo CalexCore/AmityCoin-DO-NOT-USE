@@ -1,5 +1,6 @@
 // Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2018, The TurtleCoin Developers
+// Copyright (c) 2018, The Calex Developers
 // 
 // Please see the included LICENSE file for more information.
 
@@ -7,7 +8,6 @@
 
 #include <ctime>
 #include "P2p/NetNode.h"
-#include "CryptoNoteCore/Miner.h"
 #include "CryptoNoteCore/Core.h"
 #include "CryptoNoteProtocol/CryptoNoteProtocolHandler.h"
 #include "CryptoNoteCore/CryptoNoteFormatUtils.h"
