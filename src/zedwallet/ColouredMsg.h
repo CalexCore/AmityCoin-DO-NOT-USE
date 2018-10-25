@@ -1,4 +1,5 @@
 // Copyright (c) 2018, The TurtleCoin Developers
+// Copyright (c) 2018, The Calex Developers
 // 
 // Please see the included LICENSE file for more information.
 
@@ -63,10 +64,10 @@ class SuccessMsg : public ColouredMsg
 {
     public:
         explicit SuccessMsg(std::string msg) 
-               : ColouredMsg(msg, Common::Console::Color::Green) {}
+               : ColouredMsg(msg, Common::Console::Color::BrightBlue) {}
 
         explicit SuccessMsg(std::string msg, int padding)
-               : ColouredMsg(msg, padding, Common::Console::Color::Green) {}
+               : ColouredMsg(msg, padding, Common::Console::Color::BrightBlue) {}
 };
 
 class InformationMsg : public ColouredMsg
