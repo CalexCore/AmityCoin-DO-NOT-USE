@@ -1,6 +1,7 @@
 // Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2014-2018, The Monero Project
 // Copyright (c) 2018, The TurtleCoin Developers
+// Copyright (c) 2018, The Calex Developers
 //
 // Please see the included LICENSE file for more information.
 
@@ -77,7 +78,7 @@ public:
   std::error_code getTransaction(const std::string& transactionHash, TransactionRpcInfo& transaction);
   std::error_code getAddresses(std::vector<std::string>& addresses);
   std::error_code sendTransaction(SendTransaction::Request& request, std::string& transactionHash);
-  std::error_code createDelayedTransaction(const CreateDelayedTransaction::Request& request, std::string& transactionHash);
+  std::error_code createDelayedTransaction(CreateDelayedTransaction::Request& request, std::string& transactionHash);
   std::error_code getDelayedTransactionHashes(std::vector<std::string>& transactionHashes);
   std::error_code deleteDelayedTransaction(const std::string& transactionHash);
   std::error_code sendDelayedTransaction(const std::string& transactionHash);

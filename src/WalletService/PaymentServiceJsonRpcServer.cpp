@@ -1,6 +1,7 @@
 // Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2014-2018, The Monero Project
 // Copyright (c) 2018, The TurtleCoin Developers
+// Copyright (c) 2018, The Calex Developers
 //
 // Please see the included LICENSE file for more information.
 
@@ -192,7 +193,7 @@ std::error_code PaymentServiceJsonRpcServer::handleSendTransaction(SendTransacti
   return service.sendTransaction(request, response.transactionHash);
 }
 
-std::error_code PaymentServiceJsonRpcServer::handleCreateDelayedTransaction(const CreateDelayedTransaction::Request& request, CreateDelayedTransaction::Response& response) {
+std::error_code PaymentServiceJsonRpcServer::handleCreateDelayedTransaction(CreateDelayedTransaction::Request& request, CreateDelayedTransaction::Response& response) {
   return service.createDelayedTransaction(request, response.transactionHash);
 }
 
@@ -204,7 +205,7 @@ std::error_code PaymentServiceJsonRpcServer::handleDeleteDelayedTransaction(cons
   return service.deleteDelayedTransaction(request.transactionHash);
 }
 
-std::error_code PaymentServiceJsonRpcServer::handleSendDelayedTransaction(const SendDelayedTransaction::Request& request, SendDelayedTransaction::Response& response) {
+std::error_code PaymentServiceJsonRpcServer::handleSendDelayedTransaction(SendDelayedTransaction::Request& request, SendDelayedTransaction::Response& response) {
   return service.sendDelayedTransaction(request.transactionHash);
 }
 
