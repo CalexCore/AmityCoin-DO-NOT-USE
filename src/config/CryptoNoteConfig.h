@@ -70,12 +70,12 @@ TurtleCoind --print-genesis-tx --genesis-block-reward-address TRTLv2Fyavy8CXG8BP
 * You should see your premine appear in the previously generated wallet.
 
 */
-const char     GENESIS_COINBASE_TX_HEX[]                     = "01d80401ff000180f4f6905d02b4ff81b1578dcec592a41e377a4abbe43839dcf6e4dd9b92eb208d024d7732212101763e64e215b1311f6e45002145329898a3d8bf59d0fa43a3ca3d044c4f206246";
+const char     GENESIS_COINBASE_TX_HEX[]                     = "01e80201ff0001000297e09858b9cfc8c7b5920e995472172859b18a84538f256742ce215859659d3f2101e5c80d1e21bbb6308b2d09b8b4dda3c3b4f3e811dfbcb708996dbb8e91d6eccf";
 
 /* This is the unix timestamp of the first "mined" block (technically block 2, not the genesis block)
    You can get this value by doing "print_block 2" in TurtleCoind. It is used to know what timestamp
    to import from when the block height cannot be found in the node or the node is offline. */
-const uint64_t GENESIS_BLOCK_TIMESTAMP                       = 1540222033;
+const uint64_t GENESIS_BLOCK_TIMESTAMP                       = 1541385662;
 
 const size_t   CRYPTONOTE_REWARD_BLOCKS_WINDOW               = static_cast<size_t>(186.2643);
 const size_t   CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE     = 100000; //size of block (bytes) after which reward for block calculated using block size
@@ -236,14 +236,14 @@ const char     P2P_STAT_TRUSTED_PUB_KEY[]                    = "";
 const char     LATEST_VERSION_URL[]                          = "https://github.com/CalexCore/AmityCoin";
 const static   boost::uuids::uuid CRYPTONOTE_NETWORK         =
 {
-    {  //TBD//  }
+    {  0x28, 0x63, 0x29, 0x43, 0x61, 0x6c, 0x65, 0x78, 0x44, 0x65, 0x76, 0x73, 0x32, 0x30, 0x31, 0x38  }
 };
 
 const char* const SEED_NODES[] = {
-  "97.64.253.98:21018"  //calex0
+  "97.64.253.98:21018",  //calex0
   "185.17.27.100:21018",//calex1
   "104.238.222.144:21018",//calex2
-  "185.103.97.205:21018",//calex3
+  "185.103.97.205:21018"//calex3
 };
 } // CryptoNote
 
