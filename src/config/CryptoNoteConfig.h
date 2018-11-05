@@ -236,12 +236,14 @@ const char     P2P_STAT_TRUSTED_PUB_KEY[]                    = "";
 const char     LATEST_VERSION_URL[]                          = "https://github.com/CalexCore/AmityCoin";
 const static   boost::uuids::uuid CRYPTONOTE_NETWORK         =
 {
-    {  0x28, 0x63, 0x29, 0x41, 0x6d, 0x69, 0x74, 0x79, 0x43, 0x6f, 0x69, 0x6e, 0x32, 0x30, 0x31, 0x38  }
+    {  //TBD//  }
 };
 
 const char* const SEED_NODES[] = {
-  "185.17.27.100:21018",//calexserver
-  "97.64.253.98:21018"  //llamaserver
+  "97.64.253.98:21018"  //calex0
+  "185.17.27.100:21018",//calex1
+  "104.238.222.144:21018",//calex2
+  "185.103.97.205:21018",//calex3
 };
 } // CryptoNote
 
