@@ -245,19 +245,19 @@ BlockMiningParameters MinerManager::requestMiningParameters(System::Dispatcher& 
     COMMAND_RPC_GETBLOCKTEMPLATE::request request;
     request.reserve_size = 0;
 
-	// Out of every 100 blocks, the last m_config.donateLevel blocks are mined using the donation wallet address instead of the miner's.
-	int iteration = m_blockCounter % 100;          // the current iteration within the 100 blocks
-	int donateStart = 100 - m_config.donateLevel;  // the iteration at which we start the donation phase
-	if (iteration == donateStart) {
-	  m_logger(Logging::INFO) << "Entering mining donation phase.";
-	  request.wallet_address = m_config.donateAddress;
-	} else {
-	  request.wallet_address = miningAddress;
-	  if (iteration == 0 && m_blockCounter != 0) {
-		m_logger(Logging::INFO) << "Mining donation phase complete. Thank you for supporting the developers!";
-		request.wallet_address = miningAddress;
-	  }
-	}
+    // Out of every 100 blocks, the last m_config.donateLevel blocks are mined using the donation wallet address instead of the miner's.
+    int iteration = m_blockCounter % 100;          // the current iteration within the 100 blocks
+    int donateStart = 100 - m_config.donateLevel;  // the iteration at which we start the donation phase
+    if (iteration == donateStart) {
+      m_logger(Logging::INFO) << "Entering mining donation phase.";
+      request.wallet_address = m_config.donateAddress;
+    } else {
+      request.wallet_address = miningAddress;
+      if (iteration == 0 && m_blockCounter != 0) {
+        m_logger(Logging::INFO) << "Mining donation phase complete. Thank you for supporting the developers!";
+        request.wallet_address = miningAddress;
+      }
+    }
 
     COMMAND_RPC_GETBLOCKTEMPLATE::response response;
 
@@ -276,7 +276,7 @@ BlockMiningParameters MinerManager::requestMiningParameters(System::Dispatcher& 
     }
 
     m_logger(Logging::DEBUGGING) << "Requested block template with previous block hash: " << Common::podToHex(params.blockTemplate.previousBlockHash);
-	m_blockCounter++;
+    m_blockCounter++;
     return params;
   } catch (std::exception& e) {
     m_logger(Logging::WARNING) << "Couldn't get block template: " << e.what();
