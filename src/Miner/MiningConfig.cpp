@@ -65,7 +65,7 @@ void parseDaemonAddress(const std::string& daemonAddress, std::string& daemonHos
 
 MiningConfig::MiningConfig(): help(false), version(false) {
   cmdOptions.add_options()
-      ("help,h", "Produce this help message and exit")
+	  ("help,h", "Produce this help message and exit")
       ("version", "Print the version number and exit")
       ("address", po::value<std::string>(), "Valid cryptonote miner's address")
       ("daemon-host", po::value<std::string>()->default_value(DEFAULT_DAEMON_HOST), "Daemon host")
@@ -77,7 +77,8 @@ MiningConfig::MiningConfig(): help(false), version(false) {
       ("limit", po::value<size_t>()->default_value(0), "Mine exact quantity of blocks. 0 means no limit")
       ("first-block-timestamp", po::value<uint64_t>()->default_value(0), "Set timestamp to the first mined block. 0 means leave timestamp unchanged")
       ("block-timestamp-interval", po::value<int64_t>()->default_value(0), "Timestamp step for each subsequent block. May be set only if --first-block-timestamp has been set."
-                                                         " If not set blocks' timestamps remain unchanged");
+	                                                                       " If not set blocks' timestamps remain unchanged")
+	  ("donate-level", po::value<int>()->default_value(2), "Percentage of hashing that goes to the Amity donation wallet. Must be 0..100, default is 2%.");
 }
 
 void MiningConfig::parse(int argc, char** argv) {
@@ -135,6 +136,11 @@ void MiningConfig::parse(int argc, char** argv) {
 
   firstBlockTimestamp = options["first-block-timestamp"].as<uint64_t>();
   blockTimestampInterval = options["block-timestamp-interval"].as<int64_t>();
+
+  donateLevel = options["donate-level"].as<int>();
+  if (donateLevel < 0 || donateLevel > 100) {
+	throw std::runtime_error("--donate-level must be between 0..100");
+  }
 }
 
 void MiningConfig::printHelp() {
