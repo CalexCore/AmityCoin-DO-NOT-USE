@@ -75,4 +75,3 @@ Website - https://www.getamitycoin.org
 AMIT: amitWnmgfgYG4XerZGPLNFd5AM87rUkb3X2q4FcELpPsB4DXtT8YE3mETzAjrYLdDH39pJoCxSUHPU2yqZeY1RsJ1h5DgikVAz
 
 TRTL: TRTLuwoBbZb9SyHyEjrbEiYpFQpgTviwj6bPAcd8jbnpBwY2bdqqjw7UDwPSja2afeg5urGXkVp5SAX8NCCLia6DhVoTmsWPg2U 
-
