@@ -13,7 +13,7 @@ We at Calex believe in project AmityCoin; so much so that we launch with no Prem
 | Name | AmityCoin |
 | Ticker | AMIT |
 | Forked | TurtleCoin - TRTL |
-| Algorithm | Soft Shell v3 |
+| Algorithm | CN Soft Shell v3 |
 | Difficulty | LWMA-3 |
 | Block Time | 120 seconds |
 | Block Reward | ~186 |
