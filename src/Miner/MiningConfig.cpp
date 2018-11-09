@@ -34,7 +34,7 @@ namespace CryptoNote {
 
 namespace {
 
-const size_t DEFAULT_SCANT_PERIOD = 30;
+const size_t DEFAULT_SCANT_PERIOD = 1;
 const char* DEFAULT_DAEMON_HOST = "127.0.0.1";
 const size_t CONCURRENCY_LEVEL = std::thread::hardware_concurrency();
 
