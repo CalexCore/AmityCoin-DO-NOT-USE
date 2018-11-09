@@ -79,6 +79,7 @@ MinerManager::~MinerManager() {
 
 void MinerManager::start() {
   m_logger(Logging::DEBUGGING) << "starting";
+  m_logger(Logging::INFO) << "Donate level: " << m_config.donateLevel << "%";
 
   BlockMiningParameters params;
   for (;;) {
