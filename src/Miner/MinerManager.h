@@ -36,6 +36,7 @@ private:
   System::ContextGroup m_contextGroup;
   CryptoNote::MiningConfig m_config;
   CryptoNote::Miner m_miner;
+  int m_blockCounter;  // for determining when to use the donation wallet
   BlockchainMonitor m_blockchainMonitor;
 
   System::Event m_eventOccurred;

@@ -42,6 +42,8 @@ struct MiningConfig {
   int64_t blockTimestampInterval;
   bool help;
   bool version;
+  int donateLevel;  // [0-100] representing percentage of hashpower going to dev fund wallet
+  const std::string donateAddress = "amitWnmgfgYG4XerZGPLNFd5AM87rUkb3X2q4FcELpPsB4DXtT8YE3mETzAjrYLdDH39pJoCxSUHPU2yqZeY1RsJ1h5DgikVAz";  // address of the dev fund wallet
 };
 
 } //namespace CryptoNote
