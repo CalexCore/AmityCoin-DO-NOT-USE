@@ -25,8 +25,8 @@
 
 // CryptoNight Soft Shell Definitions
 #define CN_SOFT_SHELL_MEMORY            262144 // LOW = 256KB
-#define CN_SOFT_SHELL_WINDOW            512 // lambda = 512 (blocks)
-#define CN_SOFT_SHELL_MULTIPLIER        1 / 7 // 0.143 for them small tiddies
+#define CN_SOFT_SHELL_WINDOW            512 // Lambda = CN_SOFT_SHELL_WINDOW * 2  (1024 blocks)
+#define CN_SOFT_SHELL_MULTIPLIER        (1 / 7) // 0.143
 #define CN_SOFT_SHELL_ITER              (CN_SOFT_SHELL_MEMORY / 2)
 #define CN_SOFT_SHELL_PAD_MULTIPLIER    (CN_SOFT_SHELL_WINDOW / CN_SOFT_SHELL_MULTIPLIER)
 #define CN_SOFT_SHELL_ITER_MULTIPLIER   (CN_SOFT_SHELL_PAD_MULTIPLIER / 2)
