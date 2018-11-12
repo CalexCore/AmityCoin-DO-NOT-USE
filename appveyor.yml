@@ -8,9 +8,6 @@ configuration:
 platform:
   - x64
 
-cache:
-  - .build
-
 install:
   - sh: |
       sudo apt-get update
