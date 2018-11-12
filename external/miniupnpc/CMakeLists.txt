@@ -155,21 +155,21 @@ if (UPNPC_BUILD_TESTS)
 endif (UPNPC_BUILD_TESTS)
 
 
-install (TARGETS ${UPNPC_INSTALL_TARGETS}
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib${LIB_SUFFIX}
-  ARCHIVE DESTINATION lib${LIB_SUFFIX}
-)
-install (FILES
-	miniupnpc.h
-  miniwget.h
-  upnpcommands.h
-  igd_desc_parse.h
-  upnpreplyparse.h
-  upnperrors.h
-  declspec.h
-  DESTINATION include/miniupnpc
-)
+# install (TARGETS ${UPNPC_INSTALL_TARGETS}
+#   RUNTIME DESTINATION bin
+#   LIBRARY DESTINATION lib${LIB_SUFFIX}
+#   ARCHIVE DESTINATION lib${LIB_SUFFIX}
+# )
+# install (FILES
+# 	miniupnpc.h
+#   miniwget.h
+#   upnpcommands.h
+#   igd_desc_parse.h
+#   upnpreplyparse.h
+#   upnperrors.h
+#   declspec.h
+#   DESTINATION include/miniupnpc
+# )
 
 set (CONFIGURED YES CACHE INTERNAL "")
 

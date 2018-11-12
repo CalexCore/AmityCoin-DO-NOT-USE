@@ -135,6 +135,12 @@ if(AMITY_BUILD_EXECUTABLES)
   add_custom_target(pool DEPENDS AmityCoind service)
   add_custom_target(solominer DEPENDS AmityCoind zedwallet miner)
   add_custom_target(cli DEPENDS AmityCoind zedwallet)
+
+  # Install targets
+  install(
+    TARGETS AmityCoind zedwallet miner service
+    RUNTIME DESTINATION bin
+  )
 endif() # AMITY_BUILD_EXECUTABLES
 
 if(AMITY_BUILD_CRYPTOTEST)
