@@ -39,12 +39,12 @@ build_script:
       cmake `
         -G "$CMakeGenerator" `
         -DCMAKE_BUILD_TYPE=$configuration `
-        -DCMAKE_INSTALL_PREFIX=../.install `
+        -DCMAKE_INSTALL_PREFIX:PATH=../.install `
         -DAMITY_BUILD_CRYPTOTEST=ON `
         $CMakeBoostArg `
         ..
       cmake --build . --config $configuration
-      cmake --build . --target install --config $configuration -- DESTDIR=../.install
+      cmake --build . --target install --config $configuration
       Pop-Location
 
   # settings environment for proper artifact naming
