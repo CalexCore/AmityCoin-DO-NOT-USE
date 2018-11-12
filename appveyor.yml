@@ -62,7 +62,7 @@ build_script:
 # Uploading artifacts
 artifacts:
   - path: .install
-    name: "Portable Binaries"
+    name: "Portable Binaries $(ArtifactOS)"
 
 # If we are on master branch and have a tagged version we create a new draft
 # on github release. The draft must be revisioned and published by an authorized
