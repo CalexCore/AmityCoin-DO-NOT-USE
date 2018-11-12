@@ -33,6 +33,11 @@ option(AMITY_ENABLE_GIT_VERSION_ID "Includes the git commit id within the versio
 option(AMITY_BUILD_EXECUTABLES "Builds the executables for this project (daemon, wallet...)." ON)
 option(AMITY_BUILD_CRYPTOTEST "Buils the cryptotest target for testing purposes." OFF)
 
+## Enable test integration
+if(AMITY_BUILD_CRYPTOTEST)
+  enable_testing()
+endif() # AMITY_BUILD_CRYPTOTEST
+
 # We need to set the label and import it into CMake if it exists
 set(LABEL "")
 if(DEFINED ENV{LABEL})

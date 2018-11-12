@@ -112,6 +112,7 @@ endif() # AMITY_BUILD_EXECUTABLES
 
 if(AMITY_BUILD_CRYPTOTEST)
   target_link_libraries(cryptotest Crypto Common)
+  add_test(cryptotest cryptotest)
 endif() # AMITY_BUILD_CRYPTOTEST
 
 if(AMITY_BUILD_EXECUTABLES)
