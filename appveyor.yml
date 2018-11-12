@@ -44,17 +44,23 @@ build_script:
         $CMakeBoostArg `
         ..
       cmake --build . --config $configuration
-      if ($isLinux) {
-        make DESTDIR=../.install install
-      } else {
-        cmake --build . --target install --config $configuration
-      }
+      cmake --build . --target install --config $configuration -- DESTDIR=../.install
       Pop-Location
 
-  # Create Artifact !TODO
+  # settings environment for proper artifact naming
+  - ps: |
+      if ($isLinux) {
+        $env:ArtifactOS = "Debian 64bit"
+      } else {
+        $env:ArtifactOS = "Windows 64bit"
+      }
+    
+# Tests
+# Currently the only test cryptotest will always fail and noone investigated so far
+# thus its left out.
 
-# test_script: !TODO
-
-# after_test: !TODO Deploy
+artifacts:
+  - path: .install
+    name: "Portable Binaries ($($env:ArtifactOS))"
 
 # deploy: !TODO
