@@ -73,11 +73,16 @@ if(MSVC)
   )
 endif()
 
-add_executable(AmityCoind ${AmityCoind} ${DAEMON_SOURCES_OS})
-add_executable(zedwallet ${zedwallet} ${ZED_WALLET_SOURCES_OS})
-add_executable(service ${service} ${PG_SOURCES_OS})
-add_executable(miner ${miner} ${MINER_SOURCES_OS})
-add_executable(cryptotest ${CryptoTest} ${CT_SOURCES_OS})
+if(AMITY_BUILD_EXECUTABLES)
+  add_executable(AmityCoind ${AmityCoind} ${DAEMON_SOURCES_OS})
+  add_executable(zedwallet ${zedwallet} ${ZED_WALLET_SOURCES_OS})
+  add_executable(service ${service} ${PG_SOURCES_OS})
+  add_executable(miner ${miner} ${MINER_SOURCES_OS})
+endif() # AMITY_BUILD_EXECUTABLES
+
+if(AMITY_BUILD_CRYPTOTEST)
+  add_executable(cryptotest ${CryptoTest} ${CT_SOURCES_OS})
+endif() # AMITY_BUILD_CRYPTOTEST
 
 if(MSVC)
   target_link_libraries(System ws2_32)
@@ -91,37 +96,54 @@ target_link_libraries(CryptoNoteCore Common Crypto Logging Serialization)
 target_link_libraries(P2P CryptoNoteCore Logging ${Boost_LIBRARIES} upnpc-static)
 target_link_libraries(Rpc CryptoNoteCore Logging P2P)
 target_link_libraries(WalletService Mnemonics)
-if(MSVC)
-	target_link_libraries(AmityCoind P2P Rpc Serialization System Http Logging CryptoNoteCore Crypto Common rocksdb ${Boost_LIBRARIES} )
-else()
-	target_link_libraries(AmityCoind P2P Rpc Serialization System Http Logging CryptoNoteCore Crypto Common rocksdblib ${Boost_LIBRARIES} )
-endif()
 
-target_link_libraries(zedwallet Mnemonics Wallet NodeRpcProxy Transfers Rpc Http CryptoNoteCore System Logging Common ${Boost_LIBRARIES})
-target_link_libraries(service WalletService JsonRpcServer Wallet NodeRpcProxy Transfers CryptoNoteCore Crypto Rpc Http System Logging Common ${Boost_LIBRARIES})
-target_link_libraries(Wallet NodeRpcProxy Transfers Rpc P2P upnpc-static Http Serialization CryptoNoteCore System Logging Common Crypto ${Boost_LIBRARIES})
-target_link_libraries(miner CryptoNoteCore Rpc Serialization System Http Logging Common Crypto ${Boost_LIBRARIES})
-target_link_libraries(cryptotest Crypto Common)
+if(AMITY_BUILD_EXECUTABLES)
+  if(MSVC)
+    target_link_libraries(AmityCoind P2P Rpc Serialization System Http Logging CryptoNoteCore Crypto Common rocksdb ${Boost_LIBRARIES} )
+  else()
+    target_link_libraries(AmityCoind P2P Rpc Serialization System Http Logging CryptoNoteCore Crypto Common rocksdblib ${Boost_LIBRARIES} )
+  endif()
 
-# Add dependencies means we have to build the latter before we build the former
-# In this case it's because we need to have the current version name rather
-# than a cached one
-add_dependencies(WalletService version)
-add_dependencies(Rpc version)
-add_dependencies(AmityCoind version)
-add_dependencies(zedwallet version)
-add_dependencies(service version)
-add_dependencies(P2P version)
-add_dependencies(cryptotest version)
+  target_link_libraries(zedwallet Mnemonics Wallet NodeRpcProxy Transfers Rpc Http CryptoNoteCore System Logging Common ${Boost_LIBRARIES})
+  target_link_libraries(service WalletService JsonRpcServer Wallet NodeRpcProxy Transfers CryptoNoteCore Crypto Rpc Http System Logging Common ${Boost_LIBRARIES})
+  target_link_libraries(Wallet NodeRpcProxy Transfers Rpc P2P upnpc-static Http Serialization CryptoNoteCore System Logging Common Crypto ${Boost_LIBRARIES})
+  target_link_libraries(miner CryptoNoteCore Rpc Serialization System Http Logging Common Crypto ${Boost_LIBRARIES})
+endif() # AMITY_BUILD_EXECUTABLES
 
-# Finally build the binaries
-set_property(TARGET AmityCoind PROPERTY OUTPUT_NAME "AmityCoind")
-set_property(TARGET zedwallet PROPERTY OUTPUT_NAME "zedwallet")
-set_property(TARGET service PROPERTY OUTPUT_NAME "amity-service")
-set_property(TARGET miner PROPERTY OUTPUT_NAME "miner")
-set_property(TARGET cryptotest PROPERTY OUTPUT_NAME "cryptotest")
+if(AMITY_BUILD_CRYPTOTEST)
+  target_link_libraries(cryptotest Crypto Common)
+endif() # AMITY_BUILD_CRYPTOTEST
 
-# Additional make targets
-add_custom_target(pool DEPENDS AmityCoind service)
-add_custom_target(solominer DEPENDS AmityCoind zedwallet miner)
-add_custom_target(cli DEPENDS AmityCoind zedwallet)
+if(AMITY_BUILD_EXECUTABLES)
+  # Add dependencies means we have to build the latter before we build the former
+  # In this case it's because we need to have the current version name rather
+  # than a cached one
+  add_dependencies(WalletService version)
+  add_dependencies(Rpc version)
+  add_dependencies(AmityCoind version)
+  add_dependencies(zedwallet version)
+  add_dependencies(service version)
+  add_dependencies(P2P version)
+
+  # Finally build the binaries
+  set_property(TARGET AmityCoind PROPERTY OUTPUT_NAME "AmityCoind")
+  set_property(TARGET zedwallet PROPERTY OUTPUT_NAME "zedwallet")
+  set_property(TARGET service PROPERTY OUTPUT_NAME "amity-service")
+  set_property(TARGET miner PROPERTY OUTPUT_NAME "miner")
+
+  # Additional make targets
+  add_custom_target(pool DEPENDS AmityCoind service)
+  add_custom_target(solominer DEPENDS AmityCoind zedwallet miner)
+  add_custom_target(cli DEPENDS AmityCoind zedwallet)
+
+  # Install targets
+  install(
+    TARGETS AmityCoind zedwallet miner service
+    RUNTIME DESTINATION bin
+  )
+endif() # AMITY_BUILD_EXECUTABLES
+
+if(AMITY_BUILD_CRYPTOTEST)
+  add_dependencies(cryptotest version)
+  set_property(TARGET cryptotest PROPERTY OUTPUT_NAME "cryptotest")
+endif() # AMITY_BUILD_CRYPTOTEST
