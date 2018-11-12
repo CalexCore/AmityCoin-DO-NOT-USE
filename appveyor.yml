@@ -59,8 +59,23 @@ build_script:
 # Currently the only test cryptotest will always fail and noone investigated so far
 # thus its left out.
 
+# Uploading artifacts
 artifacts:
   - path: .install
-    name: "Portable Binaries ($($env:ArtifactOS))"
+    name: "Portable Binaries"
 
-# deploy: !TODO
+# If we are on master branch and have a tagged version we create a new draft
+# on github release. The draft must be revisioned and published by an authorized
+# member of the project.
+deploy:
+  tag: $(APPVEYOR_REPO_TAG_NAME)
+  release: Amity-v$(APPVEYOR_REPO_TAG_NAME)
+  description: 'CI Release Build'
+  provider: GitHub
+  auth_token:
+    secure: Pw4T3cHP71ABVKp/ZijUFxpsEvh6VlGP1eeWzCsFVnMdzEG3V7wGFcw2PyF+JXuY
+  draft: true
+  prerelease: false
+  # on:
+  #   branch: master
+  #   appveyor_repo_tag: true
