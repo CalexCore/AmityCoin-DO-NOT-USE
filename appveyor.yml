@@ -37,7 +37,6 @@ build_script:
   # build process
   - ps: |
       New-Item -ItemType Directory -Force -Path .\.build  | Push-Location
-      Remove-Item CMakeCache.txt -ErrorAction Ignore
       cmake `
         -G "$CMakeGenerator" `
         -DCMAKE_BUILD_TYPE=$configuration `
