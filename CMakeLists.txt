@@ -1,9 +1,19 @@
 cmake_minimum_required(VERSION 2.8.6)
 project(AmityCoin)
 
-# Required for finding Threads on ARM
 enable_language(C)
 enable_language(CXX)
+
+# Enable the latest c++ standard support using msvc
+if (MSVC_VERSION GREATER_EQUAL "1900")
+    include(CheckCXXCompilerFlag)
+    CHECK_CXX_COMPILER_FLAG("/std:c++latest" _cpp_latest_flag_supported)
+    if (_cpp_latest_flag_supported)
+        add_compile_options("/std:c++latest")
+    endif()
+endif()
+
+# Required for finding Threads on ARM
 find_package(Threads)
 
 set(VERSION "0.1")
