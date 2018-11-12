@@ -95,6 +95,7 @@ if(AMITY_ENABLE_GIT_VERSION_ID)
   endif()
 else()
   set(VERSION "NA")
+  add_custom_target(version ALL "${CMAKE_COMMAND}" -E echo "-- GIT versioning is disabled, skipping...")
   file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/version)
   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/config/version.h.in" "${CMAKE_CURRENT_BINARY_DIR}/version/version.h")
 endif() # AMITY_ENABLE_GIT_VERSION_ID
