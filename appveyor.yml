@@ -73,6 +73,6 @@ deploy:
     secure: Pw4T3cHP71ABVKp/ZijUFxpsEvh6VlGP1eeWzCsFVnMdzEG3V7wGFcw2PyF+JXuY
   draft: true
   prerelease: false
-  # on:
-  #   branch: master
-  #   appveyor_repo_tag: true
+  on:
+    branch: master
+    appveyor_repo_tag: true
