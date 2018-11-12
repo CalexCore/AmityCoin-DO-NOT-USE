@@ -30,6 +30,9 @@ set(ENABLE_SCHED_GETCPU OFF CACHE STRING "Enable RocksDB SCHED_GETCPU support de
 
 ## Options for configuring build system
 option(AMITY_ENABLE_GIT_VERSION_ID "Includes the git commit id within the version information." OFF)
+option(AMITY_BUILD_EXECUTABLES "Builds the executables for this project (daemon, wallet...)." ON)
+option(AMITY_BUILD_CRYPTOTEST "Buils the cryptotest target for testing purposes." OFF)
+
 # We need to set the label and import it into CMake if it exists
 set(LABEL "")
 if(DEFINED ENV{LABEL})
