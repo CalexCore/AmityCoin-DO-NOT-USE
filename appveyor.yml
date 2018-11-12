@@ -4,7 +4,6 @@ image:
 
 configuration:
   - Release
-  - Debug
 
 platform:
   - x64
