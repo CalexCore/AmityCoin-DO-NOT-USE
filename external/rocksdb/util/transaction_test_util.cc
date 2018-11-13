@@ -1,4 +1,4 @@
-// Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
+﻿// Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
 //  This source code is licensed under both the GPLv2 (found in the
 //  COPYING file in the root directory) and Apache 2.0 License
 //  (found in the LICENSE.Apache file in the root directory).
@@ -127,8 +127,7 @@ bool RandomTransactionInserter::DoInsert(DB* db, Transaction* txn,
 
   std::vector<uint16_t> set_vec(num_sets_);
   std::iota(set_vec.begin(), set_vec.end(), static_cast<uint16_t>(0));
-  std::random_shuffle(set_vec.begin(), set_vec.end(),
-                      [&](uint64_t r) { return rand_->Uniform(r); });
+  std::shuffle(set_vec.begin(), set_vec.end(), rand_->handle());
   // For each set, pick a key at random and increment it
   for (uint16_t set_i : set_vec) {
     uint64_t int_value = 0;
@@ -175,8 +174,8 @@ bool RandomTransactionInserter::DoInsert(DB* db, Transaction* txn,
     if (txn != nullptr) {
       std::hash<std::thread::id> hasher;
       char name[64];
-      snprintf(name, 64, "txn%" ROCKSDB_PRIszt "-%d", hasher(std::this_thread::get_id()),
-               txn_id_++);
+      snprintf(name, 64, "txn%" ROCKSDB_PRIszt "-%d",
+               hasher(std::this_thread::get_id()), txn_id_++);
       assert(strlen(name) < 64 - 1);
       if (!is_optimistic && !rand_->OneIn(10)) {
         // also try commit without prpare
@@ -256,8 +255,7 @@ Status RandomTransactionInserter::Verify(DB* db, uint16_t num_sets,
   std::vector<uint16_t> set_vec(num_sets);
   std::iota(set_vec.begin(), set_vec.end(), static_cast<uint16_t>(0));
   if (rand) {
-    std::random_shuffle(set_vec.begin(), set_vec.end(),
-                        [&](uint64_t r) { return rand->Uniform(r); });
+    std::shuffle(set_vec.begin(), set_vec.end(), rand->handle());
   }
   // For each set of keys with the same prefix, sum all the values
   for (uint16_t set_i : set_vec) {
