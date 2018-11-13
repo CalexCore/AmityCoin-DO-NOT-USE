@@ -27,7 +27,7 @@
 
 namespace CryptoNote {
 
-JsonRpcServer::JsonRpcServer(System::Dispatcher& sys, System::Event& stopEvent, Logging::ILogger& loggerGroup, PaymentService::Configuration& config) :
+JsonRpcServer::JsonRpcServer(System::Dispatcher& sys, System::Event& stopEvent, Logging::ILogger& loggerGroup, PaymentService::ConfigurationManager& config) :
   HttpServer(sys, loggerGroup), 
   system(sys),
   stopEvent(stopEvent),
