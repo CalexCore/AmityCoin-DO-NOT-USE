@@ -3,6 +3,10 @@ set(UPNPC_BUILD_SHARED OFF CACHE BOOL "Build shared library")
 set(UPNPC_BUILD_TESTS OFF CACHE BOOL "Build test executables")
 set(WITH_MD_LIBRARY OFF CACHE BOOL "Code Generation for static library")
 
+foreach(flag ${CompilerFlags})
+  set(${flag} "${${flag}} ${AMITY_CXX_FLAGS}")
+endforeach()
+
 add_subdirectory(miniupnpc)
 
 if (DO_TESTS)

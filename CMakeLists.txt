@@ -15,6 +15,15 @@ project(AmityCoin)
 enable_language(C)
 enable_language(CXX)
 
+# Enable the latest c++ standard support using msvc
+if (MSVC_VERSION GREATER_EQUAL "1900")
+    include(CheckCXXCompilerFlag)
+    CHECK_CXX_COMPILER_FLAG("/std:c++latest" _cpp_latest_flag_supported)
+    if (_cpp_latest_flag_supported)
+        add_compile_options("/std:c++latest")
+    endif()
+endif()
+
 # Required for finding Threads on ARM
 find_package(Threads)
 
@@ -29,6 +38,15 @@ set(CMAKE_SKIP_PACKAGE_ALL_DEPENDENCY ON FORCE)
 set(CMAKE_SUPPRESS_REGENERATION ON)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(FIND_BOOST_VERSION 1.55)
+
+set(CompilerFlags
+  CMAKE_CXX_FLAGS
+  CMAKE_CXX_FLAGS_DEBUG
+  CMAKE_CXX_FLAGS_RELEASE
+  CMAKE_C_FLAGS
+  CMAKE_C_FLAGS_DEBUG
+  CMAKE_C_FLAGS_RELEASE
+)
 
 ## This section is specifically for RocksDB build options that we've disabled for maximum portability
 set(ENABLE_AVX OFF CACHE STRING "Enable RocksDB AVX/AVX2? Defaults to OFF")
@@ -106,11 +124,17 @@ include_directories(include "${CMAKE_CURRENT_BINARY_DIR}/version" src external)
 ## Platform specific code base information is applied here
 if(MSVC)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/Windows)
-  add_definitions("/bigobj /MP /W3 /GS- /D_CRT_SECURE_NO_WARNINGS /wd4996 /wd4345 /D_WIN32_WINNT=0x0600 /DWIN32_LEAN_AND_MEAN /DGTEST_HAS_TR1_TUPLE=0 /D_VARIADIC_MAX=8 /D__SSE4_1__")
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /STACK:10485760")
-  foreach(VAR CMAKE_C_FLAGS_DEBUG CMAKE_CXX_FLAGS_DEBUG CMAKE_C_FLAGS_RELWITHDEBINFO CMAKE_CXX_FLAGS_RELWITHDEBINFO CMAKE_C_FLAGS_RELEASE CMAKE_CXX_FLAGS_RELEASE)
-    string(REPLACE "/MD" "/MT" ${VAR} "${${VAR}}")
+  add_definitions("/D_CRT_SECURE_NO_WARNINGS /wd4996 /wd4345 /D_WIN32_WINNT=0x0600 /DWIN32_LEAN_AND_MEAN /DGTEST_HAS_TR1_TUPLE=0 /D_VARIADIC_MAX=8 /D__SSE4_1__")
+  foreach(flag ${CompilerFlags})
+    string(REPLACE "/MDd" "" ${flag} ${${flag}})
+    string(REPLACE "/MDd" "" ${flag} ${${flag}})
+    string(REPLACE "/GS" "" ${flag} ${${flag}})
+    string(REGEX REPLACE "/W[1234X]" "" ${flag} ${${flag}})
   endforeach()
+  set(AMITY_CXX_FLAGS "/MP /W3 /GS- /bigobj")
+  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MTd")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /STACK:10485760")
   include_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/src/platform/msc)
 elseif(APPLE)
   include_directories(SYSTEM /usr/include/malloc)
