@@ -1,4 +1,4 @@
-# Set a default build type if none was specified
+﻿# Set a default build type if none was specified
 set(default_build_type "Release")
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "Setting build type to '${default_build_type}' as none was specified.")
@@ -15,14 +15,10 @@ project(AmityCoin)
 enable_language(C)
 enable_language(CXX)
 
-# Enable the latest c++ standard support using msvc
-if (MSVC_VERSION GREATER_EQUAL "1900")
-    include(CheckCXXCompilerFlag)
-    CHECK_CXX_COMPILER_FLAG("/std:c++latest" _cpp_latest_flag_supported)
-    if (_cpp_latest_flag_supported)
-        add_compile_options("/std:c++latest")
-    endif()
-endif()
+# Enable the c++17 standard support
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED OFF)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Required for finding Threads on ARM
 find_package(Threads)

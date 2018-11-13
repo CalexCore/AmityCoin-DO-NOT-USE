@@ -1,4 +1,4 @@
-add_definitions(-DSTATICLIB)
+﻿add_definitions(-DSTATICLIB)
 
 include_directories(${CMAKE_SOURCE_DIR}/external/rocksdb/include)
 include_directories(${CMAKE_SOURCE_DIR}/external/linenoise)
@@ -37,7 +37,9 @@ endif()
 # https://cmake.org/cmake/help/v3.0/command/source_group.html
 # Probably not what you need to be looking at if something isn't building
 foreach(source_file ${Common} ${Crypto} ${CryptoNoteCore} ${CryptoNoteProtocol} ${AmityCoind} ${JsonRpcServer} ${Http} ${Logging} ${miner} ${Mnemonics} ${NodeRpcProxy} ${P2p} ${Rpc} ${Serialization} ${System} ${Transfers} ${Wallet} ${WalletLegacy} ${zedwallet} ${CryptoTest})
-  set_source_files_properties(${source_file} PROPERTIES COMPILE_FLAGS ${AMITY_CXX_FLAGS})
+  if(AMITY_CXX_FLAGS)
+    set_source_files_properties(${source_file} PROPERTIES COMPILE_FLAGS ${AMITY_CXX_FLAGS})
+  endif() # AMITY_CXX_FLAGS
   source_group("" FILES ${source_file})
 endforeach()
 
