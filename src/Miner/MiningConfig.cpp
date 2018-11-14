@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2018, The TurtleCoin Developers
 // Copyright (c) 2018, The Calex Developers
 //
@@ -57,7 +57,7 @@ bool parseDaemonAddressFromString(std::string& host, int& port, const std::strin
       port = std::stoi(parts.at(1));
       return true;
     }
-    catch (std::exception& e)
+    catch (...)
     {
       return false;
     }
@@ -80,6 +80,7 @@ void MiningConfig::parse(int argc, char** argv) {
     ("help", "Display this help message", cxxopts::value<bool>(help)->implicit_value("true"))
     ("version", "Output software version information", cxxopts::value<bool>(version)->default_value("false")->implicit_value("true"));
 
+  std::string daemonAddress;
   options.add_options("Daemon")
     ("daemon-address", "The daemon [host:port] combination to use for node operations. This option overrides --daemon-host and --daemon-rpc-port", 
       cxxopts::value<std::string>(daemonAddress), "<host:port>")
@@ -94,8 +95,8 @@ void MiningConfig::parse(int argc, char** argv) {
     ("first-block-timestamp", "Set timestamp to the first mined block. 0 means leave timestamp unchanged", cxxopts::value<uint64_t>(firstBlockTimestamp)->default_value("0"), "#")
     ("limit", "Mine this exact quantity of blocks and then stop. 0 means no limit", cxxopts::value<size_t>(blocksLimit)->default_value("0"), "#")
     ("log-level", "Specify log level. Must be 0 - 5", cxxopts::value<uint8_t>(logLevel)->default_value("1"), "#")
-    ("threads", "The mining threads count. Must not exceed hardware capabilities.", cxxopts::value<size_t>(threadCount)->default_value(std::to_string(CONCURRENCY_LEVEL)), "#");
-    ("donate-level", "Percentage of hashing that goes to the Amity donation wallet. Must be 0..100, default is 2%.", cxxopts::value<int>(donateAddress)->default_value("2"), "#")
+    ("threads", "The mining threads count. Must not exceed hardware capabilities.", cxxopts::value<size_t>(threadCount)->default_value(std::to_string(CONCURRENCY_LEVEL)), "#")
+    ("donate-level", "Percentage of hashing that goes to the Amity donation wallet. Must be 0..100, default is 2%.", cxxopts::value<int>(donateLevel)->default_value("2"), "#");
 
     
   try
