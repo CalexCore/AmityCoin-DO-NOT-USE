@@ -46,6 +46,11 @@ build_script:
 
   # settings environment for proper artifact naming
   - ps: |
+      $env:AmityVersion = Get-Content -Path ./VERSION
+      if (-Not $env:APPVEYOR_REPO_BRANCH -match "master") {
+        $env:AmityVersion = "$($env:AmityVersion)~$($env:APPVEYOR_REPO_BRANCH)"
+      }
+      Rename-Item -Path ./.install/bin -NewName "Amity-v$($env:AmityVersion)"
       if ($isLinux) {
         $env:ArtifactOS = "Debian 64bit"
       } else {
@@ -59,14 +64,14 @@ build_script:
 # Uploading artifacts
 artifacts:
   - path: .install
-    name: "Portable Binaries $(ArtifactOS)"
+    name: "Standalone $(ArtifactOS) - v$(AmityVersion)"
 
 # If we are on master branch and have a tagged version we create a new draft
 # on github release. The draft must be revisioned and published by an authorized
 # member of the project.
 deploy:
-  tag: $(APPVEYOR_REPO_TAG_NAME)
-  release: Amity-v$(APPVEYOR_REPO_TAG_NAME)
+  tag: $(AmityVersion)
+  release: Amity-v$(AmityVersion)
   description: 'CI Release Build'
   provider: GitHub
   auth_token:
@@ -75,4 +80,10 @@ deploy:
   prerelease: false
   on:
     branch: master
-    appveyor_repo_tag: true
+
+notifications:
+  - provider: Email
+    to:
+      - michael.herwig@hotmail.de
+    on_build_success: false
+    on_build_failure: true
