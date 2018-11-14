@@ -17,9 +17,10 @@ endif()
 
 
 # gtest ============================================================================================
-if (DO_TESTS)
+if (AMITY_BUILD_TESTSUITE)
   add_subdirectory(gtest)
   set_property(TARGET gtest gtest_main PROPERTY FOLDER "external")
+  set_property(TARGET gtest gtest_main PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/gtest/include")
 endif()
 
 # rocksDB ==========================================================================================

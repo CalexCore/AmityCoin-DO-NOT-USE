@@ -40,8 +40,9 @@ build_script:
       cmake `
         -G "$CMakeGenerator" `
         -DCMAKE_BUILD_TYPE=$configuration `
+        -DAMITY_BUILD_EXECUTABLES=ON `
+        -DAMITY_BUILD_TESTSUITE=ON `
         -DCMAKE_INSTALL_PREFIX:PATH=../.install `
-        -DAMITY_BUILD_CRYPTOTEST=ON `
         $CMakeBoostArg `
         ..
       cmake --build . --config $configuration
@@ -52,7 +53,7 @@ build_script:
   - ps: |
       $env:AmityVersion = Get-Content -Path ./VERSION
       if ($env:APPVEYOR_REPO_BRANCH -NotLike "master") {
-        $env:AmityVersion = "$($env:AmityVersion)~$($env:APPVEYOR_REPO_BRANCH)"
+        $env:AmityVersion = "$($env:AmityVersion)-$($env:APPVEYOR_REPO_BRANCH)"
       }
       Rename-Item -Path ./.install/bin -NewName "Amity-v$($env:AmityVersion)"
       if ($isLinux) {
@@ -62,8 +63,11 @@ build_script:
       }
     
 # Tests
-# Currently the only test cryptotest will always fail and noone investigated so far
-# thus its left out.
+test_script:
+  - ps: |
+      Push-Location .\.build
+      ctest -VV
+      Pop-Location
 
 # Uploading artifacts
 artifacts:

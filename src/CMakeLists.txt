@@ -27,7 +27,6 @@ file(GLOB_RECURSE WalletLegacy WalletLegacy/*)
 file(GLOB_RECURSE JsonRpcServer JsonRpcServer/*)
 file(GLOB_RECURSE service WalletService/*)
 file(GLOB_RECURSE zedwallet zedwallet/*)
-file(GLOB_RECURSE CryptoTest CryptoTest/*)
 
 if(MSVC)
 file(GLOB_RECURSE System System/* Platform/Windows/System/*)
@@ -40,7 +39,7 @@ endif()
 # This appears to be an IDE thing, to group files together.
 # https://cmake.org/cmake/help/v3.0/command/source_group.html
 # Probably not what you need to be looking at if something isn't building
-foreach(source_file ${Common} ${Crypto} ${CryptoNoteCore} ${CryptoNoteProtocol} ${AmityCoind} ${JsonRpcServer} ${Http} ${Logging} ${miner} ${Mnemonics} ${NodeRpcProxy} ${P2p} ${Rpc} ${Serialization} ${System} ${Transfers} ${Wallet} ${WalletLegacy} ${zedwallet} ${CryptoTest})
+foreach(source_file ${Common} ${Crypto} ${CryptoNoteCore} ${CryptoNoteProtocol} ${AmityCoind} ${JsonRpcServer} ${Http} ${Logging} ${miner} ${Mnemonics} ${NodeRpcProxy} ${P2p} ${Rpc} ${Serialization} ${System} ${Transfers} ${Wallet} ${WalletLegacy} ${zedwallet})
   if(AMITY_CXX_FLAGS)
     set_source_files_properties(${source_file} PROPERTIES COMPILE_FLAGS "${AMITY_CXX_FLAGS} /W3 /GS-")
   endif() # AMITY_CXX_FLAGS
@@ -77,9 +76,6 @@ if(MSVC)
   set(PG_SOURCES_OS
     BinaryInfo/service.rc
   )
-  set(CT_SOURCES_OS
-    BinaryInfo/cryptotest.rc
-  )
 endif()
 
 if(AMITY_BUILD_EXECUTABLES)
@@ -88,10 +84,6 @@ if(AMITY_BUILD_EXECUTABLES)
   add_executable(service ${service} ${PG_SOURCES_OS})
   add_executable(miner ${miner} ${MINER_SOURCES_OS})
 endif() # AMITY_BUILD_EXECUTABLES
-
-if(AMITY_BUILD_CRYPTOTEST)
-  add_executable(cryptotest ${CryptoTest} ${CT_SOURCES_OS})
-endif() # AMITY_BUILD_CRYPTOTEST
 
 if(MSVC)
   target_link_libraries(System ws2_32)
@@ -131,11 +123,6 @@ if(AMITY_BUILD_EXECUTABLES)
   target_link_libraries(miner CryptoNoteCore Rpc Serialization System Http Logging Common Crypto ${Boost_LIBRARIES})
 endif() # AMITY_BUILD_EXECUTABLES
 
-if(AMITY_BUILD_CRYPTOTEST)
-  target_link_libraries(cryptotest Crypto Common)
-  add_test(cryptotest cryptotest)
-endif() # AMITY_BUILD_CRYPTOTEST
-
 if(AMITY_BUILD_EXECUTABLES)
   # Add dependencies means we have to build the latter before we build the former
   # In this case it's because we need to have the current version name rather
@@ -164,8 +151,3 @@ if(AMITY_BUILD_EXECUTABLES)
     RUNTIME DESTINATION bin
   )
 endif() # AMITY_BUILD_EXECUTABLES
-
-if(AMITY_BUILD_CRYPTOTEST)
-  add_dependencies(cryptotest version)
-  set_property(TARGET cryptotest PROPERTY OUTPUT_NAME "cryptotest")
-endif() # AMITY_BUILD_CRYPTOTEST
