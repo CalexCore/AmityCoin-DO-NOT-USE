@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2014-2018, The Monero Project
 // Copyright (c) 2018, The TurtleCoin Developers
 //
@@ -75,7 +75,7 @@ ForkStatus get_fork_status(uint64_t height, std::vector<uint64_t> upgrade_height
         }
     }
 
-    float days = (next_fork - height) / CryptoNote::parameters::EXPECTED_NUMBER_OF_BLOCKS_PER_DAY;
+    uint64_t days = (next_fork - height) / CryptoNote::parameters::EXPECTED_NUMBER_OF_BLOCKS_PER_DAY;
 
     /* Next fork in < 30 days away */
     if (days < 30)
@@ -113,7 +113,7 @@ std::string get_fork_time(uint64_t height, std::vector<uint64_t> upgrade_heights
         }
     }
 
-    float days = (next_fork - height) / CryptoNote::parameters::EXPECTED_NUMBER_OF_BLOCKS_PER_DAY;
+    uint64_t days = (next_fork - height) / CryptoNote::parameters::EXPECTED_NUMBER_OF_BLOCKS_PER_DAY;
 
     if (height == next_fork)
     {
