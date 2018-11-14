@@ -2,6 +2,10 @@
 
 include_directories(${CMAKE_SOURCE_DIR}/external/rocksdb/include)
 include_directories(${CMAKE_SOURCE_DIR}/external/linenoise)
+include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${CMAKE_SOURCE_DIR}/src)
+include_directories(${CMAKE_SOURCE_DIR}/external)
+include_directories(${AMITY_VERSION_INCLUDE_DIR})
 
 file(GLOB_RECURSE BlockchainExplorer BlockchainExplorer/*)
 file(GLOB_RECURSE Common Common/*)
@@ -43,22 +47,22 @@ foreach(source_file ${Common} ${Crypto} ${CryptoNoteCore} ${CryptoNoteProtocol} 
   source_group("" FILES ${source_file})
 endforeach()
 
-add_library(BlockchainExplorer ${BlockchainExplorer})
-add_library(Common ${Common})
-add_library(Crypto ${Crypto})
-add_library(CryptoNoteCore ${CryptoNoteCore})
-add_library(Http ${Http})
-add_library(Logging ${Logging})
-add_library(Mnemonics ${Mnemonics})
-add_library(NodeRpcProxy ${NodeRpcProxy})
-add_library(Rpc ${Rpc})
-add_library(P2P ${CryptoNoteProtocol} ${P2p})
-add_library(Serialization ${Serialization})
-add_library(System ${System})
-add_library(Transfers ${Transfers})
-add_library(Wallet ${Wallet} ${WalletLegacy})
-add_library(JsonRpcServer ${JsonRpcServer})
-add_library(WalletService ${service})
+add_library(BlockchainExplorer STATIC ${BlockchainExplorer})
+add_library(Common STATIC ${Common})
+add_library(Crypto STATIC ${Crypto})
+add_library(CryptoNoteCore STATIC ${CryptoNoteCore})
+add_library(Http STATIC ${Http})
+add_library(Logging STATIC ${Logging})
+add_library(Mnemonics STATIC ${Mnemonics})
+add_library(NodeRpcProxy STATIC ${NodeRpcProxy})
+add_library(Rpc STATIC ${Rpc})
+add_library(P2P STATIC ${CryptoNoteProtocol} ${P2p})
+add_library(Serialization STATIC ${Serialization})
+add_library(System STATIC ${System})
+add_library(Transfers STATIC ${Transfers})
+add_library(Wallet STATIC ${Wallet} ${WalletLegacy})
+add_library(JsonRpcServer STATIC ${JsonRpcServer})
+add_library(WalletService STATIC ${service})
 
 if(MSVC)
   set(DAEMON_SOURCES_OS
@@ -96,11 +100,23 @@ if(MSVC)
 endif ()
 
 # Add the dependencies we need
-target_link_libraries(CryptoNoteCore Common Logging Crypto P2P Rpc Http Serialization System ${Boost_LIBRARIES})
-target_link_libraries(CryptoNoteCore Common Crypto Logging Serialization)
-target_link_libraries(P2P CryptoNoteCore Logging ${Boost_LIBRARIES} upnpc-static)
-target_link_libraries(Rpc CryptoNoteCore Logging P2P)
-target_link_libraries(WalletService Mnemonics)
+target_link_libraries(
+    CryptoNoteCore
+
+    PUBLIC
+        Common
+        Logging
+        Crypto
+        P2P
+        Rpc
+        Http
+        Serialization
+        System
+        ${Boost_LIBRARIES}
+)
+target_link_libraries(P2P PUBLIC CryptoNoteCore upnpc-static)
+target_link_libraries(Rpc PUBLIC CryptoNoteCore)
+target_link_libraries(WalletService PUBLIC Mnemonics)
 
 if(AMITY_BUILD_EXECUTABLES)
   if(MSVC)
