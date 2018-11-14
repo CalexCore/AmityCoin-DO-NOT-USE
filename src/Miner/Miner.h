@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2014-2018, The Monero Project
 // Copyright (c) 2018, The TurtleCoin Developers
 //
@@ -8,7 +8,6 @@
 
 #include <atomic>
 #include <thread>
-#include <mutex>
 
 #include <System/Dispatcher.h>
 #include <System/Event.h>
@@ -46,8 +45,7 @@ private:
   std::vector<std::unique_ptr<System::RemoteContext<void>>>  m_workers;
 
   BlockTemplate m_block;
-  uint64_t m_hash_count;
-  std::mutex m_hashes_mutex;
+  std::atomic<uint64_t> m_hash_count;
 
   Logging::LoggerRef m_logger;
 
