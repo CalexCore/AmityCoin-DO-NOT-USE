@@ -46,7 +46,6 @@ set(ENABLE_MALLOC_USABLE_SIZE OFF CACHE STRING "Enable RocksDB MALLOC_USABLE_SIZ
 set(ENABLE_SCHED_GETCPU OFF CACHE STRING "Enable RocksDB SCHED_GETCPU support detection? Defaults to OFF")
 
 ## Options for configuring build system
-option(AMITY_ENABLE_GIT_VERSION_ID "Includes the git commit id within the version information." OFF)
 option(AMITY_BUILD_EXECUTABLES "Builds the executables for this project (daemon, wallet...)." ON)
 option(AMITY_BUILD_CRYPTOTEST "Buils the cryptotest target for testing purposes." OFF)
 
@@ -73,40 +72,6 @@ set(STATIC ON CACHE BOOL FORCE "Link libraries statically? Forced to ON")
 # This section helps us set up RocksDB for maximum portability
 set(ENABLE_AVX OFF CACHE STRING "Enable RocksDB AVX/AVX2 support detection? Defaults to OFF")
 
-## This section helps us tag our builds with the git commit information
-if(AMITY_ENABLE_GIT_VERSION_ID)
-  set(COMMIT_ID_IN_VERSION ON CACHE BOOL "Include commit ID in version")
-  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/version")
-  if (NOT COMMIT_ID_IN_VERSION)
-    set(VERSION "${VERSION}-unknown")
-    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/version.h.in" "${CMAKE_CURRENT_BINARY_DIR}/version/version.h")
-    add_custom_target(version ALL)
-  elseif(DEFINED COMMIT)
-    string(REPLACE "." "\\." VERSION_RE "${VERSION}")
-    if(NOT REFS MATCHES "(\\(|, )tag: v${VERSION_RE}(\\)|, )")
-      set(VERSION "${VERSION}-g${COMMIT}")
-    endif()
-    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/version.h.in" "${CMAKE_CURRENT_BINARY_DIR}/version/version.h")
-    add_custom_target(version ALL)
-  else()
-    find_package(Git QUIET)
-    if(Git_FOUND OR GIT_FOUND)
-      message(STATUS "Found Git: ${GIT_EXECUTABLE}")
-      add_custom_target(version ALL "${CMAKE_COMMAND}" "-D" "VERSION=${VERSION}" "-D" "GIT=${GIT_EXECUTABLE}" "-D" "TO=${CMAKE_CURRENT_BINARY_DIR}/version/version.h" "-P" "${CMAKE_CURRENT_SOURCE_DIR}/src/version.cmake" WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
-    else()
-      message(STATUS "WARNING: Git was not found!")
-      set(VERSION "${VERSION}-unknown")
-      configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/version.h.in" "${CMAKE_CURRENT_BINARY_DIR}/version/version.h")
-      add_custom_target(version ALL)
-    endif()
-  endif()
-else()
-  set(VERSION "NA")
-  add_custom_target(version ALL "${CMAKE_COMMAND}" -E echo "-- GIT versioning is disabled, skipping...")
-  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/version)
-  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/config/version.h.in" "${CMAKE_CURRENT_BINARY_DIR}/version/version.h")
-endif() # AMITY_ENABLE_GIT_VERSION_ID
-include_directories(include "${CMAKE_CURRENT_BINARY_DIR}/version" src external)
 
 ## Platform specific code base information is applied here
 if(MSVC)
