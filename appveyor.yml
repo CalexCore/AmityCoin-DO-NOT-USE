@@ -51,7 +51,7 @@ build_script:
   # settings environment for proper artifact naming
   - ps: |
       $env:AmityVersion = Get-Content -Path ./VERSION
-      if (-Not $env:APPVEYOR_REPO_BRANCH -match "master") {
+      if ($env:APPVEYOR_REPO_BRANCH -NotLike "master") {
         $env:AmityVersion = "$($env:AmityVersion)~$($env:APPVEYOR_REPO_BRANCH)"
       }
       Rename-Item -Path ./.install/bin -NewName "Amity-v$($env:AmityVersion)"

@@ -8,9 +8,6 @@ project(
   DESCRIPTION
     "AmityCoin brings you a truly private cryptocurrency you can trust"
 
-  HOMEPAGE_URL
-    https://getamitycoin.org/
-
   LANGUAGES 
     C 
     CXX
