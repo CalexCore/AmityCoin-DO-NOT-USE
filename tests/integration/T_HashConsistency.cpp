@@ -19,8 +19,9 @@ class HashConsistency : public ::testing::Test {
 public:
     Logging::LoggerManager LogManager;
     Logging::ConsoleLogger Log{Logging::Level::WARNING};
-    std::unique_ptr<CryptoNote::IBlockchainCache> Cache;
     CryptoNote::RocksDBWrapper DB{LogManager};
+    std::unique_ptr<CryptoNote::DatabaseBlockchainCacheFactory> CacheFactory;
+    std::unique_ptr<CryptoNote::IBlockchainCache> Cache;
 
     void SetUp() override {
         using namespace CryptoNote;
@@ -28,13 +29,15 @@ public:
         DataBaseConfig cfg;
         cfg.setDataDir("./");
         DB.init(cfg);
-        DatabaseBlockchainCacheFactory factory{DB, Log};
+        CacheFactory = std::make_unique<DatabaseBlockchainCacheFactory>(DB, Log);
 
         CurrencyBuilder currencyBuilder{LogManager};
         currencyBuilder.isBlockexplorer(false);
         currencyBuilder.testnet(false);
         const Currency currency = currencyBuilder.currency();
-        Cache = factory.createRootBlockchainCache(currency);
+        Cache = CacheFactory->createRootBlockchainCache(currency);
+
+        ASSERT_GT(Cache->getBlockCount(), 0u);
     }
 
     void TearDown() override {
