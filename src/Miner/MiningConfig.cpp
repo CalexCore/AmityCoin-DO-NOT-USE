@@ -127,8 +127,6 @@ void MiningConfig::parse(int argc, char** argv) {
     
   if (donateLevel == 100) {
     miningAddress = donateAddress;
-  } else {
-    throw std::runtime_error("Specify --address option");
   }
     
   if (miningAddress.empty())

@@ -1,0 +1,34 @@
+sudo: required
+
+language: cpp
+
+services:
+  - docker
+
+script:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - VERSION=`cat VERSION`
+  - echo "Building v$VERSION on branch $TRAVIS_BRANCH"
+  - |
+    docker build \
+      -t calexcore/amitycoin:$TRAVIS_BRANCH-$VERSION \
+      -t calexcore/amitycoin:$TRAVIS_BRANCH-latest \
+      .
+    docker push calexcore/amitycoin:$TRAVIS_BRANCH-$VERSION
+    docker push calexcore/amitycoin:$TRAVIS_BRANCH-latest
+  - |
+    if [ "$TRAVIS_BRANCH" == "master" ]
+    then
+      docker tag calexcore/amitycoin:$TRAVIS_BRANCH-$VERSION calexcore/amitycoin:latest
+      docker push calexcore/amitycoin:latest
+    fi
+
+branches:
+  only:
+    - master
+    - dev
+
+after_success:
+  - /bin/bash ./scripts/ci/SendDiscordNotification.sh success $WEBHOOK_URL
+after_failure:
+  - /bin/bash ./scripts/ci/SendDiscordNotification.sh failure $WEBHOOK_URL
