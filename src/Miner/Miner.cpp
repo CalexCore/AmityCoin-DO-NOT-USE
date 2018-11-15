@@ -17,6 +17,8 @@
 
 #include <System/InterruptedException.h>
 
+#include <Common/ColouredMsg.h>
+
 namespace CryptoNote {
 
 Miner::Miner(System::Dispatcher& dispatcher, Logging::ILogger& logger) :
@@ -98,6 +100,7 @@ void Miner::workerFunc(const BlockTemplate& blockTemplate, uint64_t difficulty, 
       CachedBlock cachedBlock(block);
       Crypto::Hash hash = cachedBlock.getBlockLongHash();
       if (check_hash(hash, difficulty)) {
+	std::cout << InformationMsg("Found block for difficulty ")  << difficulty  << std::endl;
         m_logger(Logging::INFO) << "Found block for difficulty " << difficulty;
 
         if (!setStateBlockFound()) {
