@@ -51,7 +51,7 @@ You can run `./src/AmityCoind` and the daemon will fire up and begin to sync wit
 - The first step is installing [Visual Studio 2017 Community Edition](https://www.visualstudio.com/thank-you-downloading-visual-studio/?sku=Community&rel=15&page=inlineinstall)
 - When installing Visual Studio, it is **required an imperitive** that you install **Desktop development with C++** and the **VC++ v140 toolchain** when selecting features during setup. If you do not do this your build will fail. The option to install the v140 toolchain is found by expanding the "Desktop development with C++" option on the right. This item will be called something like `VC++ 2015.3 v14.00 (v140) toolset for desktop`
 - The next step is installing [Boost 1.59.0](https://sourceforge.net/projects/boost/files/boost-binaries/1.59.0/), make sure you download the installer for MSVC 14.
-- Note** At version 1.66 of boost the naming scheme has changed, making it impossible to use(at least until the makefiles are updated).
+- Note** At version 1.60 of boost the naming scheme has changed, making it impossible to use(at least until the makefiles are updated).
 
 #### Notes
  - You can safely ignore the warnings when you first build, about dependancies on things like the target P2P.  There is a reference to them, but they only get built when you actually build with the make command.
