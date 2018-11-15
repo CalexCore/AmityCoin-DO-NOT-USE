@@ -9,9 +9,9 @@ topbuffer = 1
 
 if len (sys.argv) <> 2 :
     print "Invalid number of arguments! "
-    print "Usage: < python full-checkpoints.py checkpoints.cvs >"
-    print "If checkpoints.cvs does not exist, it gets created"
-    print "If checkpoints.cvs already exists, it gets updated"
+    print "Usage: < python full-checkpoints.py checkpoint.csv >"
+    print "If checkpoints.csv does not exist, it gets created"
+    print "If checkpoints.csv already exists, it gets updated"
     sys.exit (1)
 
 def lastknownblock():
