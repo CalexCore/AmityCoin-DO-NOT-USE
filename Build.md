@@ -53,5 +53,8 @@ You can run `./src/AmityCoind` and the daemon will fire up and begin to sync wit
 - The next step is installing [Boost 1.59.0](https://sourceforge.net/projects/boost/files/boost-binaries/1.59.0/), make sure you download the installer for MSVC 14.
 - Note** At version 1.66 of boost the naming scheme has changed, making it impossible to use(at least until the makefiles are updated).
 
+#### Notes
+ - You can safely ignore the warnings when you first build, about dependancies on things like the target P2P.  There is a reference to them, but they only get built when you actually build with the make command.
+
 #### Thanks
 Cryptonote Developers, Bytecoin Developers, Monero Developers, Forknote Project, The Turtlecoin Project, Nerva Developers, AmityCoin
