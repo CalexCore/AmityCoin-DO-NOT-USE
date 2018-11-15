@@ -8,10 +8,10 @@ import requests
 topbuffer = 1
 
 if len (sys.argv) <> 2 :
-    print "Invalit number of Arguments! "
-    print "Usage: python fullcheckpoint.py checkpoints.cvs "
-    print "If checkpoints.cvs does not exist, it creates one"
-    print "If checkpoints.cvs exists ,it gets updated"
+    print "Invalid number of arguments! "
+    print "Usage: < python full-checkpoints.py checkpoints.cvs >"
+    print "If checkpoints.cvs does not exist, it gets created"
+    print "If checkpoints.cvs already exists, it gets updated"
     sys.exit (1)
 
 def lastknownblock():
