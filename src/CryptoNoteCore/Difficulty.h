@@ -6,6 +6,8 @@
 #include <stdint.h>
 #include <vector>
 
+uint64_t nextDifficultyV7(std::vector<uint64_t> timestamps, std::vector<uint64_t> cumulativeDifficulties);
+
 uint64_t nextDifficultyV6(std::vector<uint64_t> timestamps, std::vector<uint64_t> cumulativeDifficulties);
 
 uint64_t nextDifficultyV5(std::vector<uint64_t> timestamps, std::vector<uint64_t> cumulativeDifficulties);

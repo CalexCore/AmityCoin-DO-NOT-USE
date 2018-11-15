@@ -40,6 +40,8 @@ const uint64_t LWMA_2_DIFFICULTY_BLOCK_INDEX                 = 5;
 const uint64_t LWMA_2_DIFFICULTY_BLOCK_INDEX_V2              = 6;
 const uint64_t LWMA_2_DIFFICULTY_BLOCK_INDEX_V3              = 7;
 const uint64_t LWMA_3_DIFFICULTY_BLOCK_INDEX                 = 8;
+const uint64_t LWMA_2_DIFFICULTY_BLOCK_INDEX_V4              = 10000; // This will need changing if we decide different
+
 
 const uint64_t DIFFICULTY_WINDOW_V3                          = 60;
 const uint64_t DIFFICULTY_BLOCKS_COUNT_V3                    = DIFFICULTY_WINDOW_V3 + 1;
@@ -146,6 +148,7 @@ const uint32_t UPGRADE_HEIGHT_V2                             = 1;
 const uint32_t UPGRADE_HEIGHT_V3                             = 2;
 const uint32_t UPGRADE_HEIGHT_V4                             = 3; // Upgrade height for CN-Lite Variant 1 switch.
 const uint32_t UPGRADE_HEIGHT_V5                             = 4; // Upgrade height for CN-Soft Shell Variant 1 switch.
+const uint32_t UPGRADE_HEIGHT_V6							 = 10000; // Alter CN-Soft Shell Varaint 1 < Again, needs changing
 const uint32_t UPGRADE_HEIGHT_CURRENT                        = UPGRADE_HEIGHT_V5;
 const unsigned UPGRADE_VOTING_THRESHOLD                      = 90;               // percent
 const uint32_t UPGRADE_VOTING_WINDOW                         = EXPECTED_NUMBER_OF_BLOCKS_PER_DAY;  // blocks
@@ -199,6 +202,7 @@ const uint8_t  BLOCK_MAJOR_VERSION_2                         =  2;
 const uint8_t  BLOCK_MAJOR_VERSION_3                         =  3;
 const uint8_t  BLOCK_MAJOR_VERSION_4                         =  4;
 const uint8_t  BLOCK_MAJOR_VERSION_5                         =  5;
+const uint8_t  BLOCK_MAJOR_VERSION_6						 =  6;
 const uint8_t  BLOCK_MINOR_VERSION_0                         =  0;
 const uint8_t  BLOCK_MINOR_VERSION_1                         =  1;
 
@@ -215,8 +219,8 @@ const size_t   P2P_LOCAL_GRAY_PEERLIST_LIMIT                 =  5000;
 
 // P2P Network Configuration Section - This defines our current P2P network version
 // and the minimum version for communication between nodes
-const uint8_t  P2P_CURRENT_VERSION                           = 1;
-const uint8_t  P2P_MINIMUM_VERSION                           = 1;
+const uint8_t  P2P_CURRENT_VERSION                           = 2;
+const uint8_t  P2P_MINIMUM_VERSION                           = 2;
 // This defines the number of versions ahead we must see peers before we start displaying
 // warning messages that we need to upgrade our software.
 const uint8_t  P2P_UPGRADE_WINDOW                            = 2;

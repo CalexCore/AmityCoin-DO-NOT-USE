@@ -162,6 +162,8 @@ uint32_t Currency::upgradeHeight(uint8_t majorVersion) const {
     return m_upgradeHeightV4;
   } else if (majorVersion == BLOCK_MAJOR_VERSION_5) {
 	  return m_upgradeHeightV5;
+  } else if (majorVersion == BLOCK_MAJOR_VERSION_6) {
+	  return m_upgradeHeightV6;
   } else {
     return static_cast<uint32_t>(-1);
   }
@@ -431,11 +433,15 @@ bool Currency::parseAmount(const std::string& str, uint64_t& amount) const {
 uint64_t Currency::getNextDifficulty(uint8_t version, uint32_t blockIndex, std::vector<uint64_t> timestamps, std::vector<uint64_t> cumulativeDifficulties) const
 {
 	 /* nextDifficultyV3 and above are defined in src/CryptoNoteCore/Difficulty.cpp */
-    if (blockIndex >= CryptoNote::parameters::LWMA_3_DIFFICULTY_BLOCK_INDEX)
+	if (blockIndex >= CryptoNote::parameters::LWMA_2_DIFFICULTY_BLOCK_INDEX_V4)
+	{
+		return nextDifficultyV7(timestamps, cumulativeDifficulties);
+	}
+    else if (blockIndex >= CryptoNote::parameters::LWMA_3_DIFFICULTY_BLOCK_INDEX)
     {
         return nextDifficultyV6(timestamps, cumulativeDifficulties);
     }
-    if (blockIndex >= CryptoNote::parameters::LWMA_2_DIFFICULTY_BLOCK_INDEX_V3)
+    else if (blockIndex >= CryptoNote::parameters::LWMA_2_DIFFICULTY_BLOCK_INDEX_V3)
     {
         return nextDifficultyV5(timestamps, cumulativeDifficulties);
     }
@@ -626,6 +632,7 @@ bool Currency::checkProofOfWork(const CachedBlock& block, uint64_t currentDiffic
   case BLOCK_MAJOR_VERSION_3:
   case BLOCK_MAJOR_VERSION_4:
   case BLOCK_MAJOR_VERSION_5:
+  case BLOCK_MAJOR_VERSION_6:
     return checkProofOfWorkV2(block, currentDiffic);
   }
 
@@ -692,6 +699,7 @@ m_upgradeHeightV2(currency.m_upgradeHeightV2),
 m_upgradeHeightV3(currency.m_upgradeHeightV3),
 m_upgradeHeightV4(currency.m_upgradeHeightV4),
 m_upgradeHeightV5(currency.m_upgradeHeightV5),
+m_upgradeHeightV6(currency.m_upgradeHeightV6),
 m_upgradeVotingThreshold(currency.m_upgradeVotingThreshold),
 m_upgradeVotingWindow(currency.m_upgradeVotingWindow),
 m_upgradeWindow(currency.m_upgradeWindow),
@@ -758,6 +766,7 @@ zawyDifficultyBlockVersion(parameters::ZAWY_DIFFICULTY_DIFFICULTY_BLOCK_VERSION)
   upgradeHeightV3(parameters::UPGRADE_HEIGHT_V3);
   upgradeHeightV4(parameters::UPGRADE_HEIGHT_V4);
   upgradeHeightV5(parameters::UPGRADE_HEIGHT_V5);
+  upgradeHeightV5(parameters::UPGRADE_HEIGHT_V6);
   upgradeVotingThreshold(parameters::UPGRADE_VOTING_THRESHOLD);
   upgradeVotingWindow(parameters::UPGRADE_VOTING_WINDOW);
   upgradeWindow(parameters::UPGRADE_WINDOW);
