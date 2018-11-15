@@ -1,4 +1,4 @@
-// Copyright (c) 2018, The TurtleCoin Developers
+﻿// Copyright (c) 2018, The TurtleCoin Developers
 // Copyright (c) 2018, The Calex Developers
 // 
 // Please see the included LICENSE file for more information.
@@ -29,8 +29,8 @@ uint64_t nextDifficultyV6(std::vector<uint64_t> timestamps, std::vector<uint64_t
 	
 	lastTime = timestamps[0];
 	
-    for ( int64_t i = 1; i <= N; i++) {
-      if (static_cast<int64_t>(timestamps[i]) > lastTime) {
+    for ( uint64_t i = 1; i <= N; i++) {
+      if (timestamps[i] > lastTime) {
       nextTime = timestamps[i];
       } else { nextTime = lastTime+1; }
       ST = std::min(6*T,nextTime - lastTime);

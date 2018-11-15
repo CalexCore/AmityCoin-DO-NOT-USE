@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2014-2018, The Monero Project
 // Copyright (c) 2018, The TurtleCoin Developers
 //
@@ -146,13 +146,11 @@ bool Miner::setStateBlockFound() {
 }
 
 void Miner::incrementHashCount() {
-  std::lock_guard<std::mutex> guard(m_hashes_mutex);
   m_hash_count++;
 }
 
 uint64_t Miner::getHashCount() {
-  std::lock_guard<std::mutex> guard(m_hashes_mutex);
-  return m_hash_count;
+  return m_hash_count.load();
 }
 
 } //namespace CryptoNote

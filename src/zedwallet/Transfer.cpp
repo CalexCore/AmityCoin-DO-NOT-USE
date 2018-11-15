@@ -1,4 +1,4 @@
-// Copyright (c) 2018, The TurtleCoin Developers
+﻿// Copyright (c) 2018, The TurtleCoin Developers
 // 
 // Please see the included LICENSE file for more information.
 
@@ -638,20 +638,15 @@ bool handleTransferError(const std::system_error &e,
         return false;
     }
 
-    bool wrongAmount = false;
-
-    switch (e.code().value())
+    const int errorCode = e.code().value();
+    switch (errorCode)
     {
         case WalletErrors::CryptoNote::error::WRONG_AMOUNT:
-        {
-            wrongAmount = true;
-            [[fallthrough]];
-        }
         case WalletErrors::CryptoNote::error::MIXIN_COUNT_TOO_BIG:
         case NodeErrors::CryptoNote::error::INTERNAL_NODE_ERROR:
         {
     
-            if (wrongAmount)
+            if (errorCode == WalletErrors::CryptoNote::error::WRONG_AMOUNT)
             {
                 std::cout << WarningMsg("Failed to send transaction "
                                         "- not enough funds!")

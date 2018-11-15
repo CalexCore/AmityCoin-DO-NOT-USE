@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 //
 // This file is part of Bytecoin.
 //
@@ -28,7 +28,7 @@ namespace CryptoNote {
   /*                                                                      */
   /************************************************************************/
   template<class t_array>
-  struct array_hasher: std::unary_function<t_array&, size_t>
+  struct array_hasher
   {
     size_t operator()(const t_array& val) const
     {
