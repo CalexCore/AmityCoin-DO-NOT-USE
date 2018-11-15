@@ -21,7 +21,7 @@
 #include <Mnemonics/Mnemonics.h>
 
 #include <zedwallet/AddressBook.h>
-#include <zedwallet/ColouredMsg.h>
+#include <Common/ColouredMsg.h>
 #include <zedwallet/Commands.h>
 #include <zedwallet/Fusion.h>
 #include <zedwallet/Menu.h>

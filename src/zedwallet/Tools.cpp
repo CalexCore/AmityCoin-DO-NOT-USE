@@ -19,7 +19,7 @@
 
 #include <iostream>
 
-#include <zedwallet/ColouredMsg.h>
+#include <Common/ColouredMsg.h>
 #include <zedwallet/PasswordContainer.h>
 #include <config/WalletConfig.h>
 

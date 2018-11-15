@@ -24,7 +24,7 @@ namespace NodeErrors
     #include <NodeRpcProxy/NodeErrors.h>
 }
 
-#include <zedwallet/ColouredMsg.h>
+#include <Common/ColouredMsg.h>
 #include <zedwallet/Fusion.h>
 #include <zedwallet/Tools.h>
 #include <config/WalletConfig.h>

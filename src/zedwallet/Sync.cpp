@@ -8,7 +8,7 @@
 
 #include <Common/StringTools.h>
 
-#include <zedwallet/ColouredMsg.h>
+#include <Common/ColouredMsg.h>
 #include <zedwallet/CommandImplementations.h>
 #include <zedwallet/GetInput.h>
 #include <zedwallet/Tools.h>
