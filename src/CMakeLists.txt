@@ -1,13 +1,17 @@
 ﻿add_definitions(-DSTATICLIB)
 
-include_directories(${CMAKE_SOURCE_DIR}/external)
-include_directories(${CMAKE_SOURCE_DIR}/external/rocksdb/include)
-include_directories(${CMAKE_SOURCE_DIR}/external/linenoise)
-include_directories(${CMAKE_SOURCE_DIR}/external/json)
-include_directories(${CMAKE_SOURCE_DIR}/external/cxxopts)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-include_directories(${CMAKE_SOURCE_DIR}/src)
-include_directories(${AMITY_VERSION_INCLUDE_DIR})
+set(
+    AMITY_INCLUDE_DIRS
+
+    ${PROJECT_SOURCE_DIR}/external
+    ${PROJECT_SOURCE_DIR}/external/rocksdb/include
+    ${PROJECT_SOURCE_DIR}/external/linenoise
+    ${PROJECT_SOURCE_DIR}/external/json
+    ${PROJECT_SOURCE_DIR}/external/cxxopts
+    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src
+    ${AMITY_VERSION_INCLUDE_DIR}
+)
 
 
 file(GLOB_RECURSE BlockchainExplorer BlockchainExplorer/*)
@@ -65,6 +69,31 @@ add_library(Transfers STATIC ${Transfers})
 add_library(Wallet STATIC ${Wallet} ${WalletLegacy})
 add_library(JsonRpcServer STATIC ${JsonRpcServer})
 add_library(WalletService STATIC ${service})
+
+set(
+    AMITY_LIBRARIES
+
+    BlockchainExplorer
+    Common
+    Crypto
+    CryptoNoteCore
+    Http
+    Logging
+    Mnemonics
+    NodeRpcProxy
+    Rpc
+    P2P
+    Serialization
+    System
+    Transfers
+    Wallet
+    JsonRpcServer
+    WalletService
+)
+
+foreach(amityLib ${AMITY_LIBRARIES})
+    target_include_directories(${amityLib} PUBLIC ${AMITY_INCLUDE_DIRS})
+endforeach()
 
 if(MSVC)
   set(DAEMON_SOURCES_OS
