@@ -86,12 +86,15 @@ if(AMITY_BUILD_EXECUTABLES)
   add_executable(zedwallet ${zedwallet} ${ZED_WALLET_SOURCES_OS})
   add_executable(service ${service} ${PG_SOURCES_OS})
   add_executable(miner ${miner} ${MINER_SOURCES_OS})
+
+  if(MSVC)
+    target_link_libraries(AmityCoind Rpcrt4)
+    target_link_libraries(service Rpcrt4)
+  endif()
 endif() # AMITY_BUILD_EXECUTABLES
 
 if(MSVC)
   target_link_libraries(System ws2_32)
-  target_link_libraries(AmityCoind Rpcrt4)
-  target_link_libraries(service Rpcrt4)
 endif ()
 
 # Add the dependencies we need
@@ -126,16 +129,18 @@ if(AMITY_BUILD_EXECUTABLES)
   target_link_libraries(miner CryptoNoteCore Rpc Serialization System Http Logging Common Crypto ${Boost_LIBRARIES})
 endif() # AMITY_BUILD_EXECUTABLES
 
+add_dependencies(WalletService version)
+add_dependencies(Rpc version)
+add_dependencies(P2P version)
+
 if(AMITY_BUILD_EXECUTABLES)
   # Add dependencies means we have to build the latter before we build the former
   # In this case it's because we need to have the current version name rather
   # than a cached one
-  add_dependencies(WalletService version)
-  add_dependencies(Rpc version)
   add_dependencies(AmityCoind version)
   add_dependencies(zedwallet version)
   add_dependencies(service version)
-  add_dependencies(P2P version)
+  add_dependencies(miner version)
 
   # Finally build the binaries
   set_property(TARGET AmityCoind PROPERTY OUTPUT_NAME "AmityCoind")
