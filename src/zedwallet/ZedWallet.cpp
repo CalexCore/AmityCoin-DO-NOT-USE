@@ -1,4 +1,4 @@
-// Copyright (c) 2018, The TurtleCoin Developers
+﻿// Copyright (c) 2018, The TurtleCoin Developers
 // 
 // Please see the included LICENSE file for more information.
 
@@ -99,7 +99,11 @@ int main(int argc, char **argv)
                                     "connection timed out.")
                       << std::endl << std::endl;
         }
-    }
+      } else if(initNode.get()) {
+        std::cout << WarningMsg("Unable to connect to node, "
+                                "connection timed out.")
+                  << std::endl << std::endl;
+      }
     
     /*
       This will check to see if the node responded to /feeinfo and actually

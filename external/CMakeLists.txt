@@ -1,5 +1,4 @@
-﻿
-foreach(flag ${CompilerFlags})
+﻿foreach(flag ${CompilerFlags})
   set(${flag} "${${flag}} ${AMITY_CXX_FLAGS}")
 endforeach()
 

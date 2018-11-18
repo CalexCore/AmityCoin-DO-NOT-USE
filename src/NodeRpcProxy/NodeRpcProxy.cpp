@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2018, The TurtleCoin Developers
 //
 // Please see the included LICENSE file for more information.
@@ -134,6 +134,10 @@ void NodeRpcProxy::workerThread(const INode::Callback& initialized_callback) {
       assert(m_state == STATE_INITIALIZING);
       m_state = STATE_INITIALIZED;
       m_cv_initialized.notify_all();
+    }
+
+    if(!ping()) {
+      initialized_callback(make_error_code(error::CONNECT_ERROR));
     }
 
     getFeeInfo();
@@ -288,6 +292,24 @@ void NodeRpcProxy::getFeeInfo() {
   m_fee_amount = iresp.amount;
 
   return;
+}
+
+bool NodeRpcProxy::ping()
+{
+  try {
+    CryptoNote::COMMAND_RPC_GET_FEE_ADDRESS::request ireq = AUTO_VAL_INIT(ireq);
+    CryptoNote::COMMAND_RPC_GET_FEE_ADDRESS::response iresp =
+      AUTO_VAL_INIT(iresp);
+
+    std::error_code ec = jsonCommand("/feeinfo", ireq, iresp);
+
+    if (ec || iresp.status != CORE_RPC_STATUS_OK) {
+      return false;
+    }
+    return true;
+  } catch (...) {
+    return false;
+  }
 }
 
 std::string NodeRpcProxy::feeAddress() {

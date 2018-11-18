@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2018, The TurtleCoin Developers
 //
 // Please see the included LICENSE file for more information.
@@ -91,6 +91,12 @@ public:
 
   virtual std::string getInfo() = 0;
   virtual void getFeeInfo() = 0;
+
+  /*!
+   * \brief ping sends a getFeeInfo request to the server checking if the connection can be established
+   * \return true, if the connection to the node could be established, otherwise false.
+   */
+  virtual bool ping() = 0;
 
   virtual void getBlockHashesByTimestamps(uint64_t timestampBegin, size_t secondsCount, std::vector<Crypto::Hash>& blockHashes, const Callback& callback) = 0;
   virtual void getTransactionHashesByPaymentId(const Crypto::Hash& paymentId, std::vector<Crypto::Hash>& transactionHashes, const Callback& callback) = 0;
