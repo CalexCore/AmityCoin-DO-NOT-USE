@@ -26,6 +26,6 @@ The daemon should open up and start to sync! Once done it should look something 
 
 ![Image](https://www.pubnodes.com/assets/img/sync.png "sync")
 
-Thats it! Your AmityCoin Daemon is up and running!  If you really want to help the network out please open your router/firewalls port 21018 to allow incoming Peer to Peer commections.
+Thats it! Your AmityCoin Daemon is up and running!  If you really want to help the network out please open your router/firewalls port 21018 to allow incoming Peer to Peer connections.
 
 Check out the Mining Wiki to start finding some blocks!
