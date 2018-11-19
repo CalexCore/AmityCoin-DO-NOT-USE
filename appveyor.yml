@@ -76,18 +76,29 @@ artifacts:
 
 # If we are on master branch and have a tagged version we create a new draft
 # on github release. The draft must be revisioned and published by an authorized
-# member of the project.
+# member of the project. Otherwise if we are on dev branch we will continiously
+# publish a draft version without revision.
 deploy:
-  tag: $(AmityVersion)
-  release: Amity-v$(AmityVersion)
-  description: 'CI Release Build'
-  provider: GitHub
-  auth_token:
-    secure: Pw4T3cHP71ABVKp/ZijUFxpsEvh6VlGP1eeWzCsFVnMdzEG3V7wGFcw2PyF+JXuY
-  draft: true
-  prerelease: false
-  on:
-    branch: master
+  - provider: GitHub
+    tag: $(AmityVersion)
+    release: Amity-v$(AmityVersion)
+    description: 'CI Release Build'
+    auth_token:
+      secure: Pw4T3cHP71ABVKp/ZijUFxpsEvh6VlGP1eeWzCsFVnMdzEG3V7wGFcw2PyF+JXuY
+    draft: true
+    prerelease: false
+    on:
+      branch: master
+  - provider: GitHub
+    tag: $(AmityVersion)
+    release: Amity-v$(AmityVersion)
+    description: 'CI Release Build'
+    auth_token:
+      secure: Pw4T3cHP71ABVKp/ZijUFxpsEvh6VlGP1eeWzCsFVnMdzEG3V7wGFcw2PyF+JXuY
+    draft: false
+    prerelease: true
+    on:
+      branch: dev
 
 on_success:
   - ps: ./scripts/ci/SendDiscordNotification.ps1 success $env:DiscordNotificationWebHook
