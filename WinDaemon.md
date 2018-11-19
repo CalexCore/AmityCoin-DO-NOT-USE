@@ -2,7 +2,7 @@
 
 #### Step by step instructions
 
-**- Step 1:** First things first. We need to download the binary files. These can be found at https://githiub.con/CalexCore/AmityCoin/releases Go there now.
+**- Step 1:** First things first, we need to download the binary files. These can be found at https://githiub.con/CalexCore/AmityCoin/releases Go there now.
 
 **- Step 2:** Click the windows zip package to download it.
 
