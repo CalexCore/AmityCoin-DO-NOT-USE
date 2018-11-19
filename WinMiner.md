@@ -12,7 +12,7 @@ These instructions assume you have already downlaoded the latest AmityCoin Packa
 
 ![Image](https://www.pubnodes.com/assets/img/menuex.png "menuex")
 
-**- Step 4:** Once in the properties menu go to the field labled target.  There you should ender at the end of the string rthe following: `--address amitkjhgKHGhkghfdg7t7UIGugKJGHi7ugKGdsf4rgfe45 --threads 8 --log-level 3`.  These values should be changed to your Systems capavility and your address.  Once finished click apply.
+**- Step 4:** Once in the properties menu go to the field labled target.  There you should ender at the end of the string rthe following: `--address amitkjhgKHGhkghfdg7t7UIGugKJGHi7ugKGdsf4rgfe45 --threads 8 --log-level 3`.  These values should be changed to your Systems capability and your address.  Once finished click apply.
 
 ![Image](https://www.pubnodes.com/assets/img/target.png "target")
 
