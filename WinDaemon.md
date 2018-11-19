@@ -1,6 +1,6 @@
-#How to download the AmityCoin binaries and get the Daemon started for Windows
+# How to download the AmityCoin binaries and get the Daemon started for Windows
 
-####Step by step instructions
+#### Step by step instructions
 
 **- Step 1:** First things first. We need to download the binary files. These can be found at https://githiub.con/CalexCore/AmityCoin/releases Go there now.
 
