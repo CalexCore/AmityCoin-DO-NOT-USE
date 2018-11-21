@@ -111,6 +111,11 @@ if(MSVC)
 endif()
 
 if(AMITY_BUILD_EXECUTABLES)
+  file(GLOB_RECURSE CommonCLI_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/CommonCLI/*")
+  add_library(CommonCLI STATIC ${CommonCLI_SOURCES})
+  target_include_directories(CommonCLI PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/CommonCLI" ${AMITY_INCLUDE_DIRS})
+  add_dependencies(CommonCLI version)
+
   add_executable(AmityCoind ${AmityCoind} ${DAEMON_SOURCES_OS})
   add_executable(zedwallet ${zedwallet} ${ZED_WALLET_SOURCES_OS})
   add_executable(service ${service} ${PG_SOURCES_OS})
@@ -143,19 +148,19 @@ target_link_libraries(
 )
 target_link_libraries(P2P PUBLIC CryptoNoteCore upnpc-static)
 target_link_libraries(Rpc PUBLIC CryptoNoteCore)
-target_link_libraries(WalletService PUBLIC Mnemonics)
+target_link_libraries(Wallet NodeRpcProxy Transfers Rpc P2P upnpc-static Http Serialization CryptoNoteCore System Logging Common Crypto ${Boost_LIBRARIES})
+target_link_libraries(WalletService PUBLIC Mnemonics CommonCLI)
 
 if(AMITY_BUILD_EXECUTABLES)
   if(MSVC)
-    target_link_libraries(AmityCoind P2P Rpc Serialization System Http Logging CryptoNoteCore Crypto Common rocksdb ${Boost_LIBRARIES} )
+    target_link_libraries(AmityCoind P2P Rpc Serialization System Http Logging CryptoNoteCore Crypto Common CommonCLI rocksdb ${Boost_LIBRARIES} )
   else()
-    target_link_libraries(AmityCoind P2P Rpc Serialization System Http Logging CryptoNoteCore Crypto Common rocksdblib ${Boost_LIBRARIES} )
+    target_link_libraries(AmityCoind P2P Rpc Serialization System Http Logging CryptoNoteCore Crypto Common CommonCLI rocksdblib ${Boost_LIBRARIES} )
   endif()
 
-  target_link_libraries(zedwallet Mnemonics Wallet NodeRpcProxy Transfers Rpc Http CryptoNoteCore System Logging Common ${Boost_LIBRARIES})
-  target_link_libraries(service WalletService JsonRpcServer Wallet NodeRpcProxy Transfers CryptoNoteCore Crypto Rpc Http System Logging Common ${Boost_LIBRARIES})
-  target_link_libraries(Wallet NodeRpcProxy Transfers Rpc P2P upnpc-static Http Serialization CryptoNoteCore System Logging Common Crypto ${Boost_LIBRARIES})
-  target_link_libraries(miner CryptoNoteCore Rpc Serialization System Http Logging Common Crypto ${Boost_LIBRARIES})
+  target_link_libraries(zedwallet CommonCLI Mnemonics Wallet NodeRpcProxy Transfers Rpc Http CryptoNoteCore System Logging Common CommonCLI ${Boost_LIBRARIES})
+  target_link_libraries(service CommonCLI WalletService JsonRpcServer Wallet NodeRpcProxy Transfers CryptoNoteCore Crypto Rpc Http System Logging Common CommonCLI ${Boost_LIBRARIES})
+  target_link_libraries(miner CommonCLI CryptoNoteCore Rpc Serialization System Http Logging Common CommonCLI Crypto ${Boost_LIBRARIES})
 endif() # AMITY_BUILD_EXECUTABLES
 
 add_dependencies(WalletService version)
