@@ -15,7 +15,7 @@
 #include <sstream>
 
 #include <cxxopts.hpp>
-#include <config/CliHeader.h>
+#include <CommonCLI.h>
 
 #include <config/CryptoNoteConfig.h>
 #include "Common/StringTools.h"
@@ -74,7 +74,7 @@ MiningConfig::MiningConfig(): help(false), version(false) {
 }
 
 void MiningConfig::parse(int argc, char** argv) {
-  cxxopts::Options options(argv[0], getProjectCLIHeader());
+  cxxopts::Options options(argv[0], CommonCLI::header());
 
   options.add_options("Core")
     ("help", "Display this help message", cxxopts::value<bool>(help)->implicit_value("true"))
@@ -117,7 +117,7 @@ void MiningConfig::parse(int argc, char** argv) {
   }
   else if (version) // Do we want to display the software version?
   {
-    std::cout << getProjectCLIHeader() << std::endl;
+    std::cout << CommonCLI::header() << std::endl;
     exit(0);
   }
 

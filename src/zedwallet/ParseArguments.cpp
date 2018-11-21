@@ -1,4 +1,4 @@
-// Copyright (c) 2018, The TurtleCoin Developers
+﻿// Copyright (c) 2018, The TurtleCoin Developers
 //
 // Please see the included LICENSE file for more information.
 
@@ -7,7 +7,7 @@
 /////////////////////////////////////
 
 #include <cxxopts.hpp>
-#include <config/CliHeader.h>
+#include <CommonCLI/CommonCLI.h>
 #include <config/CryptoNoteConfig.h>
 #include <config/WalletConfig.h>
 #include <zedwallet/Tools.h>
@@ -53,12 +53,13 @@ bool parseDaemonAddressFromString(std::string& host, int& port, const std::strin
 
 Config parseArguments(int argc, char **argv)
 {
+  CommonCLI::verifyDevExecution(argc, argv);
   Config config;
 
   std::stringstream defaultRemoteDaemon;
   defaultRemoteDaemon << config.host << ":" << config.port;
 
-  cxxopts::Options options(argv[0], CryptoNote::getProjectCLIHeader());
+  cxxopts::Options options(argv[0], CommonCLI::header());
 
   bool help, version;
   std::string remoteDaemon;
@@ -95,7 +96,7 @@ Config parseArguments(int argc, char **argv)
   }
   else if (version) // Do we want to display the software version?
   {
-    std::cout << CryptoNote::getProjectCLIHeader() << std::endl;
+    std::cout << CommonCLI::header() << std::endl;
     exit(0);
   }
 

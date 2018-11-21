@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2018, The TurtleCoin Developers
 // Copyright (c) 2018, The Calex Developers
 //
@@ -10,7 +10,7 @@
 
 #include <string.h>
 
-#include <config/CliHeader.h>
+#include "CommonCLI.h"
 #include "PaymentGateService.h"
 #include "version.h"
 
@@ -286,6 +286,7 @@ int unregisterService() {
 }
 
 int main(int argc, char** argv) {
+  CommonCLI::verifyDevExecution(argc, argv);
   PaymentGateService pg;
   ppg = &pg;
 
@@ -294,7 +295,7 @@ int main(int argc, char** argv) {
       return 0; //help message requested or so
     }
 
-    std::cout << CryptoNote::getProjectCLIHeader();
+    std::cout << CommonCLI::header();
 
     const auto& config = pg.getConfig();
 

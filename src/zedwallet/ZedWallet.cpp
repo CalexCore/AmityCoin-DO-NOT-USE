@@ -6,7 +6,6 @@
 #include <zedwallet/ZedWallet.h>
 ////////////////////////////////
 
-#include <config/CliHeader.h>
 #include <Common/SignalHandler.h>
 #include <CryptoNoteCore/Currency.h>
 #include <NodeRpcProxy/NodeErrors.h>
@@ -23,8 +22,11 @@
 #include <zedwallet/Tools.h>
 #include <config/WalletConfig.h>
 
+#include "CommonCLI.h"
+
 int main(int argc, char **argv)
 {
+  CommonCLI::verifyDevExecution(argc, argv);
     /* On ctrl+c the program seems to throw "zedwallet.exe has stopped
        working" when calling exit(0)... I'm not sure why, this is a bit of
        a hack, it disables that - possibly some deconstructers calling
@@ -35,7 +37,7 @@ int main(int argc, char **argv)
 
     Config config = parseArguments(argc, argv);
     
-    std::cout << InformationMsg(CryptoNote::getProjectCLIHeader()) << std::endl;
+    std::cout << InformationMsg(CommonCLI::header()) << std::endl;
 
     Logging::LoggerManager logManager;
 

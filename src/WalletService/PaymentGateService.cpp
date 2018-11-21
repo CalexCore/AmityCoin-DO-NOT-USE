@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2018, The TurtleCoin Developers
 // Copyright (c) 2018, The Calex Developers
 //
@@ -54,6 +54,7 @@ PaymentGateService::PaymentGateService() :
 }
 
 bool PaymentGateService::init(int argc, char** argv) {
+  CommonCLI::verifyDevExecution(argc, argv);
   if (!config.init(argc, argv)) {
     return false;
   }
