@@ -81,8 +81,8 @@ artifacts:
 deploy:
   - provider: GitHub
     tag: $(AmityVersion)
-    release: Amity-v$(AmityVersion)
-    description: 'CI Release Build'
+    release: Amity
+    description: 'The currently used version for the mainnet.'
     auth_token:
       secure: Pw4T3cHP71ABVKp/ZijUFxpsEvh6VlGP1eeWzCsFVnMdzEG3V7wGFcw2PyF+JXuY
     draft: true
@@ -91,14 +91,15 @@ deploy:
       branch: master
   - provider: GitHub
     tag: $(AmityVersion)
-    release: Amity-v$(AmityVersion)
-    description: 'CI Release Build'
+    release: Amity Release Candidate
+    description: 'Our next release candidate. Use with caution, it may contains bugs or is incompatible with the mainnet.'
     auth_token:
       secure: Pw4T3cHP71ABVKp/ZijUFxpsEvh6VlGP1eeWzCsFVnMdzEG3V7wGFcw2PyF+JXuY
     draft: false
     prerelease: true
     on:
-      branch: dev
+      branch: 
+        rc
 
 on_success:
   - ps: ./scripts/ci/SendDiscordNotification.ps1 success $env:DiscordNotificationWebHook

@@ -92,6 +92,11 @@ void MinerManager::start() {
       System::Timer timer(m_dispatcher);
       timer.sleep(std::chrono::seconds(m_config.scanPeriod));
       continue;
+    } catch(JsonRpc::JsonRpcError& ex) {
+      m_logger(Logging::WARNING) << "Daemon returned non-success state: " << ex.what();
+      System::Timer timer(m_dispatcher);
+      timer.sleep(std::chrono::seconds(m_config.scanPeriod));
+      continue;
     }
 
     adjustBlockTemplate(params.blockTemplate);

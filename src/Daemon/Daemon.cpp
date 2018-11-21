@@ -5,8 +5,6 @@
 // 
 // Please see the included LICENSE file for more information.
 
-#include <config/CliHeader.h>
-
 #include "DaemonConfiguration.h"
 #include "DaemonCommandsHandler.h"
 
@@ -16,6 +14,7 @@
 #include "Common/StdInputStream.h"
 #include "Common/PathTools.h"
 #include "Common/Util.h"
+#include "CommonCLI/CommonCLI.h"
 #include "crypto/hash.h"
 #include "CryptoNoteCore/CryptoNoteTools.h"
 #include "CryptoNoteCore/Core.h"
@@ -79,7 +78,7 @@ void print_genesis_tx_hex(const std::vector<std::string> rewardAddresses, const 
     transaction = CryptoNote::CurrencyBuilder(logManager).generateGenesisTransaction();
   }
   std::string transactionHex = Common::toHex(CryptoNote::toBinaryArray(transaction));
-  std::cout << getProjectCLIHeader() << std::endl << std::endl
+  std::cout << CommonCLI::header() << std::endl << std::endl
     << "Replace the current GENESIS_COINBASE_TX_HEX line in src/config/CryptoNoteConfig.h with this one:" << std::endl
     << "const char GENESIS_COINBASE_TX_HEX[] = \"" << transactionHex << "\";" << std::endl;
 
@@ -124,6 +123,7 @@ void pause_for_input(int argc) {
 
 int main(int argc, char* argv[])
 {
+  CommonCLI::verifyDevExecution(argc, argv);
 	DaemonConfiguration config = initConfiguration(argv[0]);
 
 #ifdef WIN32
@@ -160,19 +160,19 @@ int main(int argc, char* argv[])
 
     if (config.dumpConfig)
   {
-    std::cout << getProjectCLIHeader() << asString(config) << std::endl;
+    std::cout << CommonCLI::header() << asString(config) << std::endl;
     exit(0);
   }
   else if (!config.outputFile.empty())
   {
     try {
       asFile(config, config.outputFile);
-      std::cout << getProjectCLIHeader() << "Configuration saved to: " << config.outputFile << std::endl;
+      std::cout << CommonCLI::header() << "Configuration saved to: " << config.outputFile << std::endl;
       exit(0);
     }
     catch (std::exception& e)
     {
-      std::cout << getProjectCLIHeader() << "Could not save configuration to: " << config.outputFile
+      std::cout << CommonCLI::header() << "Could not save configuration to: " << config.outputFile
         << std::endl << e.what() << std::endl;
       exit(1);
     }
@@ -195,7 +195,7 @@ int main(int argc, char* argv[])
 
     // configure logging
     logManager.configure(buildLoggerConfiguration(cfgLogLevel, cfgLogFile));
-		logger(INFO, BRIGHT_BLUE) << getProjectCLIHeader() << std::endl;
+                logger(INFO, BRIGHT_BLUE) << CommonCLI::header() << std::endl;
 		logger(INFO) << "Program Working Directory: " << argv[0];
 		
     //create objects and link them

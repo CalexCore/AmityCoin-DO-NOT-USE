@@ -6,14 +6,14 @@
 #include <zedwallet/ZedWallet.h>
 ////////////////////////////////
 
-#include <config/CliHeader.h>
 #include <Common/SignalHandler.h>
 #include <CryptoNoteCore/Currency.h>
+#include <NodeRpcProxy/NodeErrors.h>
 #include <Logging/FileLogger.h>
 #include <Logging/LoggerManager.h>
 
 #ifdef _WIN32
-#include <windows.h>
+#include <Windows.h>
 #endif
 
 #include <zedwallet/ColouredMsg.h>
@@ -22,8 +22,11 @@
 #include <zedwallet/Tools.h>
 #include <config/WalletConfig.h>
 
+#include "CommonCLI.h"
+
 int main(int argc, char **argv)
 {
+  CommonCLI::verifyDevExecution(argc, argv);
     /* On ctrl+c the program seems to throw "zedwallet.exe has stopped
        working" when calling exit(0)... I'm not sure why, this is a bit of
        a hack, it disables that - possibly some deconstructers calling
@@ -34,7 +37,7 @@ int main(int argc, char **argv)
 
     Config config = parseArguments(argc, argv);
     
-    std::cout << InformationMsg(CryptoNote::getProjectCLIHeader()) << std::endl;
+    std::cout << InformationMsg(CommonCLI::header()) << std::endl;
 
     Logging::LoggerManager logManager;
 
@@ -78,16 +81,25 @@ int main(int argc, char **argv)
     auto initNode = errorPromise.get_future();
 
     node->init(callback);
+    std::error_code initEc{};
+    const std::chrono::high_resolution_clock::time_point endWaitForInitialization =
+        std::chrono::high_resolution_clock::now() + std::chrono::seconds{20};
+    while(initNode.wait_for(std::chrono::seconds{1}) != std::future_status::ready) {
+      if(std::chrono::high_resolution_clock::now() > endWaitForInitialization) {
+        initEc = make_error_code(CryptoNote::error::CONNECT_ERROR);
+        break;
+      }
+      std::cout << InformationMsg("Waiting for remote connection...") << std::endl;
+    }
 
     /* Connection took to long to remote node, let program continue regardless
        as they could perform functions like export_keys without being
        connected */
-    if (initNode.wait_for(std::chrono::seconds(20)) != std::future_status::ready)
+    if (initEc)
     {
         if (config.host != "127.0.0.1")
         {
-            std::cout << WarningMsg("Unable to connect to remote node, "
-                                    "connection timed out.")
+            std::cout << WarningMsg("Unable to connect to remote node.")
                       << std::endl
                       << WarningMsg("Confirm the remote node is functioning, "
                                     "or try a different remote node.")
@@ -95,36 +107,31 @@ int main(int argc, char **argv)
         }
         else
         {
-            std::cout << WarningMsg("Unable to connect to node, "
-                                    "connection timed out.")
+            std::cout << WarningMsg("Unable to connect to node.")
                       << std::endl << std::endl;
         }
-      } else if(initNode.get()) {
-        std::cout << WarningMsg("Unable to connect to node, "
-                                "connection timed out.")
-                  << std::endl << std::endl;
+      } else /* Ware connected and get fee information */ {
+        /*
+          This will check to see if the node responded to /feeinfo and actually
+          returned something that it expects us to use for convenience charges
+          for using that node to send transactions.
+        */
+        if (node->feeAmount() != 0 && !node->feeAddress().empty()) {
+          std::stringstream feemsg;
+
+          feemsg << std::endl << "You have connected to a node that charges " <<
+                 "a fee to send transactions." << std::endl << std::endl
+                 << "The fee for sending transactions is: " <<
+                 formatAmount(node->feeAmount()) <<
+                 " per transaction." << std::endl << std::endl <<
+                 "If you don't want to pay the node fee, please " <<
+                 "relaunch " << WalletConfig::walletName <<
+                 " and specify a different node or run your own." <<
+                 std::endl;
+
+          std::cout << WarningMsg(feemsg.str()) << std::endl;
+        }
       }
-    
-    /*
-      This will check to see if the node responded to /feeinfo and actually
-      returned something that it expects us to use for convenience charges
-      for using that node to send transactions.
-    */
-    if (node->feeAmount() != 0 && !node->feeAddress().empty()) {
-      std::stringstream feemsg;
-      
-      feemsg << std::endl << "You have connected to a node that charges " <<
-             "a fee to send transactions." << std::endl << std::endl
-             << "The fee for sending transactions is: " << 
-             formatAmount(node->feeAmount()) << 
-             " per transaction." << std::endl << std::endl <<
-             "If you don't want to pay the node fee, please " <<
-             "relaunch " << WalletConfig::walletName <<
-             " and specify a different node or run your own." <<
-             std::endl;
-             
-      std::cout << WarningMsg(feemsg.str()) << std::endl;
-    }
 
     /* Create the wallet instance */
     CryptoNote::WalletGreen wallet(*dispatcher, currency, *node, 

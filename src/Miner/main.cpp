@@ -1,10 +1,11 @@
-// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2018, The TurtleCoin Developers
 // Copyright (c) 2018, The Calex Developers
 //
 // Please see the included LICENSE file for more information.
 
 #include "Common/SignalHandler.h"
+#include "CommonCLI.h"
 
 #include "Logging/LoggerGroup.h"
 #include "Logging/ConsoleLogger.h"
@@ -15,6 +16,7 @@
 #include <System/Dispatcher.h>
 
 int main(int argc, char** argv) {
+  CommonCLI::verifyDevExecution(argc, argv);
   try {
     CryptoNote::MiningConfig config;
     config.parse(argc, argv);
