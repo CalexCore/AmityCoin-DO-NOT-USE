@@ -9,14 +9,16 @@
 
 // clang-format off
 const std::string DevelpmentVersionHeader = R"(
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ATTENTION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-! You are running a development version! The program may will have bugs or             !
-! is not compatible with the mainnet. In case you accidentally ran into this version   !
-! and do not want to use it to for testing purposes you should visit our github page   !
-!     https://github.com/CalexCore/AmityCoin/releases                                  !
-! . Or if you want to build amity yourself make sure you are building from the master  !
-! branch.                                                                              !
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ATTENTION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   ATTENTION   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!                                                                                       !
+! You are running a development version! The program may contain bugs or is not         !
+! compatible with the mainnet. In case you accidentally ran into this version and do    !
+! not want to use it to for testing purposes you should visit our github page           !
+!     https://github.com/CalexCore/AmityCoin/releases                                   !
+! . Or if you want to build amity yourself make sure you are building from the master   !
+! branch.                                                                               !
+!                                                                                       !
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   ATTENTION   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 )";
 // clang-format on
 
@@ -54,18 +56,21 @@ bool CommonCLI::isDevVersion()
    ;
 }
 
-void CommonCLI::verifyDevExecution(int argc, char **argv)
+void CommonCLI::verifyDevExecution(int& argc, char **argv)
 {
-  if(!isDevVersion()) {
-      return;
-  }
   const std::string devModeFlag{ "--dev-mode" };
   for(int i = 1; i < argc; ++i) {
       if(std::string{argv[i]} == devModeFlag) {
+        for(int k = 0; i + k < argc - 1; ++k) {
+          argv[i + k] = argv[i + k + 1];
+        }
+        argc -= 1;
         return;
       }
   }
 
-  std::cout << header() << "\n You are using a development version and did not provide the --dev-mode flag. Exiting..." << std::endl;
-  exit(-1);
+  if(isDevVersion()) {
+    std::cout << header() << "\n You are using a development version and did not provide the --dev-mode flag. Exiting..." << std::endl;
+    exit(-1);
+  }
 }

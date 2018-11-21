@@ -54,7 +54,6 @@ PaymentGateService::PaymentGateService() :
 }
 
 bool PaymentGateService::init(int argc, char** argv) {
-  CommonCLI::verifyDevExecution(argc, argv);
   if (!config.init(argc, argv)) {
     return false;
   }

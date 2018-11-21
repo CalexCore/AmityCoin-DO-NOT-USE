@@ -23,5 +23,5 @@ bool isDevVersion();
  * If this is a development version and the --dev-mode flag is not provided it will print an
  * error message and exit the program.
  */
-void verifyDevExecution(int argc, char** argv);
+void verifyDevExecution(int &argc, char** argv);
 }

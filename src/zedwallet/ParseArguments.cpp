@@ -53,7 +53,6 @@ bool parseDaemonAddressFromString(std::string& host, int& port, const std::strin
 
 Config parseArguments(int argc, char **argv)
 {
-  CommonCLI::verifyDevExecution(argc, argv);
   Config config;
 
   std::stringstream defaultRemoteDaemon;
