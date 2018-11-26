@@ -88,9 +88,9 @@ TEST_F(HashConsistency, Random1kBlocks)
     auto blockCount = Cache->getBlockCount();
     std::uniform_int_distribution<uint32_t> dist{1, blockCount - 1};
     std::vector<Crypto::Hash> blockHashes;
-    blockHashes.reserve(1000);
+    blockHashes.resize(NumBlocks);
     for(std::size_t i = 0; i < NumBlocks; ++i) {
-        Cache->getBlockHash(dist(*rndGen));
+        blockHashes[i] = Cache->getBlockHash(dist(*rndGen));
     }
     TestHashes(blockHashes);
 }

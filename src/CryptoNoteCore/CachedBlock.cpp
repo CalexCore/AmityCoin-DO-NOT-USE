@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2014-2018, The Monero Project
 // Copyright (c) 2018, The TurtleCoin Developers
 // 
@@ -8,6 +8,7 @@
 #include <Common/Varint.h>
 #include <config/CryptoNoteConfig.h>
 #include "CryptoNoteTools.h"
+#include "crypto/softshell.h"
 
 using namespace Crypto;
 using namespace CryptoNote;
@@ -60,10 +61,14 @@ const Crypto::Hash& CachedBlock::getBlockLongHash() const {
       const auto& rawHashingBlock = getParentBlockHashingBinaryArray(true);
       blockLongHash = Hash();
       cn_lite_slow_hash_v1(rawHashingBlock.data(), rawHashingBlock.size(), blockLongHash.get());
-    } else if (block.majorVersion >= BLOCK_MAJOR_VERSION_5) {
+    } else if (block.majorVersion == BLOCK_MAJOR_VERSION_5) {
 	    const auto& rawHashingBlock = getParentBlockHashingBinaryArray(true);
       blockLongHash = Hash();
       cn_soft_shell_slow_hash_v1(rawHashingBlock.data(), rawHashingBlock.size(), blockLongHash.get(), getBlockIndex());
+    } else if (block.majorVersion == BLOCK_MAJOR_VERSION_6) {
+      const auto& rawHashingBlock = getParentBlockHashingBinaryArray(true);
+      blockLongHash = Hash();
+      SoftShell::amity_cn_ss_v0_0{}(rawHashingBlock.data(), rawHashingBlock.size(), blockLongHash.get(), getBlockIndex());
     } else {
       throw std::runtime_error("Unknown block major version.");
     }

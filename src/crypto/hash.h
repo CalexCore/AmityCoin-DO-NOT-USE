@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2014-2018, The Monero Project
 // Copyright (c) 2014-2018, The Aeon Project
 // Copyright (c) 2018, The TurtleCoin Developers
@@ -24,11 +24,41 @@
 #define CN_LITE_ITERATIONS              524288
 
 // CryptoNight Soft Shell Definitions
-#define CN_SOFT_SHELL_MEMORY            262144 // LOW = 256KB
-#define CN_SOFT_SHELL_WINDOW            512 // Lambda = CN_SOFT_SHELL_WINDOW * 2  (1024 blocks)
-#define CN_SOFT_SHELL_MULTIPLIER        1 / 7 // 0.143
+/*!
+ * \def CN_SOFT_SHELL_MEMORY
+ * The minimum scratchpad size in bytes.
+ */
+#define CN_SOFT_SHELL_MEMORY            (256 * 1024)
+
+/*!
+ * \def CN_SOFT_SHELL_WINDOW
+ * Number of blocks to be mined from low to peak memory/iterations. Thus the length of the wave.
+ * Notice this induces CN_SOFT_SHELL_WINDOW * 2 * BLOCK_TIME until you completed one wave.
+ * Since TRTL uses 30 seconds block time with a window of size 2048 you may want to apply your
+ * changes here accordingly.
+ */
+#define CN_SOFT_SHELL_WINDOW            2048
+
+/*!
+ * \def CN_SOFT_SHELL_MULTIPLIER
+ * Used to determine the amount of additional memory requirements for the scratchpad size for a
+ * specific iteration. The maximum scratchpad size is given by
+ * CN_SOFT_SHELL_MEMORY + CN_SOFT_SHELL_WINDOW * CN_SOFT_SHELL_WINDOW / CN_SOFT_SHELL_MULTIPLIER
+ */
+#define CN_SOFT_SHELL_MULTIPLIER        3 // 0.143
+
+/*!
+ * \def CN_SOFT_SHELL_ITER
+ * Minimal amount of Keccak iteration on the scratchpad.
+ */
 #define CN_SOFT_SHELL_ITER              (CN_SOFT_SHELL_MEMORY / 2)
+
+/*!
+ * \def CN_SOFT_SHELL_PAD_MULTIPLIER
+ * The amount of additional bytes added for each block distance away from the nearest low.
+ */
 #define CN_SOFT_SHELL_PAD_MULTIPLIER    (CN_SOFT_SHELL_WINDOW / CN_SOFT_SHELL_MULTIPLIER)
+
 #define CN_SOFT_SHELL_ITER_MULTIPLIER   (CN_SOFT_SHELL_PAD_MULTIPLIER / 2)
 
 #if (((CN_SOFT_SHELL_WINDOW * CN_SOFT_SHELL_PAD_MULTIPLIER) + CN_SOFT_SHELL_MEMORY) > CN_PAGE_SIZE)

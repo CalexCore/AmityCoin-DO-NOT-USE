@@ -21,11 +21,26 @@ mark_as_advanced(
     UPNPC_BUILD_TESTS
 )
 
-# gtest ============================================================================================
 if (AMITY_BUILD_TESTSUITE)
+  # gtest ==========================================================================================
   add_subdirectory(gtest)
   set_property(TARGET gtest gtest_main PROPERTY FOLDER "external")
   set_property(TARGET gtest gtest_main PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/gtest/include")
+  # benchmark ======================================================================================
+  set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "TestSuite of google-benchmark disabled" FORCE)
+  add_subdirectory(benchmark)
+  set_property(TARGET benchmark benchmark_main PROPERTY FOLDER "external")
+  mark_as_advanced(
+      BENCHMARK_ENABLE_TESTING
+      BENCHMARK_ENABLE_EXCEPTIONS
+      BENCHMARK_ENABLE_LTO
+      BENCHMARK_USE_LIBCXX
+      BENCHMARK_BUILD_32_BITS
+      BENCHMARK_ENABLE_INSTALL
+      BENCHMARK_DOWNLOAD_DEPENDENCIES
+      BENCHMARK_ENABLE_GTEST_TESTS
+      BENCHMARK_ENABLE_ASSEMBLY_TESTS
+  )
 endif()
 
 mark_as_advanced(
