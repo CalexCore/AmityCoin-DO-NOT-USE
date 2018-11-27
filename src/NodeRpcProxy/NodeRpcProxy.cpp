@@ -240,6 +240,7 @@ void NodeRpcProxy::updateBlockchainStatus() {
 
   ec = jsonCommand("/getinfo", getInfoReq, getInfoResp);
   if (!ec) {
+    m_lastInfoResponse = getInfoResp;
     //a quirk to let wallets work with previous versions daemons.
     //Previous daemons didn't have the 'last_known_block_index' parameter in RPC so it may have zero value.
     std::unique_lock<std::mutex> lock(m_mutex);
@@ -292,6 +293,11 @@ void NodeRpcProxy::getFeeInfo() {
   m_fee_amount = iresp.amount;
 
   return;
+}
+
+std::optional<COMMAND_RPC_GET_INFO::response> NodeRpcProxy::getLastInfoResponse() const
+{
+    return m_lastInfoResponse;
 }
 
 bool NodeRpcProxy::ping()

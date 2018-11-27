@@ -10,6 +10,7 @@
 #include <mutex>
 #include <string>
 #include <thread>
+#include <optional>
 #include <unordered_set>
 
 #include "Common/ObserverManager.h"
@@ -57,6 +58,8 @@ public:
 
   virtual std::string getInfo() override;
   virtual void getFeeInfo() override;
+
+  std::optional<COMMAND_RPC_GET_INFO::response> getLastInfoResponse() const;
 
   virtual bool ping() override;
 
@@ -159,5 +162,7 @@ private:
   bool m_connected;
   std::string m_fee_address;
   uint32_t m_fee_amount;
+
+  std::optional<COMMAND_RPC_GET_INFO::response> m_lastInfoResponse;
 };
 }
