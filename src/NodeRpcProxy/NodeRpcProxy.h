@@ -78,6 +78,7 @@ public:
   virtual void getBlocks(const std::vector<uint32_t>& blockHeights, std::vector<std::vector<BlockDetails>>& blocks, const Callback& callback) override;
   virtual void getBlocks(const std::vector<Crypto::Hash>& blockHashes, std::vector<BlockDetails>& blocks, const Callback& callback) override;
   virtual void getBlock(const uint32_t blockHeight, BlockDetails &block, const Callback& callback) override;
+  virtual void getMiningParameters(const std::string& miningAddress, BlockTemplate& blockTemplate, uint64_t& difficulty, const Callback& callback) override;
   virtual void getTransactions(const std::vector<Crypto::Hash>& transactionHashes, std::vector<TransactionDetails>& transactions, const Callback& callback) override;
   virtual void isSynchronized(bool& syncStatus, const Callback& callback) override;
   virtual std::string feeAddress() override;
@@ -113,6 +114,7 @@ private:
   std::error_code doGetBlocksByHeight(const std::vector<uint32_t>& blockHeights, std::vector<std::vector<BlockDetails>>& blocks);
   std::error_code doGetBlocksByHash(const std::vector<Crypto::Hash>& blockHashes, std::vector<BlockDetails>& blocks);
   std::error_code doGetBlock(const uint32_t blockHeight, BlockDetails& block);
+  std::error_code doGetMiningParameters(const std::string& miningAddress, BlockTemplate& blockTemplate, uint64_t& difficulty);
   std::error_code doGetTransactionHashesByPaymentId(const Crypto::Hash& paymentId, std::vector<Crypto::Hash>& transactionHashes);
   std::error_code doGetTransactions(const std::vector<Crypto::Hash>& transactionHashes, std::vector<TransactionDetails>& transactions);
 

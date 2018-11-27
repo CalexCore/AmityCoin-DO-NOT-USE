@@ -534,6 +534,17 @@ void NodeRpcProxy::getBlock(const uint32_t blockHeight, BlockDetails &block, con
   scheduleRequest(std::bind(&NodeRpcProxy::doGetBlock, this, blockHeight, std::ref(block)), callback);
 }
 
+void NodeRpcProxy::getMiningParameters(const std::string &miningAddress, BlockTemplate &blockTemplate, uint64_t &difficulty, const INode::Callback &callback)
+{
+  std::lock_guard<std::mutex> lock(m_mutex);
+  if(m_state != STATE_INITIALIZED) {
+    callback(make_error_code(error::NOT_INITIALIZED));
+  } else {
+    scheduleRequest(std::bind(&NodeRpcProxy::doGetMiningParameters,this, std::cref(miningAddress),
+                              std::ref(blockTemplate), std::ref(difficulty)), callback);
+  }
+}
+
 void NodeRpcProxy::getTransactions(const std::vector<Crypto::Hash>& transactionHashes, std::vector<TransactionDetails>& transactions, const Callback& callback) {
   std::lock_guard<std::mutex> lock(m_mutex);
   if (m_state != STATE_INITIALIZED) {
@@ -749,6 +760,25 @@ std::error_code NodeRpcProxy::doGetBlock(const uint32_t blockHeight, BlockDetail
   block = std::move(resp.block);
 
   return ec;
+}
+
+std::error_code NodeRpcProxy::doGetMiningParameters(const std::string &miningAddress, BlockTemplate &blockTemplate, uint64_t &difficulty)
+{
+  COMMAND_RPC_GETBLOCKTEMPLATE::request req = AUTO_VAL_INIT(req);
+  COMMAND_RPC_GETBLOCKTEMPLATE::response res = AUTO_VAL_INIT(res);
+
+  req.wallet_address = miningAddress;
+
+  std::error_code ec = jsonCommand("/getblocktemplate", req, res);
+  if(ec) return ec;
+  std::vector<uint8_t> blockTemplateData;
+  if(!Common::fromHex(res.blocktemplate_blob, blockTemplateData))
+    return make_error_code(error::PARSING_ERROR);
+  if(!fromBinaryArray(blockTemplate, blockTemplateData)) {
+    return make_error_code(error::PARSING_ERROR);
+  }
+  difficulty =  res.difficulty;
+  return std::error_code{};
 }
 
 std::error_code NodeRpcProxy::doGetTransactionHashesByPaymentId(const Crypto::Hash& paymentId, std::vector<Crypto::Hash>& transactionHashes) {
