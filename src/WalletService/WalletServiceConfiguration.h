@@ -1,4 +1,4 @@
-// Copyright (c) 2018, The TurtleCoin Developers
+﻿// Copyright (c) 2018, The TurtleCoin Developers
 // Copyright (c) 2018, The Calex Developers
 //
 // Please see the included LICENSE file for more information.
@@ -10,7 +10,7 @@
 #include <fstream>
 #include <string>
 
-#include <config/CliHeader.h>
+#include "CommonCLI/CommonCLI.h"
 #include <config/CryptoNoteConfig.h>
 #include <Logging/ILogger.h>
 
@@ -81,7 +81,7 @@ namespace PaymentService {
 
   inline void handleSettings(int argc, char* argv[], WalletServiceConfiguration& config)
   {
-    cxxopts::Options options(argv[0], CryptoNote::getProjectCLIHeader());
+    cxxopts::Options options(argv[0], CommonCLI::header());
 
     options.add_options("Core")
       ("h,help", "Display this help message", cxxopts::value<bool>()->implicit_value("true"))
@@ -274,7 +274,7 @@ namespace PaymentService {
       }
       else if (config.version) // Do we want to display the software version?
       {
-        std::cout << CryptoNote::getProjectCLIHeader() << std::endl;
+        std::cout << CommonCLI::header() << std::endl;
         exit(0);
       }
     }

@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2018, The TurtleCoin Developers
 // Copyright (c) 2018, The Calex Developers
 //
@@ -10,11 +10,11 @@
 #include <fstream>
 
 #include <CryptoTypes.h>
-#include <config/CliHeader.h>
 #include <config/CryptoNoteConfig.h>
 
 #include "Common/CommandLine.h"
 #include "Common/Util.h"
+#include "CommonCLI.h"
 #include "crypto/hash.h"
 #include "Logging/ILogger.h"
 
@@ -51,19 +51,19 @@ bool ConfigurationManager::init(int argc, char** argv)
 
   if (serviceConfig.dumpConfig)
   {
-    std::cout << CryptoNote::getProjectCLIHeader() << asString(serviceConfig) << std::endl;
+    std::cout << CommonCLI::header() << asString(serviceConfig) << std::endl;
     exit(0);
   }
   else if (!serviceConfig.outputFile.empty())
   {
     try {
       asFile(serviceConfig, serviceConfig.outputFile);
-      std::cout << CryptoNote::getProjectCLIHeader() << "Configuration saved to: " << serviceConfig.outputFile << std::endl;
+      std::cout << CommonCLI::header() << "Configuration saved to: " << serviceConfig.outputFile << std::endl;
       exit(0);
     }
     catch (std::exception& e)
     {
-      std::cout << CryptoNote::getProjectCLIHeader() << "Could not save configuration to: " << serviceConfig.outputFile
+      std::cout << CommonCLI::header() << "Could not save configuration to: " << serviceConfig.outputFile
         << std::endl << e.what() << std::endl;
       exit(1);
     }

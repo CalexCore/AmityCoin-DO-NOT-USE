@@ -5,7 +5,7 @@ find_package(Threads)
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_STATIC_RUNTIME ON)
 find_package(
-    Boost 1.54.0 REQUIRED
+    Boost 1.65.1 REQUIRED
 
     COMPONENTS
         system

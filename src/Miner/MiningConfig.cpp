@@ -15,7 +15,7 @@
 #include <sstream>
 
 #include <cxxopts.hpp>
-#include <config/CliHeader.h>
+#include <CommonCLI.h>
 
 #include <config/CryptoNoteConfig.h>
 #include "Common/StringTools.h"
@@ -74,7 +74,7 @@ MiningConfig::MiningConfig(): help(false), version(false) {
 }
 
 void MiningConfig::parse(int argc, char** argv) {
-  cxxopts::Options options(argv[0], getProjectCLIHeader());
+  cxxopts::Options options(argv[0], CommonCLI::header());
 
   options.add_options("Core")
     ("help", "Display this help message", cxxopts::value<bool>(help)->implicit_value("true"))
@@ -94,7 +94,7 @@ void MiningConfig::parse(int argc, char** argv) {
       cxxopts::value<int64_t>(blockTimestampInterval) ->default_value("0"), "#")
     ("first-block-timestamp", "Set timestamp to the first mined block. 0 means leave timestamp unchanged", cxxopts::value<uint64_t>(firstBlockTimestamp)->default_value("0"), "#")
     ("limit", "Mine this exact quantity of blocks and then stop. 0 means no limit", cxxopts::value<size_t>(blocksLimit)->default_value("0"), "#")
-    ("log-level", "Specify log level. Must be 0 - 5", cxxopts::value<uint8_t>(logLevel)->default_value("1"), "#")
+    ("log-level", "Specify log level. Must be 0 - 5", cxxopts::value<uint8_t>(logLevel)->default_value("3"), "#")
     ("threads", "The mining threads count. Must not exceed hardware capabilities.", cxxopts::value<size_t>(threadCount)->default_value(std::to_string(CONCURRENCY_LEVEL)), "#")
     ("donate-level", "Percentage of hashing that goes to the Amity donation wallet. Must be 0..100, default is 2%.", cxxopts::value<int>(donateLevel)->default_value("2"), "#");
 
@@ -117,7 +117,7 @@ void MiningConfig::parse(int argc, char** argv) {
   }
   else if (version) // Do we want to display the software version?
   {
-    std::cout << getProjectCLIHeader() << std::endl;
+    std::cout << CommonCLI::header() << std::endl;
     exit(0);
   }
 

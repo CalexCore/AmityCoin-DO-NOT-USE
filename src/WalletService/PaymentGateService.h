@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2018, The TurtleCoin Developers
 // Copyright (c) 2018, The Calex Developers
 //
@@ -8,7 +8,7 @@
 
 #include "ConfigurationManager.h"
 
-#include <config/CliHeader.h>
+#include "CommonCLI/CommonCLI.h"
 #include "Logging/ConsoleLogger.h"
 #include "Logging/LoggerGroup.h"
 #include "Logging/StreamLogger.h"

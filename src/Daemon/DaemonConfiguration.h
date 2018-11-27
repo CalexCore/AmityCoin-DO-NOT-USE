@@ -1,4 +1,4 @@
-// Copyright (c) 2018, The TurtleCoin Developers
+﻿// Copyright (c) 2018, The TurtleCoin Developers
 //
 // Please see the included LICENSE file for more information.
 
@@ -9,11 +9,11 @@
 #include <fstream>
 #include <sstream>
 
-#include <config/CliHeader.h>
 #include <config/CryptoNoteConfig.h>
 #include <Logging/ILogger.h>
 #include "Common/PathTools.h"
 #include "Common/Util.h"
+#include "CommonCLI/CommonCLI.h"
 
 using nlohmann::json;
 
@@ -102,7 +102,7 @@ namespace {
 
   void handleSettings(int argc, char* argv[], DaemonConfiguration& config)
   {
-    cxxopts::Options options(argv[0], CryptoNote::getProjectCLIHeader());
+    cxxopts::Options options(argv[0], CommonCLI::header());
 
     options.add_options("Core")
       ("help", "Display this help message", cxxopts::value<bool>()->implicit_value("true"))
@@ -323,12 +323,12 @@ namespace {
       }
       else if (config.version) // Do we want to display the software version?
       {
-        std::cout << CryptoNote::getProjectCLIHeader() << std::endl;
+        std::cout << CommonCLI::header() << std::endl;
         exit(0);
       }
       else if (config.osVersion) // Do we want to display the OS version information?
       {
-        std::cout << CryptoNote::getProjectCLIHeader() << "OS: " << Tools::get_os_version_string() << std::endl;
+        std::cout << CommonCLI::header() << "OS: " << Tools::get_os_version_string() << std::endl;
         exit(0);
       }
     }

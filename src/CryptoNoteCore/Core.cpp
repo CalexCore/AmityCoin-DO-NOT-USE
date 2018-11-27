@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2014-2018, The Monero Project
 // Copyright (c) 2018, The TurtleCoin Developers
 // Copyright (c) 2018, The Calex Developers
@@ -260,7 +260,7 @@ uint64_t Core::getBlockTimestampByIndex(uint32_t blockIndex) const {
   throwIfNotInitialized();
 
   auto timestamps = chainsLeaves[0]->getLastTimestamps(1, blockIndex, addGenesisBlock);
-  assert(!(timestamps.size() == 1));
+  assert(timestamps.size() == 1);
 
   return timestamps[0];
 }
@@ -443,6 +443,54 @@ bool Core::queryBlocksLite(const std::vector<Crypto::Hash>& knownBlockHashes, ui
 
     fillQueryBlockShortInfo(fullOffset, currentIndex, BLOCKS_SYNCHRONIZING_DEFAULT_COUNT, entries);
 
+    return true;
+  } catch (std::exception& e) {
+    logger(Logging::ERROR) << "Failed to query blocks: " << e.what();
+    return false;
+  }
+}
+
+bool Core::queryBlocksDetailed(const std::vector<Crypto::Hash>& knownBlockHashes, uint64_t timestamp, uint32_t& startIndex,
+                               uint32_t& currentIndex, uint32_t& fullOffset, std::vector<BlockDetails>& entries) const {
+  assert(entries.empty());
+  assert(!chainsLeaves.empty());
+  assert(!chainsStorage.empty());
+  
+  throwIfNotInitialized();
+  
+  try {
+    IBlockchainCache* mainChain = chainsLeaves[0];
+    currentIndex = mainChain->getTopBlockIndex();
+    
+    startIndex = findBlockchainSupplement(knownBlockHashes); // throws
+    
+    // Stops bug where wallets fail to sync, because timestamps have been adjusted after syncronisation.
+    // check for a query of the blocks where the block index is non-zero, but the timestamp is zero
+    // indicating that the originator did not know the internal time of the block, but knew which block
+    // was wanted by index.  Fullfill this by getting the time of m_blocks[startIndex].timestamp.
+    
+    if (startIndex > 0 && timestamp == 0) {
+      if (startIndex <= mainChain->getTopBlockIndex()) {
+        RawBlock block = mainChain->getBlockByIndex(startIndex);
+        auto blockTemplate = extractBlockTemplate(block);
+        timestamp = blockTemplate.timestamp;
+      }
+    }
+    
+    fullOffset = mainChain->getTimestampLowerBoundBlockIndex(timestamp);
+    
+    if (fullOffset < startIndex) {
+      fullOffset = startIndex;
+    }
+    
+    size_t hashesPushed = pushBlockHashes(startIndex, fullOffset, BLOCKS_IDS_SYNCHRONIZING_DEFAULT_COUNT, entries);
+    
+    if (startIndex + static_cast<uint32_t>(hashesPushed) != fullOffset) {
+      return true;
+    }
+    
+    fillQueryBlockDetails(fullOffset, currentIndex, BLOCKS_SYNCHRONIZING_DEFAULT_COUNT, entries);
+    
     return true;
   } catch (std::exception& e) {
     logger(Logging::ERROR) << "Failed to query blocks: " << e.what();
@@ -1747,7 +1795,6 @@ RawBlock Core::getRawBlock(IBlockchainCache* segment, uint32_t blockIndex) const
   return segment->getBlockByIndex(blockIndex);
 }
 
-//TODO: decompose these two methods
 size_t Core::pushBlockHashes(uint32_t startIndex, uint32_t fullOffset, size_t maxItemsCount,
                              std::vector<BlockShortInfo>& entries) const {
   assert(fullOffset >= startIndex);
@@ -1769,7 +1816,31 @@ size_t Core::pushBlockHashes(uint32_t startIndex, uint32_t fullOffset, size_t ma
   return blockIds.size();
 }
 
-//TODO: decompose these two methods
+//TODO: decompose these three methods
+size_t Core::pushBlockHashes(uint32_t startIndex, uint32_t fullOffset, size_t maxItemsCount,
+                             std::vector<BlockDetails>& entries) const {
+  
+  assert(fullOffset >= startIndex);
+  
+  uint32_t itemsCount = std::min(fullOffset - startIndex, static_cast<uint32_t>(maxItemsCount));
+  
+  if (itemsCount == 0) {
+    return 0;
+  }
+  
+  std::vector<Crypto::Hash> blockIds = getBlockHashes(startIndex, itemsCount);
+  
+  entries.reserve(entries.size() + blockIds.size());
+  for (auto& blockHash : blockIds) {
+    BlockDetails entry;
+    entry.hash = std::move(blockHash);
+    entries.emplace_back(std::move(entry));
+  }
+  
+  return blockIds.size();
+}
+
+//TODO: decompose these three methods
 size_t Core::pushBlockHashes(uint32_t startIndex, uint32_t fullOffset, size_t maxItemsCount,
                              std::vector<BlockFullInfo>& entries) const {
   assert(fullOffset >= startIndex);
@@ -1842,6 +1913,22 @@ void Core::fillQueryBlockShortInfo(uint32_t fullOffset, uint32_t currentIndex, s
     }
 
     entries.emplace_back(std::move(blockShortInfo));
+  }
+}
+
+void Core::fillQueryBlockDetails(uint32_t fullOffset, uint32_t currentIndex, size_t maxItemsCount,
+                                   std::vector<BlockDetails>& entries) const {
+  
+  assert(currentIndex >= fullOffset);
+  
+  uint32_t fullBlocksCount = static_cast<uint32_t>(std::min(static_cast<uint32_t>(maxItemsCount), currentIndex - fullOffset + 1));
+  entries.reserve(entries.size() + fullBlocksCount);
+  
+  for (uint32_t blockIndex = fullOffset; blockIndex < fullOffset + fullBlocksCount; ++blockIndex) {
+    IBlockchainCache* segment = findMainChainSegmentContainingBlock(blockIndex);
+    Crypto::Hash blockHash = segment->getBlockHash(blockIndex);
+    BlockDetails block = getBlockDetails(blockHash);
+    entries.emplace_back(std::move(block));
   }
 }
 
@@ -2221,7 +2308,6 @@ TransactionDetails Core::getTransactionDetails(const Crypto::Hash& transactionHa
       outputReferences.reserve(txInToKeyDetails.input.outputIndexes.size());
       std::vector<uint32_t> globalIndexes = relativeOutputOffsetsToAbsolute(txInToKeyDetails.input.outputIndexes);
       ExtractOutputKeysResult result = segment->extractKeyOtputReferences(txInToKeyDetails.input.amount, { globalIndexes.data(), globalIndexes.size() }, outputReferences);
-      if (result == result) {}
       assert(result == ExtractOutputKeysResult::SUCCESS);
       assert(txInToKeyDetails.input.outputIndexes.size() == outputReferences.size());
 

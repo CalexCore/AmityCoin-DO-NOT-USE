@@ -129,37 +129,42 @@ void NodeRpcProxy::workerThread(const INode::Callback& initialized_callback) {
     m_httpEvent = &httpEvent;
     m_httpEvent->set();
 
-    {
-      std::lock_guard<std::mutex> lock(m_mutex);
-      assert(m_state == STATE_INITIALIZING);
-      m_state = STATE_INITIALIZED;
-      m_cv_initialized.notify_all();
-    }
-
     if(!ping()) {
       initialized_callback(make_error_code(error::CONNECT_ERROR));
-    }
-
-    getFeeInfo();
-
-    updateNodeStatus();
-
-    initialized_callback(std::error_code());
-
-    contextGroup.spawn([this]() {
-      Timer pullTimer(*m_dispatcher);
-      while (!m_stop) {
-        updateNodeStatus();
-        if (!m_stop) {
-          pullTimer.sleep(std::chrono::milliseconds(m_pullInterval));
-        }
+    } else  {
+      {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        assert(m_state == STATE_INITIALIZING);
+        m_state = STATE_INITIALIZED;
+        m_cv_initialized.notify_all();
       }
-    });
 
-    contextGroup.wait();
-    // Make sure all remote spawns are executed
-    m_dispatcher->yield();
+      getFeeInfo();
+      updateNodeStatus();
+      initialized_callback(std::error_code());
+
+      contextGroup.spawn([this]() {
+        Timer pullTimer(*m_dispatcher);
+        while (!m_stop) {
+          updateNodeStatus();
+          if (!m_stop) {
+            pullTimer.sleep(std::chrono::milliseconds(m_pullInterval));
+          }
+        }
+      });
+
+      contextGroup.wait();
+      // Make sure all remote spawns are executed
+      m_dispatcher->yield();
+    }
   } catch (std::exception&) {
+    // TODO
+  }
+
+  {
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_state = STATE_NOT_INITIALIZED;
+    m_cv_initialized.notify_all();
   }
 
   m_dispatcher = nullptr;
