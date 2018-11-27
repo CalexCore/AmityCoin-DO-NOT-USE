@@ -64,11 +64,30 @@ add_library(NodeRpcProxy STATIC ${NodeRpcProxy})
 add_library(Rpc STATIC ${Rpc})
 add_library(P2P STATIC ${CryptoNoteProtocol} ${P2p})
 add_library(Serialization STATIC ${Serialization})
-add_library(System STATIC ${System})
 add_library(Transfers STATIC ${Transfers})
 add_library(Wallet STATIC ${Wallet} ${WalletLegacy})
 add_library(JsonRpcServer STATIC ${JsonRpcServer})
 add_library(WalletService STATIC ${service})
+
+add_library(System STATIC ${System})
+if(MSVC)
+    target_include_directories(System PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Platform/Windows)
+elseif(APPLE)
+    target_include_directories(
+        System
+        PUBLIC
+            ${CMAKE_CURRENT_SOURCE_DIR}/Platform/OSX
+            ${CMAKE_CURRENT_SOURCE_DIR}/Platform/Posix
+    )
+else()
+    target_include_directories(
+        System
+        PUBLIC
+            ${CMAKE_CURRENT_SOURCE_DIR}/Platform/Linux
+            ${CMAKE_CURRENT_SOURCE_DIR}/Platform/Posix
+    )
+endif()
+
 
 set(
     AMITY_LIBRARIES
@@ -117,13 +136,13 @@ if(AMITY_BUILD_EXECUTABLES)
   add_executable(miner ${miner} ${MINER_SOURCES_OS})
 
   if(MSVC)
-    target_link_libraries(AmityCoind Rpcrt4)
-    target_link_libraries(service Rpcrt4)
+    target_link_libraries(AmityCoind PUBLIC Rpcrt4)
+    target_link_libraries(service PUBLIC Rpcrt4)
   endif()
 endif() # AMITY_BUILD_EXECUTABLES
 
 if(MSVC)
-  target_link_libraries(System ws2_32)
+  target_link_libraries(System PUBLIC ws2_32)
 endif ()
 
 # Add the dependencies we need
