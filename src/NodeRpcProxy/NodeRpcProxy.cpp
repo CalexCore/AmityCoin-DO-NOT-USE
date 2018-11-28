@@ -25,6 +25,7 @@
 #include "Common/FormatTools.h"
 #include "CryptoNoteCore/CryptoNoteBasicImpl.h"
 #include "CryptoNoteCore/CryptoNoteTools.h"
+#include "CryptoNoteCore/CachedBlock.h"
 #include "Rpc/CoreRpcServerCommandsDefinitions.h"
 #include "Rpc/HttpClient.h"
 #include "Rpc/JsonRpc.h"
@@ -550,6 +551,16 @@ void NodeRpcProxy::getMiningParameters(const std::string &miningAddress, BlockTe
   }
 }
 
+void NodeRpcProxy::submitBlock(const BlockTemplate &block, const INode::Callback &callback)
+{
+  std::lock_guard<std::mutex> lock(m_mutex);
+  if(m_state != STATE_INITIALIZED) {
+      callback(make_error_code(error::NOT_INITIALIZED));
+  } else {
+    scheduleRequest(std::bind(&NodeRpcProxy::doSubmitBlock,this, std::cref(block)), callback);
+  }
+}
+
 void NodeRpcProxy::getTransactions(const std::vector<Crypto::Hash>& transactionHashes, std::vector<TransactionDetails>& transactions, const Callback& callback) {
   std::lock_guard<std::mutex> lock(m_mutex);
   if (m_state != STATE_INITIALIZED) {
@@ -793,6 +804,29 @@ std::error_code NodeRpcProxy::doGetMiningParameters(const std::string &miningAdd
     return make_error_code(error::PARSING_ERROR);
   }
   difficulty =  res.difficulty;
+  return std::error_code{};
+}
+
+std::error_code NodeRpcProxy::doSubmitBlock(const BlockTemplate &block)
+{
+  CachedBlock cachedBlock(block);
+
+  if(m_httpEvent == nullptr || m_httpClient == nullptr)
+    return make_error_code(error::INTERNAL_NODE_ERROR);
+
+  COMMAND_RPC_SUBMITBLOCK::request req;
+  COMMAND_RPC_SUBMITBLOCK::response res;
+  std::vector<uint8_t> rawData;
+  if(!toBinaryArray(block, rawData))
+    return make_error_code(error::PARSING_ERROR);
+  req.emplace_back(Common::toHex(rawData));
+
+  try {
+    System::EventLock lk(*m_httpEvent);
+    JsonRpc::invokeJsonRpcCommand(*m_httpClient, "submitblock", req, res);
+  } catch (...) {
+    return make_error_code(error::REQUEST_ERROR);
+  }
   return std::error_code{};
 }
 
