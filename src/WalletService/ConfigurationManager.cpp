@@ -14,7 +14,7 @@
 
 #include "Common/CommandLine.h"
 #include "Common/Util.h"
-#include "CommonCLI.h"
+#include "CommonCLI/CommonCLI.h"
 #include "crypto/hash.h"
 #include "Logging/ILogger.h"
 
