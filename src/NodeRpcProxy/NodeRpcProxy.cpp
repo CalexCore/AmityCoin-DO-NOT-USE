@@ -756,7 +756,7 @@ std::error_code NodeRpcProxy::doGetBlock(const uint32_t blockHeight, BlockDetail
 
   req.blockHeight = blockHeight;
 
-  std::error_code ec = jsonCommand("/get_block_details_by_height", req, resp);
+  std::error_code ec = jsonCommand("/json_rpc", req, resp);
 
   if (ec) {
     return ec;
@@ -774,8 +774,18 @@ std::error_code NodeRpcProxy::doGetMiningParameters(const std::string &miningAdd
 
   req.wallet_address = miningAddress;
 
-  std::error_code ec = jsonCommand("/getblocktemplate", req, res);
-  if(ec) return ec;
+  if(m_httpEvent == nullptr || m_httpClient == nullptr)
+    return make_error_code(error::INTERNAL_NODE_ERROR);
+  try {
+    System::EventLock lk(*m_httpEvent);
+    JsonRpc::invokeJsonRpcCommand(*m_httpClient, "getblocktemplate", req, res);
+  } catch (...) {
+    return make_error_code(error::REQUEST_ERROR);
+  }
+  if(res.status != CORE_RPC_STATUS_OK) {
+    return make_error_code(error::REQUEST_ERROR);
+  }
+
   std::vector<uint8_t> blockTemplateData;
   if(!Common::fromHex(res.blocktemplate_blob, blockTemplateData))
     return make_error_code(error::PARSING_ERROR);
