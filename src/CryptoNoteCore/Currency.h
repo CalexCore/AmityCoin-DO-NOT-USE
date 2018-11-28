@@ -70,11 +70,7 @@ public:
 
   uint64_t minimumFee() const { return m_mininumFee; }
   uint64_t defaultDustThreshold(uint32_t height) const {
-      if (height >= CryptoNote::parameters::DUST_THRESHOLD_V3_HEIGHT)
-      {
-          return CryptoNote::parameters::DEFAULT_DUST_THRESHOLD_V3;
-      }
-      else if (height >= CryptoNote::parameters::DUST_THRESHOLD_V2_HEIGHT)
+      if (height >= CryptoNote::parameters::DUST_THRESHOLD_V2_HEIGHT)
       {
           return CryptoNote::parameters::DEFAULT_DUST_THRESHOLD_V2;
       }
@@ -82,11 +78,7 @@ public:
       return m_defaultDustThreshold;
   }
   uint64_t defaultFusionDustThreshold(uint32_t height) const {
-      if (height >= CryptoNote::parameters::FUSION_DUST_THRESHOLD_HEIGHT_V3)
-      {
-          return CryptoNote::parameters::DEFAULT_DUST_THRESHOLD_V3;
-      }
-      else if (height >= CryptoNote::parameters::FUSION_DUST_THRESHOLD_HEIGHT_V2)
+      if (height >= CryptoNote::parameters::FUSION_DUST_THRESHOLD_HEIGHT_V2)
       {
           return CryptoNote::parameters::DEFAULT_DUST_THRESHOLD_V2;
       }
