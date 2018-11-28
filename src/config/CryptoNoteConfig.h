@@ -112,14 +112,9 @@ const uint64_t DEFAULT_MIXIN_V3                              = MAXIMUM_MIXIN_V3;
 
 const uint64_t DEFAULT_DUST_THRESHOLD                        = UINT64_C(10);
 const uint64_t DEFAULT_DUST_THRESHOLD_V2                     = DEFAULT_DUST_THRESHOLD;
-const uint64_t DEFAULT_DUST_THRESHOLD_V3                     = UINT64_C(0);
 
 const uint32_t DUST_THRESHOLD_V2_HEIGHT                      = MIXIN_LIMITS_V2_HEIGHT;
 const uint32_t FUSION_DUST_THRESHOLD_HEIGHT_V2               = 2;
-
-const uint32_t DUST_THRESHOLD_V3_HEIGHT                      = LWMA_2_DIFFICULTY_BLOCK_INDEX_V4;
-const uint32_t FUSION_DUST_THRESHOLD_HEIGHT_V3               = LWMA_2_DIFFICULTY_BLOCK_INDEX_V4;
-
 
 const uint64_t EXPECTED_NUMBER_OF_BLOCKS_PER_DAY             = 24 * 60 * 60 / DIFFICULTY_TARGET;
 const size_t   DIFFICULTY_WINDOW                             = 17;
