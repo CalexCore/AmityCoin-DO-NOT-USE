@@ -1,7 +1,8 @@
-﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2014-2018, The Monero Project
 // Copyright (c) 2018, The TurtleCoin Developers
-// 
+// Copyright (c) 2018, The Calex Developers
+//
 // Please see the included LICENSE file for more information.
 
 #include "CachedBlock.h"
@@ -68,7 +69,7 @@ const Crypto::Hash& CachedBlock::getBlockLongHash() const {
     } else if (block.majorVersion == BLOCK_MAJOR_VERSION_6) {
       const auto& rawHashingBlock = getParentBlockHashingBinaryArray(true);
       blockLongHash = Hash();
-      SoftShell::amity_cn_ss_v0_0{}(rawHashingBlock.data(), rawHashingBlock.size(), blockLongHash.get(), getBlockIndex());
+      cn_soft_shell_slow_hash_v1_v2(rawHashingBlock.data(), rawHashingBlock.size(), blockLongHash.get(), getBlockIndex());
     } else {
       throw std::runtime_error("Unknown block major version.");
     }
