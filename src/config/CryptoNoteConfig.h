@@ -40,7 +40,7 @@ const uint64_t LWMA_2_DIFFICULTY_BLOCK_INDEX                 = 5;
 const uint64_t LWMA_2_DIFFICULTY_BLOCK_INDEX_V2              = 6;
 const uint64_t LWMA_2_DIFFICULTY_BLOCK_INDEX_V3              = 7;
 const uint64_t LWMA_3_DIFFICULTY_BLOCK_INDEX                 = 8;
-const uint64_t LWMA_2_DIFFICULTY_BLOCK_INDEX_V4     		 = 20000;
+const uint64_t LWMA_2_DIFFICULTY_BLOCK_INDEX_V4              = 20000;
 
 const uint64_t DIFFICULTY_WINDOW_V3                          = 60;
 const uint64_t DIFFICULTY_BLOCKS_COUNT_V3                    = DIFFICULTY_WINDOW_V3 + 1;
@@ -64,7 +64,7 @@ const uint64_t GENESIS_BLOCK_REWARD                          = UINT64_C(0);
 --print-genesis-tx --genesis-block-reward-address <premine wallet address>
 
 For example:
-TurtleCoind --print-genesis-tx --genesis-block-reward-address TRTLv2Fyavy8CXG8BPEbNeCHFZ1fuDCYCZ3vW5H5LXN4K2M2MHUpTENip9bbavpHvvPwb4NDkBWrNgURAd5DB38FHXWZyoBh4wW
+AmityCoind --print-genesis-tx --genesis-block-reward-address amitDAEiJ7gKyE7NKwtbX96mxSuaAKjfKhn8PCCb8VB1MN3W6jKR8LqVyS7BqHsd47FBsL9RzeVF72hC3mqkaJY29GY3E3er2V
 
 * Take the hash printed, and replace it with the hash below in GENESIS_COINBASE_TX_HEX
 
@@ -160,14 +160,14 @@ static_assert(UPGRADE_VOTING_WINDOW > 1, "Bad UPGRADE_VOTING_WINDOW");
 /* Block heights we are going to have hard forks at */
 const uint64_t FORK_HEIGHTS[] =
 {
-    1,  		// 0
-    2,  		// 1
-    3,  		// 2
-    4,  		// 3
-    1000, 	    // 4
-    2000, 	    // 5
-    3000, 		// 6
-    20000	    // 7
+    1,       // 0
+    2,       // 1
+    3,       // 2
+    4,       // 3
+    1000,    // 4
+    2000,    // 5
+    3000,    // 6
+    20000    // 7
 };
 
 /* MAKE SURE TO UPDATE THIS VALUE WITH EVERY MAJOR RELEASE BEFORE A FORK */
@@ -221,8 +221,8 @@ const size_t   P2P_LOCAL_GRAY_PEERLIST_LIMIT                 =  5000;
 
 // P2P Network Configuration Section - This defines our current P2P network version
 // and the minimum version for communication between nodes
-const uint8_t  P2P_CURRENT_VERSION                           = 1;
-const uint8_t  P2P_MINIMUM_VERSION                           = 2;
+const uint8_t  P2P_CURRENT_VERSION                           = 2;
+const uint8_t  P2P_MINIMUM_VERSION                           = 1;
 // This defines the number of versions ahead we must see peers before we start displaying
 // warning messages that we need to upgrade our software.
 const uint8_t  P2P_UPGRADE_WINDOW                            = 2;
