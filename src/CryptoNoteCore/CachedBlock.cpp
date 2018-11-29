@@ -9,7 +9,7 @@
 #include <Common/Varint.h>
 #include <config/CryptoNoteConfig.h>
 #include "CryptoNoteTools.h"
-#include "crypto/softshell.h"
+//#include "crypto/softshell.h" - left here to remember new the new BSS
 
 using namespace Crypto;
 using namespace CryptoNote;
