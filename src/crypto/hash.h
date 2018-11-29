@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2014-2018, The Monero Project
 // Copyright (c) 2014-2018, The Aeon Project
 // Copyright (c) 2018, The TurtleCoin Developers
@@ -24,44 +24,27 @@
 #define CN_LITE_ITERATIONS              524288
 
 // CryptoNight Soft Shell Definitions
-/*!
- * \def CN_SOFT_SHELL_MEMORY
- * The minimum scratchpad size in bytes.
- */
-#define CN_SOFT_SHELL_MEMORY            (256 * 1024)
-
-/*!
- * \def CN_SOFT_SHELL_WINDOW
- * Number of blocks to be mined from low to peak memory/iterations. Thus the length of the wave.
- * Notice this induces CN_SOFT_SHELL_WINDOW * 2 * BLOCK_TIME until you completed one wave.
- * Since TRTL uses 30 seconds block time with a window of size 2048 you may want to apply your
- * changes here accordingly.
- */
-#define CN_SOFT_SHELL_WINDOW            2048
-
-/*!
- * \def CN_SOFT_SHELL_MULTIPLIER
- * Used to determine the amount of additional memory requirements for the scratchpad size for a
- * specific iteration. The maximum scratchpad size is given by
- * CN_SOFT_SHELL_MEMORY + CN_SOFT_SHELL_WINDOW * CN_SOFT_SHELL_WINDOW / CN_SOFT_SHELL_MULTIPLIER
- */
-#define CN_SOFT_SHELL_MULTIPLIER        3 // 0.143
-
-/*!
- * \def CN_SOFT_SHELL_ITER
- * Minimal amount of Keccak iteration on the scratchpad.
- */
+/* -----version 1 in AmityCoin----- */
+#define CN_SOFT_SHELL_MEMORY            262144 // LOW = 256KB
+#define CN_SOFT_SHELL_WINDOW            512 // Lambda = CN_SOFT_SHELL_WINDOW * 2  (1024 blocks)
+#define CN_SOFT_SHELL_MULTIPLIER        1 / 7 // 0.143
 #define CN_SOFT_SHELL_ITER              (CN_SOFT_SHELL_MEMORY / 2)
-
-/*!
- * \def CN_SOFT_SHELL_PAD_MULTIPLIER
- * The amount of additional bytes added for each block distance away from the nearest low.
- */
 #define CN_SOFT_SHELL_PAD_MULTIPLIER    (CN_SOFT_SHELL_WINDOW / CN_SOFT_SHELL_MULTIPLIER)
-
 #define CN_SOFT_SHELL_ITER_MULTIPLIER   (CN_SOFT_SHELL_PAD_MULTIPLIER / 2)
 
 #if (((CN_SOFT_SHELL_WINDOW * CN_SOFT_SHELL_PAD_MULTIPLIER) + CN_SOFT_SHELL_MEMORY) > CN_PAGE_SIZE)
+#error The CryptoNight Soft Shell Parameters you supplied will exceed normal paging operations.
+#endif
+
+/* -----version 2 in AmityCoin----- */
+#define CN_SOFT_SHELL_MEMORY_2          22500
+#define CN_SOFT_SHELL_WINDOW_2          700
+#define CN_SOFT_SHELL_MULTIPLIER_2      1
+#define CN_SOFT_SHELL_ITER_2            (CN_SOFT_SHELL_MEMORY_2 / 2)
+#define CN_SOFT_SHELL_PAD_MULTIPLIER_2  (CN_SOFT_SHELL_WINDOW_2 / CN_SOFT_SHELL_MULTIPLIER_2)
+#define CN_SOFT_SHELL_ITER_MULTIPLIER_2 (CN_SOFT_SHELL_PAD_MULTIPLIER_2 / 2)
+
+#if (((CN_SOFT_SHELL_WINDOW_2 * CN_SOFT_SHELL_PAD_MULTIPLIER_2) + CN_SOFT_SHELL_MEMORY_2) > CN_PAGE_SIZE)
 #error The CryptoNight Soft Shell Parameters you supplied will exceed normal paging operations.
 #endif
 
@@ -140,6 +123,19 @@ namespace Crypto {
     cn_slow_hash(data, length, reinterpret_cast<char *>(&hash), 1, 1, 0, pagesize, scratchpad, iterations);
   }
 
+  inline void cn_soft_shell_slow_hash_v1_v2(const void *data, size_t length, Hash &hash, uint32_t height) {
+    uint32_t base_offset = (height % CN_SOFT_SHELL_WINDOW_2);
+    int32_t offset = (height % (CN_SOFT_SHELL_WINDOW_2 * 2)) - (base_offset * 2);
+    if (offset < 0) {
+      offset = base_offset;
+    }
+
+    uint32_t scratchpad = CN_SOFT_SHELL_MEMORY_2 + (static_cast<uint32_t>(offset) * CN_SOFT_SHELL_PAD_MULTIPLIER_2);
+    uint32_t iterations = CN_SOFT_SHELL_ITER_2 + (static_cast<uint32_t>(offset) * CN_SOFT_SHELL_ITER_MULTIPLIER_2);
+    uint32_t pagesize = scratchpad;
+
+    cn_slow_hash(data, length, reinterpret_cast<char *>(&hash), 1, 1, 0, pagesize, scratchpad, iterations);
+  }
   inline void cn_soft_shell_slow_hash_v2(const void *data, size_t length, Hash &hash, uint32_t height) {
     uint32_t base_offset = (height % CN_SOFT_SHELL_WINDOW);
     int32_t offset = (height % (CN_SOFT_SHELL_WINDOW * 2)) - (base_offset * 2);
@@ -168,3 +164,4 @@ namespace Crypto {
 }
 
 CRYPTO_MAKE_HASHABLE(Hash)
+
