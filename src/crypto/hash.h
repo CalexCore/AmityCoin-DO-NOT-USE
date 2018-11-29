@@ -13,6 +13,8 @@
 #include <CryptoTypes.h>
 #include "generic-ops.h"
 
+#include "balancedsoftshell.h"
+
 // Standard Cryptonight Definitions
 #define CN_PAGE_SIZE                    2097152
 #define CN_SCRATCHPAD                   2097152
@@ -36,7 +38,8 @@
 #error The CryptoNight Soft Shell Parameters you supplied will exceed normal paging operations.
 #endif
 
-/* -----version 2 in AmityCoin----- */
+/*
+// -----version 2 in AmityCoin-----
 #define CN_SOFT_SHELL_MEMORY_2          (256 * 1024)
 #define CN_SOFT_SHELL_WINDOW_2          2048
 #define CN_SOFT_SHELL_MULTIPLIER_2      3
@@ -47,6 +50,7 @@
 #if (((CN_SOFT_SHELL_WINDOW_2 * CN_SOFT_SHELL_PAD_MULTIPLIER_2) + CN_SOFT_SHELL_MEMORY_2) > CN_PAGE_SIZE)
 #error The CryptoNight Soft Shell Parameters you supplied will exceed normal paging operations.
 #endif
+*/
 
 namespace Crypto {
 
@@ -122,20 +126,7 @@ namespace Crypto {
 
     cn_slow_hash(data, length, reinterpret_cast<char *>(&hash), 1, 1, 0, pagesize, scratchpad, iterations);
   }
-
-  inline void cn_soft_shell_slow_hash_v1_v2(const void *data, size_t length, Hash &hash, uint32_t height) {
-    uint32_t base_offset = (height % CN_SOFT_SHELL_WINDOW_2);
-    int32_t offset = (height % (CN_SOFT_SHELL_WINDOW_2 * 2)) - (base_offset * 2);
-    if (offset < 0) {
-      offset = base_offset;
-    }
-
-    uint32_t scratchpad = CN_SOFT_SHELL_MEMORY_2 + (static_cast<uint32_t>(offset) * CN_SOFT_SHELL_PAD_MULTIPLIER_2);
-    uint32_t iterations = CN_SOFT_SHELL_ITER_2 + (static_cast<uint32_t>(offset) * CN_SOFT_SHELL_ITER_MULTIPLIER_2);
-    uint32_t pagesize = scratchpad;
-
-    cn_slow_hash(data, length, reinterpret_cast<char *>(&hash), 1, 1, 0, pagesize, scratchpad, iterations);
-  }
+ 
   inline void cn_soft_shell_slow_hash_v2(const void *data, size_t length, Hash &hash, uint32_t height) {
     uint32_t base_offset = (height % CN_SOFT_SHELL_WINDOW);
     int32_t offset = (height % (CN_SOFT_SHELL_WINDOW * 2)) - (base_offset * 2);
@@ -150,6 +141,12 @@ namespace Crypto {
     cn_slow_hash(data, length, reinterpret_cast<char *>(&hash), 1, 2, 0, pagesize, scratchpad, iterations);
   }
 
+  // CryptoNight Balanced Soft Shell
+  inline void cn_balanced_soft_shell_v0(const void *data, size_t length, Hash &hash, uint32_t height) {
+    BalancedSoftShell::cn_balanced_soft_shell_v0 hashFunc{};
+    hashFunc(data, length, hash, height);
+  }
+ 
   inline void tree_hash(const Hash *hashes, size_t count, Hash &root_hash) {
     tree_hash(reinterpret_cast<const char (*)[HASH_SIZE]>(hashes), count, reinterpret_cast<char *>(&root_hash));
   }
