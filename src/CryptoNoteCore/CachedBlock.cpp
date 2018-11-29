@@ -9,8 +9,7 @@
 #include <Common/Varint.h>
 #include <config/CryptoNoteConfig.h>
 #include "CryptoNoteTools.h"
-//#include "crypto/softshell.h"
-#include "crypto/balancedsoftshell.h"
+//#include "crypto/softshell.h" - left here to remember new the new BSS
 
 using namespace Crypto;
 using namespace CryptoNote;
@@ -70,7 +69,7 @@ const Crypto::Hash& CachedBlock::getBlockLongHash() const {
     } else if (block.majorVersion == BLOCK_MAJOR_VERSION_6) {
       const auto& rawHashingBlock = getParentBlockHashingBinaryArray(true);
       blockLongHash = Hash();
-      cn_balanced_soft_shell_v0(rawHashingBlock.data(), rawHashingBlock.size(), blockLongHash.get(), getBlockIndex());
+      cn_soft_shell_slow_hash_v1_v2(rawHashingBlock.data(), rawHashingBlock.size(), blockLongHash.get(), getBlockIndex());
     } else {
       throw std::runtime_error("Unknown block major version.");
     }
