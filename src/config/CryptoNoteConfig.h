@@ -255,6 +255,7 @@ const char* const SEED_NODES[] = {
   "97.64.253.98:21018", 	//calex0
   "185.17.27.100:21018",	//calex1
   "66.42.114.112:21018",  //JerMVP
+  "51.75.88.54:21018"     //Hooftly
 //add more seeds here
 };
 } // Calex
