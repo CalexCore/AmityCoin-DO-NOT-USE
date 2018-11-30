@@ -254,6 +254,7 @@ const static   boost::uuids::uuid CRYPTONOTE_NETWORK         =
 const char* const SEED_NODES[] = {
   "97.64.253.98:21018", 	//calex0
   "185.17.27.100:21018",	//calex1
+  "66.42.114.112:21018",  //JerMVP
 //add more seeds here
 };
 } // Calex
