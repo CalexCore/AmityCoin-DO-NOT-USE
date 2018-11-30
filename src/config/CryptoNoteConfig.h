@@ -214,7 +214,7 @@ const size_t   COMMAND_RPC_GET_BLOCKS_FAST_MAX_COUNT         =  1000;
 
 const int      P2P_DEFAULT_PORT                              =  21018;
 const int      RPC_DEFAULT_PORT                              =  31018;
-const int	   SERVICE_DEFAULT_PORT 						 =  38070;
+const int	     SERVICE_DEFAULT_PORT                          =  38070;
 
 const size_t   P2P_LOCAL_WHITE_PEERLIST_LIMIT                =  1000;
 const size_t   P2P_LOCAL_GRAY_PEERLIST_LIMIT                 =  5000;
@@ -254,7 +254,6 @@ const static   boost::uuids::uuid CRYPTONOTE_NETWORK         =
 const char* const SEED_NODES[] = {
   "97.64.253.98:21018", 	//calex0
   "185.17.27.100:21018",	//calex1
-  "104.238.222.144:21018",	//calex2
-  "185.103.97.205:21018"	//calex3
+//add more seeds here
 };
 } // Calex
