@@ -10,7 +10,7 @@
 
 #include <string.h>
 
-#include "CommonCLI.h"
+#include "CommonCLI/CommonCLI.h"
 #include "PaymentGateService.h"
 #include "version.h"
 

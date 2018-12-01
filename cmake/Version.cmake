@@ -1,7 +1,7 @@
 ﻿## This section helps us tag our builds with the git commit information
 set(versionScript "${CMAKE_CURRENT_LIST_DIR}/VersionScript.cmake")
 set(AMITY_VERSION_INPUT_FILE "${PROJECT_SOURCE_DIR}/VERSION")
-set(AMITY_VERSION_INCLUDE_DIR "${CMAKE_BINARY_DIR}/version")
+set(AMITY_VERSION_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/version")
 set(AMITY_VERSION_TEMPLATE "${CMAKE_CURRENT_SOURCE_DIR}/src/config/version.h.in")
 set(AMITY_VERSION_FILE "${AMITY_VERSION_INCLUDE_DIR}/version.h")
 file(MAKE_DIRECTORY ${AMITY_VERSION_INCLUDE_DIR})
