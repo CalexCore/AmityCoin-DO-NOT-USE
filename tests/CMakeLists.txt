@@ -26,3 +26,10 @@ add_executable(TestSuite.Integration ${int_tests})
 target_link_libraries(TestSuite.Integration PRIVATE gtest_main Common Crypto CryptoNoteCore Serialization Logging ${ROCKSDB_LIB})
 
 add_test(Integrity TestSuite.Integration WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+# benchmarks
+file(GLOB_RECURSE int_tests "${CMAKE_CURRENT_SOURCE_DIR}/benchmark/*")
+source_group("" FILES ${int_tests})
+add_executable(TestSuite.Benchmark ${int_tests})
+target_link_libraries(TestSuite.Benchmark PRIVATE benchmark_main Common Crypto CryptoNoteCore Serialization Logging ${ROCKSDB_LIB})
+target_include_directories(TestSuite.Benchmark PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/benchmark")

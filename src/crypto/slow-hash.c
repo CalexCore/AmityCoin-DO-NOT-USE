@@ -1,4 +1,4 @@
-// Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
+﻿// Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 // Copyright (c) 2014-2018, The Monero Project
 // Copyright (c) 2014-2018, The Aeon Project
 // Copyright (c) 2018, The TurtleCoin Developers
@@ -345,7 +345,7 @@ STATIC INLINE int force_software_aes(void)
   if (use != -1)
     return use;
 
-  const char *env = getenv("TURTLECOIN_USE_SOFTWARE_AES");
+  const char *env = getenv("AMITY_USE_SOFTWARE_AES");
   if (!env) {
     use = 0;
   }

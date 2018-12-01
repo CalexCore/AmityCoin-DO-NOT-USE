@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2014-2018, The Monero Project
 // Copyright (c) 2018, The TurtleCoin Developers
 // Copyright (c) 2018, The Calex Developers
@@ -40,9 +40,12 @@ const uint64_t LWMA_2_DIFFICULTY_BLOCK_INDEX                 = 5;
 const uint64_t LWMA_2_DIFFICULTY_BLOCK_INDEX_V2              = 6;
 const uint64_t LWMA_2_DIFFICULTY_BLOCK_INDEX_V3              = 7;
 const uint64_t LWMA_3_DIFFICULTY_BLOCK_INDEX                 = 8;
+const uint64_t LWMA_2_DIFFICULTY_BLOCK_INDEX_V4              = 20000;
 
 const uint64_t DIFFICULTY_WINDOW_V3                          = 60;
 const uint64_t DIFFICULTY_BLOCKS_COUNT_V3                    = DIFFICULTY_WINDOW_V3 + 1;
+const uint64_t DIFFICULTY_WINDOW_V4                          = 30;
+const uint64_t DIFFICULTY_BLOCKS_COUNT_V4                    = DIFFICULTY_WINDOW_V4 + 1;
 
 const unsigned EMISSION_SPEED_FACTOR                         = 29;
 static_assert(EMISSION_SPEED_FACTOR <= 8 * sizeof(uint64_t), "Bad EMISSION_SPEED_FACTOR");
@@ -61,7 +64,7 @@ const uint64_t GENESIS_BLOCK_REWARD                          = UINT64_C(0);
 --print-genesis-tx --genesis-block-reward-address <premine wallet address>
 
 For example:
-TurtleCoind --print-genesis-tx --genesis-block-reward-address TRTLv2Fyavy8CXG8BPEbNeCHFZ1fuDCYCZ3vW5H5LXN4K2M2MHUpTENip9bbavpHvvPwb4NDkBWrNgURAd5DB38FHXWZyoBh4wW
+AmityCoind --print-genesis-tx --genesis-block-reward-address amitDAEiJ7gKyE7NKwtbX96mxSuaAKjfKhn8PCCb8VB1MN3W6jKR8LqVyS7BqHsd47FBsL9RzeVF72hC3mqkaJY29GY3E3er2V
 
 * Take the hash printed, and replace it with the hash below in GENESIS_COINBASE_TX_HEX
 
@@ -146,7 +149,8 @@ const uint32_t UPGRADE_HEIGHT_V2                             = 1;
 const uint32_t UPGRADE_HEIGHT_V3                             = 2;
 const uint32_t UPGRADE_HEIGHT_V4                             = 3; // Upgrade height for CN-Lite Variant 1 switch.
 const uint32_t UPGRADE_HEIGHT_V5                             = 4; // Upgrade height for CN-Soft Shell Variant 1 switch.
-const uint32_t UPGRADE_HEIGHT_CURRENT                        = UPGRADE_HEIGHT_V5;
+const uint32_t UPGRADE_HEIGHT_V6                             = 20000; // Upgrade height for CN-Soft Shell Amity Variant switch.
+const uint32_t UPGRADE_HEIGHT_CURRENT                        = UPGRADE_HEIGHT_V6;
 const unsigned UPGRADE_VOTING_THRESHOLD                      = 90;               // percent
 const uint32_t UPGRADE_VOTING_WINDOW                         = EXPECTED_NUMBER_OF_BLOCKS_PER_DAY;  // blocks
 const uint32_t UPGRADE_WINDOW                                = EXPECTED_NUMBER_OF_BLOCKS_PER_DAY;  // blocks
@@ -156,17 +160,18 @@ static_assert(UPGRADE_VOTING_WINDOW > 1, "Bad UPGRADE_VOTING_WINDOW");
 /* Block heights we are going to have hard forks at */
 const uint64_t FORK_HEIGHTS[] =
 {
-    1,  // 0
-    2,  // 1
-    3,  // 2
-    4,  // 3
-    1000, // 4
-    2000, // 5
-    3000  // 6
+    1,       // 0
+    2,       // 1
+    3,       // 2
+    4,       // 3
+    1000,    // 4
+    2000,    // 5
+    3000,    // 6
+    20000    // 7
 };
 
 /* MAKE SURE TO UPDATE THIS VALUE WITH EVERY MAJOR RELEASE BEFORE A FORK */
-const uint64_t SOFTWARE_SUPPORTED_FORK_INDEX                 = 6;
+const uint64_t SOFTWARE_SUPPORTED_FORK_INDEX                 = 7;
 
 const uint64_t FORK_HEIGHTS_SIZE = sizeof(FORK_HEIGHTS) / sizeof(*FORK_HEIGHTS);
 
@@ -199,6 +204,7 @@ const uint8_t  BLOCK_MAJOR_VERSION_2                         =  2;
 const uint8_t  BLOCK_MAJOR_VERSION_3                         =  3;
 const uint8_t  BLOCK_MAJOR_VERSION_4                         =  4;
 const uint8_t  BLOCK_MAJOR_VERSION_5                         =  5;
+const uint8_t  BLOCK_MAJOR_VERSION_6                         =  6;
 const uint8_t  BLOCK_MINOR_VERSION_0                         =  0;
 const uint8_t  BLOCK_MINOR_VERSION_1                         =  1;
 
@@ -208,14 +214,14 @@ const size_t   COMMAND_RPC_GET_BLOCKS_FAST_MAX_COUNT         =  1000;
 
 const int      P2P_DEFAULT_PORT                              =  21018;
 const int      RPC_DEFAULT_PORT                              =  31018;
-const int      SERVICE_DEFAULT_PORT                          =  38070;
+const int	     SERVICE_DEFAULT_PORT                          =  38070;
 
 const size_t   P2P_LOCAL_WHITE_PEERLIST_LIMIT                =  1000;
 const size_t   P2P_LOCAL_GRAY_PEERLIST_LIMIT                 =  5000;
 
 // P2P Network Configuration Section - This defines our current P2P network version
 // and the minimum version for communication between nodes
-const uint8_t  P2P_CURRENT_VERSION                           = 1;
+const uint8_t  P2P_CURRENT_VERSION                           = 2;
 const uint8_t  P2P_MINIMUM_VERSION                           = 1;
 // This defines the number of versions ahead we must see peers before we start displaying
 // warning messages that we need to upgrade our software.
@@ -246,10 +252,10 @@ const static   boost::uuids::uuid CRYPTONOTE_NETWORK         =
 };
 
 const char* const SEED_NODES[] = {
-  "97.64.253.98:21018",  //calex0
-  "185.17.27.100:21018",//calex1
-  "104.238.222.144:21018",//calex2
-  "185.103.97.205:21018"//calex3
+  "97.64.253.98:21018", 	//calex0
+  "185.17.27.100:21018",	//calex1
+  "66.42.114.112:21018",  //JerMVP
+  "51.75.88.54:21018"     //Hooftly
+//add more seeds here
 };
-} // CryptoNote
-
+} // Calex
