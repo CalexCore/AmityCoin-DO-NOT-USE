@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 //
 // This file is part of Bytecoin.
 //
@@ -31,6 +31,7 @@ enum NodeErrorCodes {
   NODE_BUSY,
   INTERNAL_NODE_ERROR,
   REQUEST_ERROR,
+  PARSING_ERROR,
   CONNECT_ERROR
 };
 
@@ -55,6 +56,7 @@ public:
     case NODE_BUSY:           return "Node is busy";
     case INTERNAL_NODE_ERROR: return "Internal node error";
     case REQUEST_ERROR:       return "Error in request parameters";
+    case PARSING_ERROR:       return "Error parsing request/response parameters";
     case CONNECT_ERROR:       return "Can't connect to daemon";
     default:                  return "Unknown error";
     }

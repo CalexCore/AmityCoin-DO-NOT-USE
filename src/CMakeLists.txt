@@ -16,6 +16,7 @@ set(
 
 file(GLOB_RECURSE BlockchainExplorer BlockchainExplorer/*)
 file(GLOB_RECURSE Common Common/*)
+file(GLOB_RECURSE CommonCLI_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/CommonCLI/*")
 file(GLOB_RECURSE Crypto crypto/*)
 file(GLOB_RECURSE CryptoNoteCore CryptoNoteCore/* CryptoNoteConfig.h)
 file(GLOB_RECURSE CryptoNoteProtocol CryptoNoteProtocol/*)
@@ -55,6 +56,7 @@ endforeach()
 
 add_library(BlockchainExplorer STATIC ${BlockchainExplorer})
 add_library(Common STATIC ${Common})
+add_library(CommonCLI STATIC ${CommonCLI_SOURCES})
 add_library(Crypto STATIC ${Crypto})
 add_library(CryptoNoteCore STATIC ${CryptoNoteCore})
 add_library(Http STATIC ${Http})
@@ -64,17 +66,37 @@ add_library(NodeRpcProxy STATIC ${NodeRpcProxy})
 add_library(Rpc STATIC ${Rpc})
 add_library(P2P STATIC ${CryptoNoteProtocol} ${P2p})
 add_library(Serialization STATIC ${Serialization})
-add_library(System STATIC ${System})
 add_library(Transfers STATIC ${Transfers})
 add_library(Wallet STATIC ${Wallet} ${WalletLegacy})
 add_library(JsonRpcServer STATIC ${JsonRpcServer})
 add_library(WalletService STATIC ${service})
+
+add_library(System STATIC ${System})
+if(MSVC)
+    target_include_directories(System PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Platform/Windows)
+elseif(APPLE)
+    target_include_directories(
+        System
+        PUBLIC
+            ${CMAKE_CURRENT_SOURCE_DIR}/Platform/OSX
+            ${CMAKE_CURRENT_SOURCE_DIR}/Platform/Posix
+    )
+else()
+    target_include_directories(
+        System
+        PUBLIC
+            ${CMAKE_CURRENT_SOURCE_DIR}/Platform/Linux
+            ${CMAKE_CURRENT_SOURCE_DIR}/Platform/Posix
+    )
+endif()
+
 
 set(
     AMITY_LIBRARIES
 
     BlockchainExplorer
     Common
+    CommonCLI
     Crypto
     CryptoNoteCore
     Http
@@ -111,8 +133,6 @@ if(MSVC)
 endif()
 
 if(AMITY_BUILD_EXECUTABLES)
-  file(GLOB_RECURSE CommonCLI_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/CommonCLI/*")
-  add_library(CommonCLI STATIC ${CommonCLI_SOURCES})
   target_include_directories(CommonCLI PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/CommonCLI" ${AMITY_INCLUDE_DIRS})
   add_dependencies(CommonCLI version)
 
@@ -120,15 +140,10 @@ if(AMITY_BUILD_EXECUTABLES)
   add_executable(zedwallet ${zedwallet} ${ZED_WALLET_SOURCES_OS})
   add_executable(service ${service} ${PG_SOURCES_OS})
   add_executable(miner ${miner} ${MINER_SOURCES_OS})
-
-  if(MSVC)
-    target_link_libraries(AmityCoind Rpcrt4)
-    target_link_libraries(service Rpcrt4)
-  endif()
 endif() # AMITY_BUILD_EXECUTABLES
 
 if(MSVC)
-  target_link_libraries(System ws2_32)
+  target_link_libraries(System PUBLIC ws2_32)
 endif ()
 
 # Add the dependencies we need
@@ -153,13 +168,14 @@ target_link_libraries(WalletService PUBLIC Mnemonics CommonCLI)
 
 if(AMITY_BUILD_EXECUTABLES)
   if(MSVC)
-    target_link_libraries(AmityCoind P2P Rpc Serialization System Http Logging CryptoNoteCore Crypto Common CommonCLI rocksdb ${Boost_LIBRARIES} )
+    target_link_libraries(AmityCoind P2P Rpc Serialization System Http Logging CryptoNoteCore Crypto Common CommonCLI rocksdb Rpcrt4 ${Boost_LIBRARIES} )
+    target_link_libraries(service CommonCLI WalletService JsonRpcServer Wallet NodeRpcProxy Transfers CryptoNoteCore Crypto Rpc Http System Logging Common CommonCLI Rpcrt4 ${Boost_LIBRARIES})
   else()
     target_link_libraries(AmityCoind P2P Rpc Serialization System Http Logging CryptoNoteCore Crypto Common CommonCLI rocksdblib ${Boost_LIBRARIES} )
+    target_link_libraries(service CommonCLI WalletService JsonRpcServer Wallet NodeRpcProxy Transfers CryptoNoteCore Crypto Rpc Http System Logging Common CommonCLI ${Boost_LIBRARIES})
   endif()
 
   target_link_libraries(zedwallet CommonCLI Mnemonics Wallet NodeRpcProxy Transfers Rpc Http CryptoNoteCore System Logging Common CommonCLI ${Boost_LIBRARIES})
-  target_link_libraries(service CommonCLI WalletService JsonRpcServer Wallet NodeRpcProxy Transfers CryptoNoteCore Crypto Rpc Http System Logging Common CommonCLI ${Boost_LIBRARIES})
   target_link_libraries(miner CommonCLI CryptoNoteCore Rpc Serialization System Http Logging Common CommonCLI Crypto ${Boost_LIBRARIES})
 endif() # AMITY_BUILD_EXECUTABLES
 
