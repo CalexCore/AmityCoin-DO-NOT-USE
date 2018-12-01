@@ -26,14 +26,6 @@ include(cmake/Dependencies.cmake)
 include(cmake/Platform.cmake)
 include(cmake/Version.cmake)
 
-## Enable test integration
-if(AMITY_BUILD_TESTSUITE)
-  enable_testing()
-endif() # AMITY_BUILD_TESTSUITE
-
 add_subdirectory(external)
 add_subdirectory(src)
 
-if(AMITY_BUILD_TESTSUITE)
-    add_subdirectory(tests)
-endif() # AMITY_BUILD_TESTSUITE
