@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2014-2018, The Monero Project
 // Copyright (c) 2018, The TurtleCoin Developers
 // 
@@ -1043,6 +1043,7 @@ uint8_t DatabaseBlockchainCache::getBlockMajorVersionForHeight(uint32_t height) 
   upgradeManager.addMajorBlockVersion(BLOCK_MAJOR_VERSION_3, currency.upgradeHeight(BLOCK_MAJOR_VERSION_3));
   upgradeManager.addMajorBlockVersion(BLOCK_MAJOR_VERSION_4, currency.upgradeHeight(BLOCK_MAJOR_VERSION_4));
   upgradeManager.addMajorBlockVersion(BLOCK_MAJOR_VERSION_5, currency.upgradeHeight(BLOCK_MAJOR_VERSION_5));
+  upgradeManager.addMajorBlockVersion(BLOCK_MAJOR_VERSION_6, currency.upgradeHeight(BLOCK_MAJOR_VERSION_6));
   return upgradeManager.getBlockMajorVersion(height);
 }
 
@@ -1675,7 +1676,7 @@ void DatabaseBlockchainCache::addGenesisBlock(CachedBlock&& genesisBlock) {
     minerReward += output.amount;
   }
 
-  assert(minerReward > 0);
+  // assert(minerReward > 0);
 
   uint64_t baseTransactionSize = getObjectBinarySize(genesisBlock.getBlock().baseTransaction);
   assert(baseTransactionSize < std::numeric_limits<uint32_t>::max());

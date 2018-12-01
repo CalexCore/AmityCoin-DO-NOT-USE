@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2018, The TurtleCoin Developers
 //
 // Please see the included LICENSE file for more information.
@@ -10,6 +10,7 @@
 #include <mutex>
 #include <string>
 #include <thread>
+#include <optional>
 #include <unordered_set>
 
 #include "Common/ObserverManager.h"
@@ -58,6 +59,10 @@ public:
   virtual std::string getInfo() override;
   virtual void getFeeInfo() override;
 
+  std::optional<COMMAND_RPC_GET_INFO::response> getLastInfoResponse() const;
+
+  virtual bool ping() override;
+
   virtual void getBlockHashesByTimestamps(uint64_t timestampBegin, size_t secondsCount, std::vector<Crypto::Hash>& blockHashes, const Callback& callback) override;
   virtual void getTransactionHashesByPaymentId(const Crypto::Hash& paymentId, std::vector<Crypto::Hash>& transactionHashes, const Callback& callback) override;
 
@@ -73,6 +78,8 @@ public:
   virtual void getBlocks(const std::vector<uint32_t>& blockHeights, std::vector<std::vector<BlockDetails>>& blocks, const Callback& callback) override;
   virtual void getBlocks(const std::vector<Crypto::Hash>& blockHashes, std::vector<BlockDetails>& blocks, const Callback& callback) override;
   virtual void getBlock(const uint32_t blockHeight, BlockDetails &block, const Callback& callback) override;
+  virtual void getMiningParameters(const std::string& miningAddress, BlockTemplate& blockTemplate, uint64_t& difficulty, const Callback& callback) override;
+  virtual void submitBlock(const BlockTemplate& block, const Callback& callback);
   virtual void getTransactions(const std::vector<Crypto::Hash>& transactionHashes, std::vector<TransactionDetails>& transactions, const Callback& callback) override;
   virtual void isSynchronized(bool& syncStatus, const Callback& callback) override;
   virtual std::string feeAddress() override;
@@ -108,6 +115,8 @@ private:
   std::error_code doGetBlocksByHeight(const std::vector<uint32_t>& blockHeights, std::vector<std::vector<BlockDetails>>& blocks);
   std::error_code doGetBlocksByHash(const std::vector<Crypto::Hash>& blockHashes, std::vector<BlockDetails>& blocks);
   std::error_code doGetBlock(const uint32_t blockHeight, BlockDetails& block);
+  std::error_code doGetMiningParameters(const std::string& miningAddress, BlockTemplate& blockTemplate, uint64_t& difficulty);
+  std::error_code doSubmitBlock(const BlockTemplate& block);
   std::error_code doGetTransactionHashesByPaymentId(const Crypto::Hash& paymentId, std::vector<Crypto::Hash>& transactionHashes);
   std::error_code doGetTransactions(const std::vector<Crypto::Hash>& transactionHashes, std::vector<TransactionDetails>& transactions);
 
@@ -157,5 +166,7 @@ private:
   bool m_connected;
   std::string m_fee_address;
   uint32_t m_fee_amount;
+
+  std::optional<COMMAND_RPC_GET_INFO::response> m_lastInfoResponse;
 };
 }

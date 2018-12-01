@@ -28,7 +28,7 @@ def height():
     base_url = 'http://localhost:31018/getheight'
     resp = requests.get(base_url).json()
     if 'height' not in resp:
-        print ('Unexpected response, make sure TurtleCoind is running',
+        print ('Unexpected response, make sure AmityCoind is running',
                resp)
         sys.exit(-1)
     else:
@@ -45,7 +45,7 @@ def rpc(method, params={}):
         }
     resp = requests.post(base_url, data=json.dumps(payload)).json()
     if 'result' not in resp:
-        print ('Unexpected response, make sure Turtlecoind is running with block explorer enabled'
+        print ('Unexpected response, make sure AmityCoind is running with block explorer enabled'
                , resp)
         sys.exit(-1)
     else:

@@ -1,9 +1,11 @@
-// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2018, The TurtleCoin Developers
 //
 // Please see the included LICENSE file for more information.
 
 #include "P2pNode.h"
+
+#include <random>
 
 #include <boost/uuid/uuid_io.hpp>
 
@@ -226,7 +228,9 @@ void P2pNode::connectPeers() {
   // if white peer list is empty, get peers from seeds
   if (m_peerlist.get_white_peers_count() == 0 && !m_cfg.getSeedNodes().empty()) {
     auto seedNodes = m_cfg.getSeedNodes();
-    std::random_shuffle(seedNodes.begin(), seedNodes.end());
+    std::random_device random_dev;
+    std::mt19937       generator(random_dev());
+    std::shuffle(seedNodes.begin(), seedNodes.end(), generator);
     for (const auto& seed : seedNodes) {
       auto conn = tryToConnectPeer(seed);
       if (conn != nullptr && fetchPeerList(std::move(conn))) {

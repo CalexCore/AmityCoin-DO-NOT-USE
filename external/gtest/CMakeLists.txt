@@ -1,4 +1,4 @@
-########################################################################
+﻿########################################################################
 # CMake build script for Google Test.
 #
 # To run the tests for Google Test itself on Linux, use 'make test' or
@@ -8,6 +8,10 @@
 # BUILD_SHARED_LIBS is a standard CMake variable, but we declare it here to
 # make it prominent in the GUI.
 option(BUILD_SHARED_LIBS "Build shared libraries (DLLs)." OFF)
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-undef")
+endif() # GCC
 
 # When other libraries are using a shared version of runtime libraries,
 # Google Test also has to use one.

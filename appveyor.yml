@@ -1,0 +1,107 @@
+image:
+  - Visual Studio 2017
+  - Ubuntu1804
+
+configuration:
+  - Release
+
+platform:
+  - x64
+
+environment:
+  DiscordNotificationWebHook:
+    secure: 9ZFEBnW+lrCDIvInRHUN6L0kmoC062LJBBnRJlns4uLQ/x4V8zMoggQ2xMCi6bzwO6A+1Vo7vsEzv+YM6MVvrHNl0jjjnd8EeP75rBj7EkGrnJFveDmgHZREnE01N0S9oBYiHs6gkz7H5m/YUYHh+IDnk4T3/JC1JgzI0zqV/qE=
+
+install:
+  - sh: |
+      sudo apt-get update
+      sudo apt-get install -y libboost-all-dev
+
+before_build:
+  - git submodule update --init --recursive
+
+build_script:
+  # setup c++ environment on windows
+  - cmd: call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
+
+  # select cmake generator and boost version
+  - ps: |
+      if ($isLinux) {
+        $CMakeGenerator = "Unix Makefiles"
+        $CMakeBoostArg = ""
+      } else {
+        $CMakeGenerator = "Visual Studio 15 2017 Win64"
+        $CMakeBoostArg = "-DBOOST_ROOT=C:/Libraries/boost_1_67_0"
+      }
+
+  # build process
+  - ps: |
+      New-Item -ItemType Directory -Force -Path .\.build  | Push-Location
+      cmake `
+        -G "$CMakeGenerator" `
+        -DCMAKE_BUILD_TYPE=$configuration `
+        -DAMITY_BUILD_EXECUTABLES=ON `
+        -DAMITY_BUILD_TESTSUITE=ON `
+        -DCMAKE_INSTALL_PREFIX:PATH=../.install `
+        $CMakeBoostArg `
+        ..
+      cmake --build . --config $configuration
+      cmake --build . --target install --config $configuration
+      Pop-Location
+
+  # settings environment for proper artifact naming
+  - ps: |
+      $env:AmityVersion = Get-Content -Path ./VERSION
+      if ($env:APPVEYOR_REPO_BRANCH -NotLike "master") {
+        $env:AmityVersion = "$($env:AmityVersion)-$($env:APPVEYOR_REPO_BRANCH)"
+      }
+      Rename-Item -Path ./.install/bin -NewName "Amity-v$($env:AmityVersion)"
+      if ($isLinux) {
+        $env:ArtifactOS = "Debian 64bit"
+      } else {
+        $env:ArtifactOS = "Windows 64bit"
+      }
+    
+# Tests
+test_script:
+  - ps: |
+      Push-Location .\.build
+      ctest -VV
+      Pop-Location
+
+# Uploading artifacts
+artifacts:
+  - path: .install
+    name: "Standalone $(ArtifactOS) - v$(AmityVersion)"
+
+# If we are on master branch and have a tagged version we create a new draft
+# on github release. The draft must be revisioned and published by an authorized
+# member of the project. Otherwise if we are on dev branch we will continiously
+# publish a draft version without revision.
+deploy:
+  - provider: GitHub
+    tag: $(AmityVersion)
+    release: Amity
+    description: 'The currently used version for the mainnet.'
+    auth_token:
+      secure: Pw4T3cHP71ABVKp/ZijUFxpsEvh6VlGP1eeWzCsFVnMdzEG3V7wGFcw2PyF+JXuY
+    draft: true
+    prerelease: false
+    on:
+      branch: master
+  - provider: GitHub
+    tag: $(AmityVersion)
+    release: Amity Release Candidate
+    description: 'Our next release candidate. Use with caution, it may contains bugs or is incompatible with the mainnet.'
+    auth_token:
+      secure: Pw4T3cHP71ABVKp/ZijUFxpsEvh6VlGP1eeWzCsFVnMdzEG3V7wGFcw2PyF+JXuY
+    draft: false
+    prerelease: true
+    on:
+      branch: 
+        rc
+
+on_success:
+  - ps: ./scripts/ci/SendDiscordNotification.ps1 success $env:DiscordNotificationWebHook
+on_failure:
+  - ps: ./scripts/ci/SendDiscordNotification.ps1 failure $env:DiscordNotificationWebHook

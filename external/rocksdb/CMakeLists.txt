@@ -1,4 +1,4 @@
-# Prerequisites for Windows:
+﻿# Prerequisites for Windows:
 #     This cmake build is for Windows 64-bit only.
 #
 # Prerequisites:
@@ -323,6 +323,7 @@ if(DEFINED USE_RTTI)
     if(MSVC)
       message(STATUS "Disabling RTTI in Release builds. Always on in Debug.")
       set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DROCKSDB_USE_RTTI")
+      string(REPLACE "/GR" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
       set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /GR-")
     else()
       message(STATUS "Disabling RTTI in Release builds")
@@ -334,6 +335,7 @@ else()
   message(STATUS "Enabling RTTI in Debug builds only (default)")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DROCKSDB_USE_RTTI")
   if(MSVC)
+     string(REPLACE "/GR" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
      set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /GR-")
   else()
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fno-rtti")
@@ -761,12 +763,6 @@ if(WIN32)
     ${THIRDPARTY_LIBS} ${SYSTEM_LIBS})
   set_target_properties(${ROCKSDB_IMPORT_LIB} PROPERTIES
     COMPILE_DEFINITIONS "ROCKSDB_DLL;ROCKSDB_LIBRARY_EXPORTS")
-  if(MSVC)
-    set_target_properties(${ROCKSDB_STATIC_LIB} PROPERTIES
-      COMPILE_FLAGS "/Fd${CMAKE_CFG_INTDIR}/${ROCKSDB_STATIC_LIB}.pdb")
-    set_target_properties(${ROCKSDB_IMPORT_LIB} PROPERTIES
-      COMPILE_FLAGS "/Fd${CMAKE_CFG_INTDIR}/${ROCKSDB_IMPORT_LIB}.pdb")
-  endif()
 endif()
 
 option(WITH_JNI "build with JNI" OFF)

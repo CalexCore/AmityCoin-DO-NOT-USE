@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2018, The TurtleCoin Developers
 //
 // Please see the included LICENSE file for more information.
@@ -30,6 +30,7 @@ public:
 
   virtual std::string getInfo() override { return std::string(); }
   virtual void getFeeInfo() override { }
+  virtual bool ping() override { return false; }
 
   virtual void getBlockHashesByTimestamps(uint64_t timestampBegin, size_t secondsCount, std::vector<Crypto::Hash>& blockHashes, const Callback& callback) override {
     callback(std::error_code());
@@ -71,6 +72,11 @@ public:
 
   virtual void getBlock(const uint32_t blockHeight, CryptoNote::BlockDetails &block,
     const Callback& callback) override { }
+
+  virtual void getMiningParameters(const std::string& miningAddress, CryptoNote::BlockTemplate& blockTemplate,
+                                   uint64_t& difficulty, const Callback& callback) override {}
+
+  virtual void submitBlock(const CryptoNote::BlockTemplate& block, const Callback& callback) override {}
 
   virtual void getTransactions(const std::vector<Crypto::Hash>& transactionHashes, std::vector<CryptoNote::TransactionDetails>& transactions,
     const Callback& callback) override { }

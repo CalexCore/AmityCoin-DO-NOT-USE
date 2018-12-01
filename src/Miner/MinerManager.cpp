@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2014-2018, The Monero Project
 // Copyright (c) 2018, The TurtleCoin Developers
 // Copyright (c) 2018, The Calex Developers
@@ -89,6 +89,11 @@ void MinerManager::start() {
       params = requestMiningParameters(m_dispatcher, m_config.daemonHost, m_config.daemonPort, m_config.miningAddress);
     } catch (ConnectException& e) {
       m_logger(Logging::WARNING) << "Couldn't connect to daemon: " << e.what();
+      System::Timer timer(m_dispatcher);
+      timer.sleep(std::chrono::seconds(m_config.scanPeriod));
+      continue;
+    } catch(JsonRpc::JsonRpcError& ex) {
+      m_logger(Logging::WARNING) << "Daemon returned non-success state: " << ex.what();
       System::Timer timer(m_dispatcher);
       timer.sleep(std::chrono::seconds(m_config.scanPeriod));
       continue;
@@ -208,7 +213,9 @@ void MinerManager::startBlockchainMonitoring() {
       pushEvent(BlockchainUpdatedEvent());
     } catch (System::InterruptedException&) {
     } catch (std::exception& e) {
-      m_logger(Logging::ERROR) << "BlockchainMonitor context unexpectedly finished: " << e.what();
+        m_logger(Logging::ERROR) << "BlockchainMonitor context unexpectedly finished: " << e.what();
+        std::this_thread::sleep_for(std::chrono::seconds{10});
+        startBlockchainMonitoring();
     }
   });
 }

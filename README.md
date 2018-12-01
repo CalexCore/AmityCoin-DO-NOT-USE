@@ -1,4 +1,5 @@
-# AmityCoin
+# AmityCoin [![Build status](https://ci.appveyor.com/api/projects/status/7u785g3c2nttnpc5/branch/dev?svg=true)](https://ci.appveyor.com/project/michael-herwig/amitycoin/branch/dev) [![Build Status](https://travis-ci.com/CalexCore/AmityCoin.svg?branch=dev)](https://travis-ci.com/CalexCore/AmityCoin) [![](https://img.shields.io/badge/%20-dockerhub-blue.svg?logo=docker&style=flat)](https://hub.docker.com/r/calexcore/amitycoin/) [![](https://img.shields.io/badge/%20-discord-blue.svg?logo=discord&style=flat)](https://discord.gg/Nywqwtm) [![](https://img.shields.io/badge/%20-documentation-orange.svg?logo=github&style=flat)](https://github.com/CalexCore/AmityCoin/wiki)
+
 
 ###### We want a decentralized future, we want a decentralized currency, we want a decentralized life.  We want to be different.  We are Amity
 
