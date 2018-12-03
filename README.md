@@ -48,6 +48,6 @@ Website - https://www.getamitycoin.org
 
 #### Donations
 
-AMIT: amitWnmgfgYG4XerZGPLNFd5AM87rUkb3X2q4FcELpPsB4DXtT8YE3mETzAjrYLdDH39pJoCxSUHPU2yqZeY1RsJ1h5DgikVAz
+AMIT: amitQLHwwcaU5bDjqkZrQ26KHeVdk2mgsC8j8mnBJbpJfi6jMNxUqB42V2ZCn6EJ4z9wK5nVvNBwMVBFubZce3BXAYAJx2YEon 
 
-TRTL: TRTLuwoBbZb9SyHyEjrbEiYpFQpgTviwj6bPAcd8jbnpBwY2bdqqjw7UDwPSja2afeg5urGXkVp5SAX8NCCLia6DhVoTmsWPg2U 
+TRTL: TRTLv1GJbzV1ginJEWCwAk2mnuPykhSwcF1694Z6TsDy8ohHPFSNbPggHMdq5GpM74NW8DDG7n6NN3Zb9TZ4nw4CjiQvfY6NkhX
