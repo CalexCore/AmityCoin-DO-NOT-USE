@@ -1,5 +1,6 @@
-﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2018, The TurtleCoin Developers
+// Copyright (c) 2018, The Calex Developers
 //
 // Please see the included LICENSE file for more information.
 
@@ -113,8 +114,6 @@ public:
   virtual void getBlocks(const std::vector<uint32_t>& blockHeights, std::vector<std::vector<BlockDetails>>& blocks, const Callback& callback) = 0;
   virtual void getBlocks(const std::vector<Crypto::Hash>& blockHashes, std::vector<BlockDetails>& blocks, const Callback& callback) = 0;
   virtual void getBlock(const uint32_t blockHeight, BlockDetails &block, const Callback& callback) = 0;
-  virtual void getMiningParameters(const std::string& miningAddress, BlockTemplate& blockTemplate, uint64_t& difficulty, const Callback& callback) = 0;
-  virtual void submitBlock(const BlockTemplate& block, const Callback& callback) = 0;
   virtual void getTransactions(const std::vector<Crypto::Hash>& transactionHashes, std::vector<TransactionDetails>& transactions, const Callback& callback) = 0;
   virtual void isSynchronized(bool& syncStatus, const Callback& callback) = 0;
   virtual std::string feeAddress() = 0;
