@@ -1,9 +1,12 @@
-﻿// Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2014-2018, The Monero Project
 // Copyright (c) 2014-2018, The Aeon Project
 // Copyright (c) 2018, The TurtleCoin Developers
+// Copyright (c) 2018, The Calex Developers
+// Copyright (c) 2018, The Nerva Developers
 //
 // Please see the included LICENSE file for more information.
+
 
 #include <assert.h>
 #include <stddef.h>
@@ -15,6 +18,7 @@
 #include "hash-ops.h"
 #include "oaes_lib.h"
 #include "variant2_int_sqrt.h"
+#include "crypto/cnx/operations/cnx-operations.h"
 
 // Standard Crypto Definitions
 #define AES_BLOCK_SIZE         16
@@ -65,9 +69,11 @@ extern int aesb_pseudo_round(const uint8_t *in, uint8_t *out, const uint8_t *exp
   } \
   const uint64_t tweak1_2 = (variant == 1) ? (state.hs.w[24] ^ (*((const uint64_t*)NONCE_POINTER))) : 0
 
-#define VARIANT2_INIT64() \
+#define VARIANT2_INIT64()       \
   uint64_t division_result = 0; \
-  uint64_t sqrt_result = 0; \
+  (void)division_result;        \
+  uint64_t sqrt_result = 0;     \
+  (void)sqrt_result;            \
   do if (variant == 2) \
   { \
     U64(b)[2] = state.hs.w[8] ^ state.hs.w[10]; \
@@ -139,7 +145,7 @@ extern int aesb_pseudo_round(const uint8_t *in, uint8_t *out, const uint8_t *exp
   ((uint64_t*)(b))[0] ^= division_result ^ (sqrt_result << 32); \
   { \
     const uint64_t dividend = ((uint64_t*)(ptr))[1]; \
-    const uint32_t divisor = (((uint64_t*)(ptr))[0] + (uint32_t)(sqrt_result << 1)) | 0x80000001UL; \
+    const uint32_t divisor = (uint32_t)((((uint64_t*)(ptr))[0] + (uint32_t)(sqrt_result << 1)) | 0x80000001UL); \
     division_result = ((uint32_t)(dividend / divisor)) + \
                      (((uint64_t)(dividend % divisor)) << 32); \
   } \
@@ -279,6 +285,147 @@ extern int aesb_pseudo_round(const uint8_t *in, uint8_t *out, const uint8_t *exp
   VARIANT1_2(p + 1); \
   _b1 = _b; \
   _b = _c; \
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CN Adaptive
+
+#define ADPATIVE_VARIANT1_1(p) \
+  do if (variant > 0) \
+  { \
+    const uint8_t tmp = ((const uint8_t*)(p))[11]; \
+    static const uint32_t table = 0x75310; \
+    const uint8_t index = (((tmp >> 3) & 6) | (tmp & 1)) << 1; \
+    ((uint8_t*)(p))[11] = tmp ^ ((table >> index) & 0x30); \
+  } while(0)
+
+#define ADPATIVE_VARIANT1_2(p) \
+  do if (variant > 0) \
+  { \
+    xor64(p, tweak1_2); \
+  } while(0)
+
+#define ADPATIVE_VARIANT2_INIT64() \
+  do if (variant >= 2) \
+  { \
+    U64(b)[2] = state.hs.w[8] ^ state.hs.w[10]; \
+    U64(b)[3] = state.hs.w[9] ^ state.hs.w[11]; \
+  } while (0)
+
+#define ADPATIVE_VARIANT2_PORTABLE_INIT() \
+  do if (variant >= 2) \
+  { \
+    memcpy(b + AES_BLOCK_SIZE, state.hs.b + 64, AES_BLOCK_SIZE); \
+    xor64(b + AES_BLOCK_SIZE, state.hs.b + 80); \
+    xor64(b + AES_BLOCK_SIZE + 8, state.hs.b + 88); \
+  } while (0)
+
+#define ADPATIVE_VARIANT2_2() \
+  do if (variant >= 2) \
+  { \
+    *U64(hp_state + (j ^ 0x10)) ^= hi; \
+    *(U64(hp_state + (j ^ 0x10)) + 1) ^= lo; \
+    hi ^= *U64(hp_state + (j ^ 0x20)); \
+    lo ^= *(U64(hp_state + (j ^ 0x20)) + 1); \
+  } while (0)
+
+#define ADPATIVE_VARIANT2_2_PORTABLE() \
+  if (variant >= 2) { \
+    xor_blocks(long_state + (j ^ 0x10), d); \
+    xor_blocks(d, long_state + (j ^ 0x20)); \
+  }
+
+#define ADPATIVE_VARIANT2_SHUFFLE_ADD_SSE2(base_ptr, offset) \
+  do if (variant >= 2) \
+  { \
+    const __m128i chunk1 = _mm_load_si128((__m128i *)((base_ptr) + ((offset) ^ 0x10))); \
+    const __m128i chunk2 = _mm_load_si128((__m128i *)((base_ptr) + ((offset) ^ 0x20))); \
+    const __m128i chunk3 = _mm_load_si128((__m128i *)((base_ptr) + ((offset) ^ 0x30))); \
+    _mm_store_si128((__m128i *)((base_ptr) + ((offset) ^ 0x10)), _mm_add_epi64(chunk3, _b1)); \
+    _mm_store_si128((__m128i *)((base_ptr) + ((offset) ^ 0x20)), _mm_add_epi64(chunk1, _b)); \
+    _mm_store_si128((__m128i *)((base_ptr) + ((offset) ^ 0x30)), _mm_add_epi64(chunk2, _a)); \
+  } while (0)
+
+#define ADPATIVE_VARIANT2_PORTABLE_SHUFFLE_ADD(base_ptr, offset) \
+  do if (variant >= 2) \
+  { \
+    uint64_t* chunk1 = U64((base_ptr) + ((offset) ^ 0x10)); \
+    uint64_t* chunk2 = U64((base_ptr) + ((offset) ^ 0x20)); \
+    uint64_t* chunk3 = U64((base_ptr) + ((offset) ^ 0x30)); \
+    \
+    const uint64_t chunk1_old[2] = { chunk1[0], chunk1[1] }; \
+    \
+    uint64_t b1[2]; \
+    memcpy(b1, b + 16, 16); \
+    chunk1[0] = chunk3[0] + b1[0]; \
+    chunk1[1] = chunk3[1] + b1[1]; \
+    \
+    uint64_t a0[2]; \
+    memcpy(a0, a, 16); \
+    chunk3[0] = chunk2[0] + a0[0]; \
+    chunk3[1] = chunk2[1] + a0[1]; \
+    \
+    uint64_t b0[2]; \
+    memcpy(b0, b, 16); \
+    chunk2[0] = chunk1_old[0] + b0[0]; \
+    chunk2[1] = chunk1_old[1] + b0[1]; \
+  } while (0)
+
+#define ADPATIVE_VARIANT1_CHECK() \
+  do if (length < 43) \
+  { \
+    fprintf(stderr, "Cryptonight variants need at least 43 bytes of data"); \
+    _exit(1); \
+  } while(0)
+
+/*
+ * WARNING: Is this the nonce pointer?
+ */
+#define ADPATIVE_NONCE_POINTER (((const uint8_t*)data)+35)
+
+#define ADPATIVE_VARIANT1_PORTABLE_INIT() \
+  uint8_t tweak1_2[8]; \
+  do if (variant > 0) \
+  { \
+    VARIANT1_CHECK(); \
+    memcpy(&tweak1_2, &state.hs.b[192], sizeof(tweak1_2)); \
+    xor64(tweak1_2, ADPATIVE_NONCE_POINTER); \
+  } while(0)
+
+#define ADPATIVE_VARIANT1_INIT64() \
+  if (variant > 0) \
+  { \
+    ADPATIVE_VARIANT1_CHECK(); \
+  } \
+  const uint64_t tweak1_2 = variant > 0 ? (state.hs.w[24] ^ (*((const uint64_t*)ADPATIVE_NONCE_POINTER))) : 0
+
+#define ADPATIVE_state_index(x) (((*((uint64_t *)x) >> 4) & ((memory / AES_BLOCK_SIZE) - 1)) << 4)
+
+#define ADPATIVE_pre_aes() \
+  j = ADPATIVE_state_index(a); \
+  _c = _mm_load_si128(R128(&hp_state[j])); \
+  _a = _mm_load_si128(R128(a)); \
+
+#define ADPATIVE_post_aes(sh, v22) \
+  _mm_store_si128(R128(c), _c); \
+  _b = _mm_xor_si128(_b, _c); \
+  _mm_store_si128(R128(&hp_state[j]), _b); \
+  ADPATIVE_VARIANT1_1(&hp_state[j]); \
+  j = ADPATIVE_state_index(c); \
+  p = U64(&hp_state[j]); \
+  b[0] = p[0]; b[1] = p[1]; \
+  __mul(); \
+  if (v22) \
+      ADPATIVE_VARIANT2_2(); \
+  if (sh) \
+      ADPATIVE_VARIANT2_SHUFFLE_ADD_SSE2(hp_state, j); \
+  a[0] += hi; a[1] += lo; \
+  p = U64(&hp_state[j]); \
+  p[0] = a[0];  p[1] = a[1]; \
+  a[0] ^= b[0]; a[1] ^= b[1]; \
+  ADPATIVE_VARIANT1_2(p + 1); \
+  _b1 = _b; \
+  _b = _c; \
+
+// --------------------------------------------------------------------------------------------------------------------- CN Adaptive
 
 #if defined(_MSC_VER)
 #define THREADV __declspec(thread)
@@ -569,6 +716,8 @@ BOOL SetLockPagesPrivilege(HANDLE hProcess, BOOL bEnable)
 }
 #endif
 
+THREADV uint32_t allocated_memory = 0;
+
 /**
  * @brief allocate the 2MB scratch buffer using OS support for huge pages, if available
  *
@@ -583,6 +732,8 @@ BOOL SetLockPagesPrivilege(HANDLE hProcess, BOOL bEnable)
 
 void slow_hash_allocate_state(uint32_t PAGE_SIZE)
 {
+    allocated_memory = PAGE_SIZE;
+
     if(hp_state != NULL)
         return;
 
@@ -802,6 +953,247 @@ void cn_slow_hash(const void *data, size_t length, char *hash, int light, int va
   hash_permutation(&state.hs);
   extra_hashes[state.hs.b[0] & 3](&state, 200, hash);
   slow_hash_free_state(PAGE_SIZE);
+}
+
+void cn_adaptive_apply_operator(uint8_t* inPlaceOperand, const int8_t* appliedOperand, uint8_t operationsIndex, uint8_t* operation, uint32_t size)
+{
+  void (*const fn)(uint8_t* inPlaceOperand, const int8_t* appliedOperand, uint8_t op) = CN_ADAPTIVE_OP_LOOKUP[operationsIndex];
+  for(uint32_t i = 0; i < size; ++i)
+    fn(inPlaceOperand + i, appliedOperand + i, operation[i]);
+}
+
+void cn_adaptive_randomize_scratchpad(CN_ADAPTIVE_RandomValues *r, char* salt, uint8_t* scratchpad, uint32_t memory, uint32_t variant)
+{
+  if (variant < 1 || variant > 1)
+      return;
+
+  for(uint32_t i = 0; i < memory / r->size; ++i) {
+    for(uint32_t j = 0; j < r->size; ++j) {
+        const uint32_t rI = i % r->size;
+        scratchpad[i] = scratchpad[i * r->size + j] ^ ((const uint8_t*)salt)[rI];
+    }
+  }
+
+  for(uint32_t i = 0; i < memory / r->size; ++i) {
+    void (*const fn)(uint8_t* inPlaceOperand, const int8_t* appliedOperand, uint8_t op) = CN_ADAPTIVE_OP_LOOKUP[r->operationsIndex];
+    for(uint32_t j = 0; j < r->size; ++j) {
+      fn(scratchpad + (r->indices[j] % memory), r->values, r->operators[j]);
+    }
+    r->operationsIndex = scratchpad[i];
+  }
+}
+
+void cn_adaptive_slow_hash(const void *data, size_t length, char *hash, int variant, int prehashed,
+                             size_t rand_iters, CN_ADAPTIVE_RandomValues *r, char* sp_bytes, uint8_t init_size_blk,
+                             uint16_t xx, uint16_t yy, uint16_t zz, uint16_t ww, uint32_t memory)
+{
+    uint32_t init_size_byte = (init_size_blk * AES_BLOCK_SIZE);
+    RDATA_ALIGN16 uint8_t expandedKey[240];  /* These buffers are aligned to use later with SSE functions */
+
+    uint8_t* text = (uint8_t*)malloc(init_size_byte);
+    RDATA_ALIGN16 uint64_t a[2];
+    RDATA_ALIGN16 uint64_t b[4];
+    RDATA_ALIGN16 uint64_t c[2];
+    union cn_slow_hash_state state;
+    __m128i _a, _b, _b1, _c;
+    uint64_t hi, lo;
+
+    size_t i, j;
+    uint64_t *p = NULL;
+    oaes_ctx *aes_ctx = NULL;
+    int useAes = !force_software_aes() && check_aes_hw();
+
+    static void (*const extra_hashes[4])(const void *, size_t, char *) =
+    {
+        hash_extra_blake, hash_extra_groestl, hash_extra_jh, hash_extra_skein
+    };
+
+    // quick hack to make sure the pad is the right size when transitioning to the new fork
+    if (memory != allocated_memory && hp_state != NULL)
+        slow_hash_free_state(allocated_memory);
+
+    if(hp_state == NULL)
+        slow_hash_allocate_state(memory);
+
+    /* CryptoNight Step 1:  Use Keccak1600 to initialize the 'state' (and 'text') buffers from the data. */
+    if (prehashed) {
+        memcpy(&state.hs, data, length);
+    } else {
+        hash_process(&state.hs, data, length);
+    }
+    memcpy(text, state.init, init_size_byte);
+
+    VARIANT1_INIT64();
+    VARIANT2_INIT64();
+
+    /* CryptoNight Step 2:  Iteratively encrypt the results from Keccak to fill
+     * the 2MB large random access buffer.
+     */
+
+    if(useAes)
+    {
+        aes_expand_key(state.hs.b, expandedKey);
+        for(i = 0; i < memory / init_size_byte; i++)
+        {
+            aes_pseudo_round(text, text, expandedKey, init_size_blk);
+            memcpy(&hp_state[i * init_size_byte], text, init_size_byte);
+        }
+    }
+    else
+    {
+        aes_ctx = (oaes_ctx *) oaes_alloc();
+        oaes_key_import_data(aes_ctx, state.hs.b, AES_KEY_SIZE);
+        for(i = 0; i < memory / init_size_byte; i++)
+        {
+            for(j = 0; j < init_size_blk; j++)
+                aesb_pseudo_round(&text[AES_BLOCK_SIZE * j], &text[AES_BLOCK_SIZE * j], aes_ctx->key->exp_data);
+
+            memcpy(&hp_state[i * init_size_byte], text, init_size_byte);
+        }
+    }
+
+    cn_adaptive_randomize_scratchpad(r, sp_bytes, hp_state, memory, 1);
+
+    U64(a)[0] = U64(&state.k[0])[0] ^ U64(&state.k[32])[0];
+    U64(a)[1] = U64(&state.k[0])[1] ^ U64(&state.k[32])[1];
+    U64(b)[0] = U64(&state.k[16])[0] ^ U64(&state.k[48])[0];
+    U64(b)[1] = U64(&state.k[16])[1] ^ U64(&state.k[48])[1];
+
+    /* CryptoNight Step 3:  Bounce randomly 1,048,576 times (1<<20) through the mixing buffer,
+     * using 524,288 iterations of the following mixing function.  Each execution
+     * performs two reads and writes from the mixing buffer.
+     */
+
+    _b = _mm_load_si128(R128(b));
+    _b1 = _mm_load_si128(R128(b) + 1);
+
+    uint16_t k = 1, l = 1, m = 1;
+    uint16_t r2[6] = { xx ^ yy, xx ^ zz, xx ^ ww, yy ^ zz, yy ^ ww, zz ^ ww };
+
+    if(useAes)
+    {
+        for(k = 1; k < xx; k++)
+        {
+            r2[0] ^= r2[1];
+            r2[1] ^= r2[2];
+            r2[2] ^= r2[3];
+            r2[3] ^= r2[4];
+            r2[4] ^= r2[5];
+            r2[5] ^= r2[0];
+
+            ADPATIVE_pre_aes();
+            _c = _mm_aesenc_si128(_c, _a);
+            ADPATIVE_post_aes(r2[0] % 2, r2[1] % 2);
+            r2[0] ^= (r2[1] ^ r2[3]);
+            r2[1] ^= (r2[0] ^ r2[2]);
+
+            for(l = 1; l < yy; l++)
+            {
+                ADPATIVE_pre_aes();
+                _c = _mm_aesenc_si128(_c, _a);
+                ADPATIVE_post_aes(r2[2] % 2, r2[3] % 2);
+                r2[2] ^= (r2[3] ^ r2[5]);
+                r2[3] ^= (r2[2] ^ r2[4]);
+
+                for(m = 1; m < zz; m++)
+                {
+                    ADPATIVE_pre_aes();
+                    _c = _mm_aesenc_si128(_c, _a);
+                    ADPATIVE_post_aes(r2[4] % 2, r2[5] % 2);
+                    r2[4] ^= (r2[5] ^ r2[1]);
+                    r2[5] ^= (r2[4] ^ r2[0]);
+                }
+            }
+        }
+
+        for(i = 0; i < rand_iters; i++)
+        {
+            ADPATIVE_pre_aes();
+            _c = _mm_aesenc_si128(_c, _a);
+            ADPATIVE_post_aes(0, 0);
+        }
+    }
+    else
+    {
+        for(k = 1; k < xx; k++)
+        {
+            r2[0] ^= r2[1];
+            r2[1] ^= r2[2];
+            r2[2] ^= r2[3];
+            r2[3] ^= r2[4];
+            r2[4] ^= r2[5];
+            r2[5] ^= r2[0];
+
+            ADPATIVE_pre_aes();
+            aesb_single_round((uint8_t *) &_c, (uint8_t *) &_c, (uint8_t *) &_a);
+            ADPATIVE_post_aes(r2[0] % 2, r2[1] % 2);
+            r2[0] ^= (r2[1] ^ r2[3]);
+            r2[1] ^= (r2[0] ^ r2[2]);
+
+            for(l = 1; l < yy; l++)
+            {
+                ADPATIVE_pre_aes();
+                aesb_single_round((uint8_t *) &_c, (uint8_t *) &_c, (uint8_t *) &_a);
+                ADPATIVE_post_aes(r2[2] % 2, r2[3] % 2);
+                r2[2] ^= (r2[3] ^ r2[5]);
+                r2[3] ^= (r2[2] ^ r2[4]);
+
+                for(m = 1; m < zz; m++)
+                {
+                    ADPATIVE_pre_aes();
+                    aesb_single_round((uint8_t *) &_c, (uint8_t *) &_c, (uint8_t *) &_a);
+                    ADPATIVE_post_aes(r2[4] % 2, r2[5] % 2);
+                    r2[4] ^= (r2[5] ^ r2[1]);
+                    r2[5] ^= (r2[4] ^ r2[0]);
+                }
+            }
+        }
+
+        for(i = 0; i < rand_iters; i++)
+        {
+            ADPATIVE_pre_aes();
+            aesb_single_round((uint8_t *) &_c, (uint8_t *) &_c, (uint8_t *) &_a);
+            ADPATIVE_post_aes(0, 0);
+        }
+    }
+
+    /* CryptoNight Step 4:  Sequentially pass through the mixing buffer and use 10 rounds
+     * of AES encryption to mix the random data back into the 'text' buffer.  'text'
+     * was originally created with the output of Keccak1600. */
+
+    memcpy(text, state.init, init_size_byte);
+    if(useAes)
+    {
+        aes_expand_key(&state.hs.b[32], expandedKey);
+        for(i = 0; i < memory / init_size_byte; i++)
+            aes_pseudo_round_xor(text, text, expandedKey, &hp_state[i * init_size_byte], init_size_blk);
+    }
+    else
+    {
+        oaes_key_import_data(aes_ctx, &state.hs.b[32], AES_KEY_SIZE);
+        for(i = 0; i < memory / init_size_byte; i++)
+        {
+            for(j = 0; j < init_size_blk; j++)
+            {
+                xor_blocks(&text[j * AES_BLOCK_SIZE], &hp_state[i * init_size_byte + j * AES_BLOCK_SIZE]);
+                aesb_pseudo_round(&text[AES_BLOCK_SIZE * j], &text[AES_BLOCK_SIZE * j], aes_ctx->key->exp_data);
+            }
+        }
+        oaes_free((OAES_CTX **) &aes_ctx);
+    }
+
+    /* CryptoNight Step 5:  Apply Keccak to the state again, and then
+     * use the resulting data to select which of four finalizer
+     * hash functions to apply to the data (Blake, Groestl, JH, or Skein).
+     * Use this hash to squeeze the state array down
+     * to the final 256 bit hash output.
+     */
+
+    memcpy(state.init, text, init_size_byte);
+    hash_permutation(&state.hs);
+    extra_hashes[state.hs.b[0] & 3](&state, 200, hash);
+
+    free(text);
 }
 
 #elif !defined NO_AES && (defined(__arm__) || defined(__aarch64__))

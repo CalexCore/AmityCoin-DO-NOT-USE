@@ -1,19 +1,9 @@
 // Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2018, The TurtleCoin Developers
+// Copyright (c) 2018, The Calex Developers
+// Copyright (c) 2018, The Nerva Developers
 //
-// This file is part of Bytecoin.
-//
-// Bytecoin is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Bytecoin is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public License
-// along with Bytecoin.  If not, see <http://www.gnu.org/licenses/>.
+// Please see the included LICENSE file for more information.
 
 #pragma once
 
@@ -57,6 +47,26 @@ void hash_process(union hash_state *state, const uint8_t *buf, size_t count);
 #endif
 
 enum {
+  CN_ADAPTIVE_NOP = 0,
+  CN_ADAPTIVE_ADD,
+  CN_ADAPTIVE_SUB,
+  CN_ADAPTIVE_XOR,
+  CN_ADAPTIVE_OR,
+  CN_ADAPTIVE_AND,
+  CN_ADAPTIVE_COMP,
+  CN_ADAPTIVE_EQ
+};
+
+typedef struct CN_ADAPTIVE_Randomizer
+{
+  uint8_t* operators;
+  uint32_t* indices;
+  int8_t* values;
+  uint32_t size;
+  uint8_t operationsIndex;
+} CN_ADAPTIVE_RandomValues;
+
+enum {
   HASH_SIZE = 32,
   HASH_DATA_AREA = 136,
   SLOW_HASH_CONTEXT_SIZE = 2097552,
@@ -65,6 +75,12 @@ enum {
 
 void cn_fast_hash(const void *data, size_t length, char *hash);
 void cn_slow_hash(const void *data, size_t length, char *hash, int light, int variant, int prehashed, uint32_t page_size, uint32_t scratchpad, uint32_t iterations);
+
+void cn_adaptive_apply_operator(uint8_t* inPlaceOperand, const int8_t* appliedOperand, uint8_t operationsIndex, uint8_t* operation, uint32_t size);
+void cn_adaptive_randomize_scratchpad(CN_ADAPTIVE_RandomValues *r, char *salt, uint8_t* scratchpad, uint32_t memory, uint32_t variant);
+void cn_adaptive_slow_hash(const void *data, size_t length, char *hash, int variant, int prehashed,
+                             size_t rand_iters, CN_ADAPTIVE_RandomValues *r, char *sp_bytes, uint8_t init_size_blk,
+                             uint16_t xx, uint16_t yy, uint16_t zz, uint16_t ww, uint32_t memory);
 
 void hash_extra_blake(const void *data, size_t length, char *hash);
 void hash_extra_groestl(const void *data, size_t length, char *hash);

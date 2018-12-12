@@ -20,6 +20,7 @@
 #include <System/EventLock.h>
 #include <System/Timer.h>
 #include <CryptoNoteCore/TransactionApi.h>
+#include <Logging/ILogger.h>
 
 #include "Common/StringTools.h"
 #include "Common/FormatTools.h"
@@ -70,7 +71,8 @@ NodeRpcProxy::NodeRpcProxy(const std::string& nodeHost, unsigned short nodePort,
 NodeRpcProxy::~NodeRpcProxy() {
   try {
     shutdown();
-  } catch (std::exception&) {
+  } catch (std::exception& ex) {
+    m_logger(FATAL) << "Node could not shutdown properly: " << ex.what();
   }
 }
 
@@ -144,9 +146,22 @@ void NodeRpcProxy::workerThread(const INode::Callback& initialized_callback) {
       initialized_callback(std::error_code());
 
       contextGroup.spawn([this]() {
+        const uint8_t MaxRetries = 5;
         Timer pullTimer(*m_dispatcher);
+        uint8_t continiousExceptionCounter = 0;
         while (!m_stop) {
-          updateNodeStatus();
+          try {
+              updateNodeStatus();
+              continiousExceptionCounter = 0;
+          } catch(std::exception& ex) {
+            m_logger(ERROR) << "Failed to updated node status (try " << std::to_string(continiousExceptionCounter + 1)
+                            << " of " << std::to_string(MaxRetries) << "): " << ex.what();
+            if(++continiousExceptionCounter > MaxRetries)
+              throw ex;  // The endpoint failed MaxRetries times, we should break here.
+            else
+              pullTimer.sleep(std::chrono::seconds{1}); // We encountered an error, we should give the endpoint some time to
+                                                        // recover before retrying.
+          }
           if (!m_stop) {
             pullTimer.sleep(std::chrono::milliseconds(m_pullInterval));
           }
@@ -157,8 +172,8 @@ void NodeRpcProxy::workerThread(const INode::Callback& initialized_callback) {
       // Make sure all remote spawns are executed
       m_dispatcher->yield();
     }
-  } catch (std::exception&) {
-    // TODO
+  } catch (std::exception& ex) {
+    m_logger(FATAL) << "Error in node synchronization: '" << ex.what() << "\n', going to shutdown...";
   }
 
   {
@@ -177,7 +192,7 @@ void NodeRpcProxy::workerThread(const INode::Callback& initialized_callback) {
 
 void NodeRpcProxy::updateNodeStatus() {
   bool updateBlockchain = true;
-  while (updateBlockchain) {
+  while (updateBlockchain && !m_stop) {
     updateBlockchainStatus();
     updateBlockchain = !updatePoolStatus();
   }
