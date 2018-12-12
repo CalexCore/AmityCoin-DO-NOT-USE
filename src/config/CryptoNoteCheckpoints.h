@@ -19,6 +19,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cinttypes>
 #include <initializer_list>
 
 namespace CryptoNote {

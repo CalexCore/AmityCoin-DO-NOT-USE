@@ -3,10 +3,6 @@
 
 ###### We want a decentralized future, we want a decentralized currency, we want a decentralized life.  We want to be different.  We are Amity
 
-#### About AmityCoin
-
-We at Calex believe in project AmityCoin; so much so that we launch with no Premine. AmityCoin aims to change the status quo; to be accepted anywhere good and services are rendered. We believe with this ethos the value of AmityCoin will speak volumes about itself.  Please, join us in shaping the future! We are a unique, CryptoNote privacy coin that aims for fair mining and distribution for decentralisation. We use a unique algorithm called CryptoNight Soft Shell created by our good friends over at TurtleCoin. Soft Shell is a novel adaptation to the Cryptonote hashing algorithm. By dynamically adjusting the scratchpad and memory utilization, we present a CryptoNote coin more ASIC resistant than those which preceed it. At the present time there are is no compatible pool software or GPU-enabled miners, ensuring a more natural growth and network decentralization. During our testing phase, even a moderately powered computing device stood a 'fair' chance of solving a block enabling a truly fair mining experience.
-
 ### Coin Information
 
 | Coin | Info |
@@ -14,7 +10,7 @@ We at Calex believe in project AmityCoin; so much so that we launch with no Prem
 | Name | AmityCoin |
 | Ticker | AMIT |
 | Forked | TurtleCoin - TRTL |
-| Algorithm | CN Soft Shell v3 |
+| Algorithm | CN Soft Shell v1-ACEdit |
 | Difficulty | LWMA-2 |
 | Block Time | 120 seconds |
 | Block Reward | ~186 |
@@ -26,25 +22,28 @@ We at Calex believe in project AmityCoin; so much so that we launch with no Prem
 | Premine | **0** |
 | Add' Prefix | amit… |
 
-#### Information
-
-https://medium.com/@Mitoshi/amitycoin-a926d4db52cc - Information on what we've done so far can be found here. Its a 5 minute read article.
-
-#### Screenshots
-
-<h1 align="center"><img title="Daemon" src="https://github.com/Neo-Amity/docs/blob/master/images/daemon.png" ><img/></h1>
-
-<h1 align="center"><img title="Zedwallet" src="https://github.com/Neo-Amity/docs/blob/master/images/wallet.png" ><img/></h1>
 
 ***
 
 #### Quick Links
 
-Discord - https://discord.gg/k2jYvBT
+Website — https://www.getamitycoin.org/
 
-Twitter - https://twitter.com/AmityCore
+Block Explorer — https://explorer.getamitycoin.org/
 
-Website - https://www.getamitycoin.org
+Discord — https://discord.gg/k2jYvBT
+
+Twitter — https://www.twitter.com/AmityCore
+
+Trello Project Board — https://trello.com/b/VzlfzgN7/amitycoin
+
+GitHub — https://github.com/CalexCore
+
+Discord OTC — https://discord.gg/RHkdzAp
+
+GitLab - https://gitlab.com/Mitoshi/AmityCoin
+
+Medium - https://medium.com/@Mitoshi/
 
 #### Donations
 

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2014-2018, The Monero Project
 // Copyright (c) 2018, The TurtleCoin Developers
 // Copyright (c) 2018, The Calex Developers
@@ -261,7 +261,7 @@ BlockMiningParameters MinerManager::requestMiningParameters(System::Dispatcher& 
       request.wallet_address = m_config.donateAddress;
     } else {
       request.wallet_address = miningAddress;
-      if (iteration == 0 && m_blockCounter != 0) {
+      if (iteration == 0 && m_blockCounter != 0 && m_config.donateLevel != 0) {
         m_logger(Logging::INFO) << "Mining donation phase complete. Thank you for supporting the developers!";
         request.wallet_address = miningAddress;
       }

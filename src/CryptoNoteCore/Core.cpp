@@ -93,10 +93,20 @@ inline IBlockchainCache* findIndexInChain(IBlockchainCache* blockSegment, uint32
   return nullptr;
 }
 
-size_t getMaximumTransactionAllowedSize(size_t blockSizeMedian, const Currency& currency) {
-  assert(blockSizeMedian * 2 > currency.minerTxBlobReservedSize());
+size_t getMaximumTransactionAllowedSize(size_t blockSizeMedian, const Currency& currency, uint32_t height) {
+  size_t medianBasedMaxSize = blockSizeMedian * 2;
+  assert(medianBasedMaxSize > currency.minerTxBlobReservedSize());
 
-  return blockSizeMedian * 2 - currency.minerTxBlobReservedSize();
+  uint32_t maxPopulatedHeight = height + 5;
+  const size_t heightBasedMaxSize = currency.maxBlockCumulativeSize(maxPopulatedHeight)
+      - currency.minerTxBlobReservedSize();
+
+  if(medianBasedMaxSize < currency.minerTxBlobReservedSize())
+    medianBasedMaxSize = heightBasedMaxSize;
+  else
+    medianBasedMaxSize = medianBasedMaxSize - currency.minerTxBlobReservedSize();
+
+  return std::min(medianBasedMaxSize, heightBasedMaxSize);
 }
 
 BlockTemplate extractBlockTemplate(const RawBlock& block) {
@@ -193,6 +203,7 @@ Core::Core(const Currency& currency, Logging::ILogger& logger, Checkpoints&& che
   upgradeManager->addMajorBlockVersion(BLOCK_MAJOR_VERSION_4, currency.upgradeHeight(BLOCK_MAJOR_VERSION_4));
   upgradeManager->addMajorBlockVersion(BLOCK_MAJOR_VERSION_5, currency.upgradeHeight(BLOCK_MAJOR_VERSION_5));
   upgradeManager->addMajorBlockVersion(BLOCK_MAJOR_VERSION_6, currency.upgradeHeight(BLOCK_MAJOR_VERSION_6));
+  upgradeManager->addMajorBlockVersion(BLOCK_MAJOR_VERSION_7, currency.upgradeHeight(BLOCK_MAJOR_VERSION_7));
 
   transactionPool = std::unique_ptr<ITransactionPoolCleanWrapper>(new TransactionPoolCleanWrapper(
     std::unique_ptr<ITransactionPool>(new TransactionPool(logger)),
@@ -833,7 +844,7 @@ void Core::actualizePoolTransactionsLite(const TransactionValidatorState& valida
 
     auto txState = extractSpentOutputs(tx);
 
-    if (hasIntersections(validatorState, txState) || tx.getTransactionBinaryArray().size() > getMaximumTransactionAllowedSize(blockMedianSize, currency)) {
+    if (hasIntersections(validatorState, txState) || tx.getTransactionBinaryArray().size() > getMaximumTransactionAllowedSize(blockMedianSize, currency, getTopBlockIndex())) {
       pool.removeTransaction(hash);
       notifyObservers(makeDelTransactionMessage({ hash }, Messages::DeleteTransaction::Reason::NotActual));
     }
@@ -1035,7 +1046,7 @@ bool Core::isTransactionValidForPool(const CachedTransaction& cachedTransaction,
     return false;
   }
 
-  auto maxTransactionSize = getMaximumTransactionAllowedSize(blockMedianSize, currency);
+  auto maxTransactionSize = getMaximumTransactionAllowedSize(blockMedianSize, currency, getTopBlockIndex());
   if (cachedTransaction.getTransactionBinaryArray().size() > maxTransactionSize) {
     logger(Logging::WARNING) << "Transaction " << cachedTransaction.getTransactionHash()
       << " is not valid. Reason: transaction is too big (" << cachedTransaction.getTransactionBinaryArray().size()
@@ -1993,6 +2004,9 @@ void Core::fillBlockTemplate(BlockTemplate& block, size_t medianSize, size_t max
     if (currency.fusionTxMaxSize() < transactionsSize + transactionBlobSize) {
       continue;
     }
+    if (transactionsSize + transactionBlobSize > maxTotalSize) {
+      continue;
+    }
 
     if (!spentInputsChecker.haveSpentInputs(transaction.getTransaction())) {
       block.transactionHashes.emplace_back(transaction.getTransactionHash());
@@ -2002,7 +2016,7 @@ void Core::fillBlockTemplate(BlockTemplate& block, size_t medianSize, size_t max
   }
 
   for (const auto& cachedTransaction : poolTransactions) {
-    size_t blockSizeLimit = (cachedTransaction.getTransactionFee() == 0) ? medianSize : maxTotalSize;
+    size_t blockSizeLimit = maxTotalSize;
 
     if (blockSizeLimit < transactionsSize + cachedTransaction.getTransactionBinaryArray().size()) {
       continue;
