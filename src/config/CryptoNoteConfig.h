@@ -260,9 +260,10 @@ const static   boost::uuids::uuid CRYPTONOTE_NETWORK         =
 };
 
 const char* const SEED_NODES[] = {
-  "184.68.225.218:21018",	//Hooftly0
-  "66.42.114.12:21018",  //JerMVP
-  "51.75.88.54:21018"    //Hooftly1
+  "184.68.225.218:21018",	//CANADA
+  "51.75.92.73:21018",    //GERMANY0
+  "51.75.88.54:21018",    //GERMANY1
+  "66.42.84.250:21018"    //JerMe404
 //add more seeds here
 };
 } // Calex
