@@ -99,7 +99,7 @@ deploy:
     prerelease: true
     on:
       branch: 
-        dev
+        rc
 
 on_success:
   - ps: ./scripts/ci/SendDiscordNotification.ps1 success $env:DiscordNotificationWebHook
