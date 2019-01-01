@@ -155,7 +155,7 @@ const uint32_t UPGRADE_HEIGHT_V3                             = 2;
 const uint32_t UPGRADE_HEIGHT_V4                             = 3; // Upgrade height for CN-Lite Variant 1 switch.
 const uint32_t UPGRADE_HEIGHT_V5                             = 4; // Upgrade height for CN-Soft Shell Variant 1 switch.
 const uint32_t UPGRADE_HEIGHT_V6                             = 30000; // Upgrade height for CN-Soft Shell Amity Variant switch.
-const uint32_t UPGRADE_HEIGHT_V7                             = 40000; // Upgrade height for CN-X Variant switch.
+const uint32_t UPGRADE_HEIGHT_V7                             = 4000000; // Upgrade height for CN-X Variant switch.
 const uint32_t UPGRADE_HEIGHT_CURRENT                        = UPGRADE_HEIGHT_V7;
 const unsigned UPGRADE_VOTING_THRESHOLD                      = 90;               // percent
 const uint32_t UPGRADE_VOTING_WINDOW                         = EXPECTED_NUMBER_OF_BLOCKS_PER_DAY;  // blocks
@@ -174,7 +174,7 @@ const uint64_t FORK_HEIGHTS[] =
     2000,    // 5
     3000,    // 6
     30000,   // 7
-    40000    // 8
+    4000000    // 8
 };
 
 /* MAKE SURE TO UPDATE THIS VALUE WITH EVERY MAJOR RELEASE BEFORE A FORK */
@@ -256,13 +256,13 @@ const char     LICENSE_URL[]                                 = "https://github.c
 const char     LATEST_VERSION_URL[]                          = "https://github.com/CalexCore/AmityCoin";
 const static   boost::uuids::uuid CRYPTONOTE_NETWORK         =
 {
-    {  0x28, 0x63, 0x29, 0x43, 0x61, 0x6c, 0x65, 0x78, 0x44, 0x65, 0x76, 0x73, 0x32, 0x30, 0x31, 0x38  }
+    {  0x28, 0x63, 0x29, 0x43, 0x61, 0x6c, 0x65, 0x78, 0x73, 0x32, 0x30, 0x31, 0x38, 0x44, 0x65, 0x76  }
 };
 
 const char* const SEED_NODES[] = {
-  "184.68.225.218:21018",	//Hooftly0
-  "66.42.114.12:21018",  //JerMVP
-  "51.75.88.54:21018"    //Hooftly1
+  "51.75.168.212:21018",
+  "54.39.178.95:21018"	//CANADA
+ 
 //add more seeds here
 };
 } // Calex
