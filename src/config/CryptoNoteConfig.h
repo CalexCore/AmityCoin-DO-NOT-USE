@@ -161,7 +161,7 @@ const uint32_t UPGRADE_HEIGHT_V3                             = 2;
 const uint32_t UPGRADE_HEIGHT_V4                             = 3; // Upgrade height for CN-Lite Variant 1 switch.
 const uint32_t UPGRADE_HEIGHT_V5                             = 4; // Upgrade height for CN-Soft Shell Variant 1 switch.
 const uint32_t UPGRADE_HEIGHT_V6                             = 30000; // Upgrade height for CN-Soft Shell Amity Variant switch.
-const uint32_t UPGRADE_HEIGHT_V7                             = 70000; // 
+const uint32_t UPGRADE_HEIGHT_V7                             = 90000; // 
 const uint32_t UPGRADE_HEIGHT_CURRENT                        = UPGRADE_HEIGHT_V7;
 
 const unsigned UPGRADE_VOTING_THRESHOLD                      = 90;               // percent
@@ -181,7 +181,7 @@ const uint64_t FORK_HEIGHTS[] =
     2000,    // 5
     3000,    // 6
     30000,   // 7
-	90000    // 8
+    90000    // 8
 };
 
 /* MAKE SURE TO UPDATE THIS VALUE WITH EVERY MAJOR RELEASE BEFORE A FORK */
