@@ -1,5 +1,4 @@
 // Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
-// Copyright (c) 2018, The Calex Developers
 //
 // This file is part of Bytecoin.
 //
@@ -42,7 +41,7 @@ namespace CryptoNote {
   template <typename BC>
   class BasicUpgradeDetector : public UpgradeDetectorBase {
   public:
-    BasicUpgradeDetector(const Currency& currency, BC& blockchain, uint8_t targetVersion, Logging::ILogger& log) :
+    BasicUpgradeDetector(const Currency& currency, BC& blockchain, uint8_t targetVersion, std::shared_ptr<Logging::ILogger> log) :
       m_currency(currency),
       m_blockchain(blockchain),
       m_targetVersion(targetVersion),

@@ -1,7 +1,7 @@
-﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2014-2018, The Monero Project
 // Copyright (c) 2018, The TurtleCoin Developers
-// 
+//
 // Please see the included LICENSE file for more information.
 
 #include <CryptoNoteCore/DatabaseBlockchainCache.h>
@@ -425,7 +425,7 @@ struct DatabaseBlockchainCache::ExtendedPushedBlockInfo {
 };
 
 
-DatabaseBlockchainCache::DatabaseBlockchainCache(const Currency& curr, IDataBase& dataBase, IBlockchainCacheFactory& blockchainCacheFactory, Logging::ILogger& _logger)
+DatabaseBlockchainCache::DatabaseBlockchainCache(const Currency& curr, IDataBase& dataBase, IBlockchainCacheFactory& blockchainCacheFactory, std::shared_ptr<Logging::ILogger> _logger)
     : currency(curr), database(dataBase), blockchainCacheFactory(blockchainCacheFactory), logger(_logger, "DatabaseBlockchainCache") {
   DatabaseVersionReadBatch readBatch;
   auto ec = database.read(readBatch);
@@ -452,7 +452,7 @@ DatabaseBlockchainCache::DatabaseBlockchainCache(const Currency& curr, IDataBase
   }
 }
 
-bool DatabaseBlockchainCache::checkDBSchemeVersion(IDataBase& database, Logging::ILogger& _logger) {
+bool DatabaseBlockchainCache::checkDBSchemeVersion(IDataBase& database, std::shared_ptr<Logging::ILogger> _logger) {
   Logging::LoggerRef logger(_logger, "DatabaseBlockchainCache");
 
   DatabaseVersionReadBatch readBatch;
@@ -1347,6 +1347,28 @@ size_t DatabaseBlockchainCache::getKeyOutputsCountForAmount(uint64_t amount, uin
   return result;
 }
 
+std::tuple<bool, uint64_t> DatabaseBlockchainCache::getBlockHeightForTimestamp(uint64_t timestamp) const
+{
+    const auto midnight = roundToMidnight(timestamp);
+
+    const auto [blockHeight, success] = requestClosestBlockIndexByTimestamp(midnight, database);
+
+    /* Failed to read from DB */
+    if (!success)
+    {
+        logger(Logging::DEBUGGING) << "getTimestampLowerBoundBlockIndex failed: failed to read database";
+        throw std::runtime_error("Couldn't get closest to timestamp block index");
+    }
+
+    /* Failed to find the block height with this timestamp */
+    if (!blockHeight)
+    {
+        return {false, 0};
+    }
+
+    return {true, *blockHeight};
+}
+
 uint32_t DatabaseBlockchainCache::getTimestampLowerBoundBlockIndex(uint64_t timestamp) const {
   auto midnight = roundToMidnight(timestamp);
 
@@ -1612,6 +1634,44 @@ std::vector<Crypto::Hash> DatabaseBlockchainCache::getBlockHashesByTimestamps(ui
   return blockHashes;
 }
 
+std::vector<RawBlock> DatabaseBlockchainCache::getBlocksByHeight(
+    const uint64_t startHeight, uint64_t endHeight) const
+{
+    auto blockBatch = BlockchainReadBatch().requestRawBlocks(startHeight, endHeight);
+
+    /* Get the info from the DB */
+    auto rawBlocks = readDatabase(blockBatch).getRawBlocks();
+
+    std::vector<RawBlock> orderedBlocks;
+
+    /* Order, and convert from map, to vector */
+    for (uint64_t height = startHeight; height < startHeight + rawBlocks.size(); height++)
+    {
+        orderedBlocks.push_back(rawBlocks.at(height));
+    }
+
+    return orderedBlocks;
+}
+
+std::unordered_map<Crypto::Hash, std::vector<uint64_t>> DatabaseBlockchainCache::getGlobalIndexes(
+    const std::vector<Crypto::Hash> transactionHashes) const
+{
+    auto txBatch = BlockchainReadBatch().requestCachedTransactions(transactionHashes);
+
+    database.read(txBatch);
+
+    auto txs = txBatch.extractResult().getCachedTransactions();
+
+    std::unordered_map<Crypto::Hash, std::vector<uint64_t>> indexes;
+
+    for (const auto [txHash, transaction] : txs)
+    {
+        indexes[txHash].assign(transaction.globalIndexes.begin(), transaction.globalIndexes.end());
+    }
+
+    return indexes;
+}
+
 DatabaseBlockchainCache::ExtendedPushedBlockInfo DatabaseBlockchainCache::getExtendedPushedBlockInfo(uint32_t blockIndex) const {
   assert(blockIndex <= getTopBlockIndex());
 
@@ -1677,7 +1737,7 @@ void DatabaseBlockchainCache::addGenesisBlock(CachedBlock&& genesisBlock) {
     minerReward += output.amount;
   }
 
-  // assert(minerReward > 0);
+  assert(minerReward > 0);
 
   uint64_t baseTransactionSize = getObjectBinarySize(genesisBlock.getBlock().baseTransaction);
   assert(baseTransactionSize < std::numeric_limits<uint32_t>::max());

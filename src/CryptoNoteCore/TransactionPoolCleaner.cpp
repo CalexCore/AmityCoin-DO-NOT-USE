@@ -17,7 +17,7 @@ namespace CryptoNote {
 TransactionPoolCleanWrapper::TransactionPoolCleanWrapper(
   std::unique_ptr<ITransactionPool>&& transactionPool,
   std::unique_ptr<ITimeProvider>&& timeProvider,
-  Logging::ILogger& logger,
+  std::shared_ptr<Logging::ILogger> logger,
   uint64_t timeout)
   :
   transactionPool(std::move(transactionPool)),
@@ -90,10 +90,8 @@ std::vector<Crypto::Hash> TransactionPoolCleanWrapper::clean(const uint32_t heig
       std::vector<CachedTransaction> transactions;
       transactions.emplace_back(transaction);
 
-      bool success;
-      std::string error;
+      auto [success, error] = Mixins::validate(transactions, height);
 
-      std::tie(success, error) = Mixins::validate(transactions, height);
       if (!success)
       {
         logger(Logging::DEBUGGING) << "Deleting invalid transaction " << Common::podToHex(hash) << " from pool." <<

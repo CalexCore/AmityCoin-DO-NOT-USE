@@ -1,4 +1,4 @@
-﻿//  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
+//  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
 //  This source code is licensed under both the GPLv2 (found in the
 //  COPYING file in the root directory) and Apache 2.0 License
 //  (found in the LICENSE.Apache file in the root directory).
@@ -8,8 +8,8 @@
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
 #pragma once
-#include <stdint.h>
 #include <random>
+#include <stdint.h>
 
 namespace rocksdb {
 
@@ -68,7 +68,9 @@ class Random {
   // Skewed: pick "base" uniformly from range [0,max_log] and then
   // return "base" random bits.  The effect is to pick a number in the
   // range [0,2^max_log-1] with exponential bias towards smaller numbers.
-  uint32_t Skewed(int max_log) { return Uniform(1 << Uniform(max_log + 1)); }
+  uint32_t Skewed(int max_log) {
+    return Uniform(1 << Uniform(max_log + 1));
+  }
 
   // Returns a Random instance for use by the current thread without
   // additional locking
@@ -81,7 +83,7 @@ class Random64 {
   std::mt19937_64 generator_;
 
  public:
-  explicit Random64(uint64_t s) : generator_(s) {}
+  explicit Random64(uint64_t s) : generator_(s) { }
 
   // Generates the next random number
   uint64_t Next() { return generator_(); }
@@ -102,8 +104,6 @@ class Random64 {
   uint64_t Skewed(int max_log) {
     return Uniform(uint64_t(1) << Uniform(max_log + 1));
   }
-
-  std::mt19937_64& handle() { return generator_; }
 };
 
 }  // namespace rocksdb

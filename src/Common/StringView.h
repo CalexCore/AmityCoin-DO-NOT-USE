@@ -32,7 +32,7 @@ namespace Common {
 class StringView {
 public:
   typedef char Object;
-  typedef size_t Size;
+  typedef uint64_t Size;
 
   const static Size INVALID;
   const static StringView EMPTY;
@@ -77,10 +77,6 @@ public:
   // Return false if 'StringView' is not EMPTY.
   // The behavior is undefined unless 'StringView' was initialized.
   bool isEmpty() const;
-
-  // Return false if 'StringView' is not NIL.
-  // The behavior is undefined unless 'StringView' was initialized.
-  bool isNil() const;
 
   // Get 'StringView' element by index.
   // The behavior is undefined unless 'StringView' was initialized and 'index' < 'size'.
@@ -127,14 +123,6 @@ public:
   // Compare two strings character-wise.
   // The behavior is undefined unless both strings were initialized.
   bool operator>=(StringView other) const;
-
-  // Return false if 'StringView' does not contain 'object' at the beginning.
-  // The behavior is undefined unless 'StringView' was initialized.
-  bool beginsWith(const Object& object) const;
-
-  // Return false if 'StringView' does not contain 'other' at the beginning.
-  // The behavior is undefined unless both strings were initialized.
-  bool beginsWith(StringView other) const;
 
   // Return false if 'StringView' does not contain 'object'.
   // The behavior is undefined unless 'StringView' was initialized.
