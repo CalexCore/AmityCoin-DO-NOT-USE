@@ -1,4 +1,4 @@
-
+#AmityCoin
 
 
 ###### We want a decentralized future, we want a decentralized currency, we want a decentralized life.  We want to be different.  We are Amity
