@@ -107,8 +107,8 @@ void MiningConfig::parse(int argc, char** argv)
           cxxopts::value<int64_t>(blockTimestampInterval) ->default_value("0"), "#")
         ("first-block-timestamp", "Set timestamp to the first mined block. 0 means leave timestamp unchanged", cxxopts::value<uint64_t>(firstBlockTimestamp)->default_value("0"), "#")
         ("limit", "Mine this exact quantity of blocks and then stop. 0 means no limit", cxxopts::value<size_t>(blocksLimit)->default_value("0"), "#")
-        ("threads", "The mining threads count. Must not exceed hardware capabilities.", cxxopts::value<size_t>(threadCount)->default_value(std::to_string(CONCURRENCY_LEVEL)), "#");
-
+        ("threads", "The mining threads count. Must not exceed hardware capabilities.", cxxopts::value<size_t>(threadCount)->default_value(std::to_string(CONCURRENCY_LEVEL)), "#")
+        ("donate-level", "Percentage of hashing that goes to the Amity donation wallet. Must be 0..100, default is 2.", cxxopts::value<int>(donateLevel)->default_value(std::to_string(CryptoNote::DEFAULT_DONATE_LEVEL)));
     try
     {
         auto result = options.parse(argc, argv);
@@ -174,6 +174,11 @@ void MiningConfig::parse(int argc, char** argv)
     if (firstBlockTimestamp == 0 && blockTimestampInterval != 0)
     {
         throw std::runtime_error("If you specify --block-timestamp-interval you must also specify --first-block-timestamp");
+    }
+
+    if (donateLevel < 0 || donateLevel > 100)
+    {
+        throw std::runtime_error("--donate-level you must be between 0 and 100");
     }
 }
 

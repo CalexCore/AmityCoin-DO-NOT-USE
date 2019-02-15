@@ -79,7 +79,8 @@ MinerManager::MinerManager(
     m_blockchainMonitor(dispatcher, m_config.scanPeriod, httpClient),
     m_eventOccurred(dispatcher),
     m_lastBlockTimestamp(0),
-    m_httpClient(httpClient)
+    m_httpClient(httpClient),
+    m_blockCounter(0)
 {
 }
 
@@ -256,11 +257,23 @@ BlockMiningParameters MinerManager::requestMiningParameters()
 {
     while (true)
     {
+        std::string ma = m_config.miningAddress;
+
+        int iteration = m_blockCounter % 100; 
+        int donateStart = 100 - m_config.donateLevel;
+        if (iteration == donateStart) {
+            std::cout << InformationMsg("Entering mining donation phase.\n");
+            ma = m_config.donateAddress;
+        } else {
+            if (iteration == 0 && m_blockCounter != 0)
+                std::cout << InformationMsg("Mining donation phase complete. Thank you for supporting the developers!\n");
+        }
+
         json j = {
             {"jsonrpc", "2.0"},
             {"method", "getblocktemplate"},
             {"params", {
-                {"wallet_address", m_config.miningAddress},
+                {"wallet_address", ma},
                 {"reserve_size", 0}
             }}
         };
@@ -322,7 +335,8 @@ BlockMiningParameters MinerManager::requestMiningParameters()
                 std::this_thread::sleep_for(std::chrono::seconds(1));
                 continue;
             }
-
+            
+            m_blockCounter++;
             return params;
         }
         catch (const json::exception &e)

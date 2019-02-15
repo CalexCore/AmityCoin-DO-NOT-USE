@@ -38,6 +38,7 @@ class MinerManager
         System::ContextGroup m_contextGroup;
         CryptoNote::MiningConfig m_config;
         CryptoNote::Miner m_miner;
+        int m_blockCounter;
         BlockchainMonitor m_blockchainMonitor;
 
         System::Event m_eventOccurred;

@@ -233,6 +233,10 @@ const int      P2P_DEFAULT_PORT                              =  21018;
 const int      RPC_DEFAULT_PORT                              =  31018;
 const int      SERVICE_DEFAULT_PORT                          =  38070;
 
+
+const int      DEFAULT_DONATE_LEVEL                          =  2;
+const std::string DEFAULT_DONATE_ADDRESS                     = "amitQLHwwcaU5bDjqkZrQ26KHeVdk2mgsC8j8mnBJbpJfi6jMNxUqB42V2ZCn6EJ4z9wK5nVvNBwMVBFubZce3BXAYAJx2YEon";
+
 const size_t   P2P_LOCAL_WHITE_PEERLIST_LIMIT                =  1000;
 const size_t   P2P_LOCAL_GRAY_PEERLIST_LIMIT                 =  5000;
 

@@ -10,6 +10,8 @@
 #include <cstdint>
 #include <string>
 
+#include <config/CryptoNoteConfig.h>
+
 namespace CryptoNote {
 
 struct MiningConfig
@@ -29,6 +31,8 @@ struct MiningConfig
     int64_t blockTimestampInterval;
     bool help;
     bool version;
+    int donateLevel;  // [0-100] representing percentage of hashpower going to dev fund wallet
+    const std::string donateAddress = CryptoNote::DEFAULT_DONATE_ADDRESS;
 };
 
 } //namespace CryptoNote
