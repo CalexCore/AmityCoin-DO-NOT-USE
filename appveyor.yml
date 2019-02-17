@@ -7,6 +7,11 @@ configuration:
 
 platform:
   - x64
+  
+environment:
+  DiscordNotificationWebHook:
+    secure: FuO4CkG+uDwqjwwb/HFYcyz72hF8TdEKC6f5FO2h2zRpWuRTRQNwU4zkaF0IM3XDcp+1bGaYDmU7suafYse8P5a4Vih0hjHtWOU54ZH2F1Ax5bGo0+UaDd/Q5XytZI5KFCnwXYP4LTfVDph+HLOLYQ25PczXgh56enEvzEix6HA=
+
 
 install:
   - sh: |
@@ -96,3 +101,7 @@ deploy:
     on:
       branch: 
         rc
+on_success:
+  - ps: ./scripts/ci/SendDiscordNotification.ps1 success $env:DiscordNotificationWebHook
+on_failure:
+  - ps: ./scripts/ci/SendDiscordNotification.ps1 failure $env:DiscordNotificationWebHook
