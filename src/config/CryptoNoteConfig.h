@@ -270,16 +270,18 @@ const uint32_t DATABASE_DEFAULT_MAX_OPEN_FILES               = 100;
 const uint16_t DATABASE_DEFAULT_BACKGROUND_THREADS_COUNT     = 2;
 
 const std::string LICENSE_URL                                = "https://github.com/CalexCore/AmityCoin/blob/master/LICENSE";
-const char     LATEST_VERSION_URL[]                          = "https://github.com/CalexCore/AmityCoin";
+const char     LATEST_VERSION_URL[]                          = "http://latest.getamitycoin.org";
 const static   boost::uuids::uuid CRYPTONOTE_NETWORK         =
 {
     {  0x28, 0x63, 0x29, 0x43, 0x61, 0x6c, 0x65, 0x78, 0x73, 0x32, 0x30, 0x31, 0x38, 0x44, 0x65, 0x76  }
 };
 
 const char* const SEED_NODES[] = {
-  "51.75.168.212:21018",
-  "54.39.178.95:21018"	//CANADA
+  "51.75.168.212:21018", //GERMANY
+  "54.39.178.95:21018",	//CANADA
+  "54.169.246.203:21018", //SINGAPORE
+  "3.17.204.129:21018" //USA
  
 //add more seeds here
 };
-} // Calex
+} // AmityCoin
