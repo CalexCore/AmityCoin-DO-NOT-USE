@@ -28,3 +28,7 @@ branches:
     - master
     - dev
 
+after_success:
+  - /bin/bash ./scripts/ci/SendDiscordNotification.sh success $WEBHOOK_URL
+after_failure:
+  - /bin/bash ./scripts/ci/SendDiscordNotification.sh failure $WEBHOOK_URL
