@@ -8,10 +8,6 @@ configuration:
 platform:
   - x64
 
-environment:
-  DiscordNotificationWebHook:
-    secure: 9ZFEBnW+lrCDIvInRHUN6L0kmoC062LJBBnRJlns4uLQ/x4V8zMoggQ2xMCi6bzwO6A+1Vo7vsEzv+YM6MVvrHNl0jjjnd8EeP75rBj7EkGrnJFveDmgHZREnE01N0S9oBYiHs6gkz7H5m/YUYHh+IDnk4T3/JC1JgzI0zqV/qE=
-
 install:
   - sh: |
       sudo apt-get update
@@ -100,8 +96,3 @@ deploy:
     on:
       branch: 
         rc
-
-on_success:
-  - ps: ./scripts/ci/SendDiscordNotification.ps1 success $env:DiscordNotificationWebHook
-on_failure:
-  - ps: ./scripts/ci/SendDiscordNotification.ps1 failure $env:DiscordNotificationWebHook
