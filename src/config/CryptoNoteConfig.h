@@ -106,6 +106,7 @@ const uint32_t MIXIN_LIMITS_V1_HEIGHT                        = 1000;
 const uint32_t MIXIN_LIMITS_V2_HEIGHT                        = 2000;
 const uint32_t MIXIN_LIMITS_V3_HEIGHT                        = 3000;
 const uint32_t MIXIN_LIMITS_V4_HEIGHT                        = 35000;
+const uint32_t MIXIN_LIMITS_V4_HEIGHT                        = 90000;
 
 /* The mixin to use by default with zedwallet and turtle-service */
 /* DEFAULT_MIXIN_V0 is the mixin used before MIXIN_LIMITS_V1_HEIGHT is started */
