@@ -8,10 +8,6 @@ configuration:
 platform:
   - x64
   
-environment:
-  DiscordNotificationWebHook:
-    secure: FuO4CkG+uDwqjwwb/HFYcyz72hF8TdEKC6f5FO2h2zRpWuRTRQNwU4zkaF0IM3XDcp+1bGaYDmU7suafYse8P5a4Vih0hjHtWOU54ZH2F1Ax5bGo0+UaDd/Q5XytZI5KFCnwXYP4LTfVDph+HLOLYQ25PczXgh56enEvzEix6HA=
-
 
 install:
   - sh: |
@@ -85,8 +81,8 @@ deploy:
     release: Amity
     description: 'The currently used version for the mainnet.'
     auth_token:
-      secure: Pw4T3cHP71ABVKp/ZijUFxpsEvh6VlGP1eeWzCsFVnMdzEG3V7wGFcw2PyF+JXuY
-    draft: true
+      secure: dxHRdzzCarm3sSM5ty0gfozohAbOUEndv53ULM0dlN4jzV0WXtppvDSQwENOU2mw
+    draft: false
     prerelease: false
     on:
       branch: master
@@ -95,13 +91,9 @@ deploy:
     release: Amity Release Candidate
     description: 'Our next release candidate. Use with caution, it may contains bugs or is incompatible with the mainnet.'
     auth_token:
-      secure: Pw4T3cHP71ABVKp/ZijUFxpsEvh6VlGP1eeWzCsFVnMdzEG3V7wGFcw2PyF+JXuY
+      secure: dxHRdzzCarm3sSM5ty0gfozohAbOUEndv53ULM0dlN4jzV0WXtppvDSQwENOU2mw
     draft: false
     prerelease: true
     on:
       branch: 
-        rc
-on_success:
-  - ps: ./scripts/ci/SendDiscordNotification.ps1 success $env:DiscordNotificationWebHook
-on_failure:
-  - ps: ./scripts/ci/SendDiscordNotification.ps1 failure $env:DiscordNotificationWebHook
+        dev
