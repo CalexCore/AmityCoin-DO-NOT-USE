@@ -151,12 +151,13 @@ deploy:
   - provider: s3
     access_key_id:
       secure: fTMu0Ui5zTgvvh6RNzPsrVaeSQrPfc44sG5qEKiPDhSNFrvkvFnu7ecUD+P5ooXJ+olz5l41LlmyaEqvq6OYuHDDPM2mcp8+eUnXxpEiD6vPqij4BKwIdF2m55TK9bRWYD4DNXM/d43/+aFQRZ3UfYk5nrGeNNQMlLQyC3E5Bhla3wv4Q9IeojrbbENw6pwCvwlPSFt61F5iogiU2izPd8JRVEcjoRgDicz9zID6/a7NVmYS4rOohUxq5o2zRLAZdewK08Gw33BnleiHwYfIzK2naFoSWjZGdhPvBejE1FRHQ3n5bnHh1G+0FLTeGi9yJNRcgoZN3SzcOW6ylYyOZZma2LCB8TXXJsy/kbg1XmTbJz39WQ/5D5pzmhbQ9jo5DnkIh4a5MDPE/vs4fYjDCZOoSrv1MifcLzSLwOMV2+ldKJXils3370L3GoHn7ByCokcxaF7mNbrEZQFaWzSK6D3M0/jZqUTyb5KXg82k4XUi9e+YdUQnI05uu04AOcHUMLEbFwbIT4WvOMN/0fDU1ZzJsn5U9i7rhuTVs2uy3fOSQLIVJhCtxrEO24EH8wdwcdLU/u4sH+L2fDGJi80kl14JaITv7ojY7R+Py88FUsepGv5ybwqNAamJmLLc5wRUg6N8EJKcNCTqtlUWrF6PGzAxUssQ4Yg/tIwidgrFyLQ=
+    secret_access_key:  
       secure: ELCTY/B+d7n2OhLcMEWzqgy70VYIrex27glpq/qikPc6MivNACSxbPDv3x3mVVYJG/xi4u+bxVGjosnNZwOc9bMMykbVExr3VMqwVrIC/OnGOetL/lOZtGI3C9C1vxBS9230TghsmVJNJpX70bjk2UjUT2T/c9YYw7V0iEOMDUYhnX+zLBenfc2m6d20k1o5rdxDTPqHeAnmF53BKM6KVV77O6I6onp0k7RMmOHvl2W+YEukfGdldzR66kGwsfrSl7jolVpMrt3+P6QDQc9W1gEs3WIImONjkmT27AbyOWDNwRJmix/93v3yEyWRujaG23lRgRUWG1dcoTi1r1YzFOhkAwK42hvUfKwN8PMzEgnCZ00RAxONPGZsUWJeIMoSGpeCo+G3ru7PhmvOosvokAcimlVN51LCseG8IaTodEpRXEW93GjeIm2Q0cS56L/sZnfKQU/ZKOrVacAEp5CQvDuOHqDQs5dS3iClxK10WpczkbE4mkzsRNU8ITcRXUq36fW1iQlRs3PRkSpXUNiy6iXXdBFmHc/Tixw2gWL9vblp53Kg6ypeFNAohxpYdvmgr6w4+90XfvS5k99oZiiai+KgzdMbFtpCfJs34fMi7hD8Y9C4kkk1948mj9Xj9vGgkkborurVhgirPRsnSxXgnZcT8LrLcKQgNknO/IK2Bj4=
 
     bucket: amitycoin
     skip_cleanup: true
     acl: public_read
-    region: us-east-2
+    region: us-west-1
     upload-dir: amitycoin
     local-dir: src/builds
     on:
