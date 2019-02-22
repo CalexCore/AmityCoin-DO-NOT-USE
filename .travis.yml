@@ -156,10 +156,4 @@ deploy:
 
     bucket: amitycoin
     skip_cleanup: true
-    acl: public_read
-    region: us-west-1
-    upload-dir: amitycoin
-    local-dir: src/builds
-    on:
-      repo: CalexCore/AmityCoin
-      all_branches: true
+  
