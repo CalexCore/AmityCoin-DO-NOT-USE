@@ -18,7 +18,6 @@ build_script:
   - cd build
   - cmake -G "Visual Studio 15 2017 Win64" ..
   - MSBuild AmityCoin.sln /p:CLToolExe=clcache.exe /p:CLToolPath=c:\Python37\Scripts\ /p:Configuration=Release /m
-  - src\Release\cryptotest.exe
 
 after_build:
   - clcache -s
