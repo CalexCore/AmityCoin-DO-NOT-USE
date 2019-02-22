@@ -26,7 +26,7 @@ after_build:
   - mkdir amity-%APPVEYOR_REPO_TAG_NAME%
   - copy *.exe amity-%APPVEYOR_REPO_TAG_NAME%
   - copy ..\..\..\LICENSE amity-%APPVEYOR_REPO_TAG_NAME%
-  - 7z a amity-%APPVEYOR_REPO_TAG_NAME%-windows.zip lithe-%APPVEYOR_REPO_TAG_NAME%
+  - 7z a amity-%APPVEYOR_REPO_TAG_NAME%-windows.zip amity-%APPVEYOR_REPO_TAG_NAME%
   - copy amity-%APPVEYOR_REPO_TAG_NAME%-windows.zip ..\..\..\
 
 artifacts:
