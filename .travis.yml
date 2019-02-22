@@ -138,7 +138,6 @@ deploy:
     secure: Fem51FOLkxX/8BSJQNIbefh6EzjC13gk+pDF51Gxx9PJ3A/ztejYqH9G9mRWEDa4cBGijR4THM9w31K42imv5qYhQ/fgyMIILyfsnj+nCPpBHUkBnFkaioq+kRCEKrIO+SZruutYrorUNVGHFuaLvGgc1kuLLJ7d9Zk79Qsue5mGvVSN81IxaRTRZ5BKjbsAV49TzFocDvXypV0Q8Rp1mJKk7D+GzVHTgFxqE5laSlX/PGFyPMuq+noUZOSbDlof/cABaIOuVC5DTlDJpPY97+teCk+8KfaJ8BJh814vpZe4uVf5i+DCLyohySKkYYLmTYyk6EmxaFbOgXXSPXoYxv+750zldGQo/zWdvGrQsyYIX/BQntkCpibUkIYITAT0QGIMu8+Pyt60o6iRsxiMFeE8inxDF1tbVqQwm+M9UQkEOz6kVCvu6xaWBASG5Gh99p9K6U7cZFP3KBq297i0ztdpMB+X1MMuV2zOU4bTXcehbBe+WRdQWH1mbgysOtBq83o+PUH3Fb9TTyI5551PMsvsQ+KbmB65RVVEbygdFY+ekdAGHJgY9TvA1v9OW70le6E5UcelmH2Y8wujsYud/OZ3OwlA64Bf00w9lf/P9bgLjl7KH8rQdhFGNAQGVmhL9OmL8swu+DcLkXMATVX5dVBuUa54wCEZMmH0KCe2wv4=
   bucket: amitycoin
   region: us-west-1
-  local-dir: src/builds
   upload-dir: "amitycoin"
   on:
     repo: CalexCore/AmityCoin
