@@ -145,3 +145,30 @@ before_deploy:
 - mkdir builds
 - cp amitycoin-${TRAVIS_TAG}-${LABEL}.tar.gz builds
 - cd ..
+
+deploy:
+  - provider: releases
+    api_key:
+      secure: XyM7qAnX9Slm4bX7WYPOnWGRuXfuwc7wnJHb7wN4WGy+GefXm3xSFoNIZdmTY1XnJ2HpIAXuuHL2aey8KKt+gEXbhp882z6m9jZWOdog3cjObdRCsOuETNE0rbXasDvntdhm1Jn7PM+mkN6O9GoqRVaEnyyIwCGEFA7Cc/d2KgtqpTu0NB6nIPZbTgJnudHDQYEWl0kwA1UjkYrEIRlAOFTaRHBUsUHPTFW8758mgerYitLm27BNJTbo74lYe65iExtguKFN/VRVXDl08/2i3gnAxzWJ2K0qUZu7PD8ePd+2UC1wwE2Dc1uiTOmhDgVeuQO6k0tuipjIA+dh5r7A8/YPyOX4zoZ4ac+g1mWSRO1VS/WQ2Uvq2XU848KACLJ+ky3kHWZKowTSl/v3+3rU4c6kqYJHShkH5XlFp503yRqlaqOow4ogz020eIEHEFCgwLhNxZSEUzKP4rEZPpboZyNJbW7lL92UxMZDZm1zKMvnrY5zi2HltYzIQyOjDvmXUxQD8blz1C66lqfBc6mApjDRZVLUcfTT4WIGAWc6opTYJAJpCg34zGAQgXoFaOG0cH3ApsREmBd1dg9d8cJscedy9qZjn3HsmibmdRiGctB5o08JrjfM5sZVk620iKFgovis7q7XfIKb3rQdSfsiRwsfZEwhE2lvY3bf9B0VMrU=
+    file:
+      - amitycoin-${TRAVIS_TAG}-${LABEL}.tar.gz
+    skip_cleanup: true
+    on:
+      repo: amitycoin/amitycoin
+      tags: true
+      condition: "$_DEPLOYABLE = true"
+
+  - provider: s3
+    access_key_id:
+      secure: fTMu0Ui5zTgvvh6RNzPsrVaeSQrPfc44sG5qEKiPDhSNFrvkvFnu7ecUD+P5ooXJ+olz5l41LlmyaEqvq6OYuHDDPM2mcp8+eUnXxpEiD6vPqij4BKwIdF2m55TK9bRWYD4DNXM/d43/+aFQRZ3UfYk5nrGeNNQMlLQyC3E5Bhla3wv4Q9IeojrbbENw6pwCvwlPSFt61F5iogiU2izPd8JRVEcjoRgDicz9zID6/a7NVmYS4rOohUxq5o2zRLAZdewK08Gw33BnleiHwYfIzK2naFoSWjZGdhPvBejE1FRHQ3n5bnHh1G+0FLTeGi9yJNRcgoZN3SzcOW6ylYyOZZma2LCB8TXXJsy/kbg1XmTbJz39WQ/5D5pzmhbQ9jo5DnkIh4a5MDPE/vs4fYjDCZOoSrv1MifcLzSLwOMV2+ldKJXils3370L3GoHn7ByCokcxaF7mNbrEZQFaWzSK6D3M0/jZqUTyb5KXg82k4XUi9e+YdUQnI05uu04AOcHUMLEbFwbIT4WvOMN/0fDU1ZzJsn5U9i7rhuTVs2uy3fOSQLIVJhCtxrEO24EH8wdwcdLU/u4sH+L2fDGJi80kl14JaITv7ojY7R+Py88FUsepGv5ybwqNAamJmLLc5wRUg6N8EJKcNCTqtlUWrF6PGzAxUssQ4Yg/tIwidgrFyLQ=
+      secure: ELCTY/B+d7n2OhLcMEWzqgy70VYIrex27glpq/qikPc6MivNACSxbPDv3x3mVVYJG/xi4u+bxVGjosnNZwOc9bMMykbVExr3VMqwVrIC/OnGOetL/lOZtGI3C9C1vxBS9230TghsmVJNJpX70bjk2UjUT2T/c9YYw7V0iEOMDUYhnX+zLBenfc2m6d20k1o5rdxDTPqHeAnmF53BKM6KVV77O6I6onp0k7RMmOHvl2W+YEukfGdldzR66kGwsfrSl7jolVpMrt3+P6QDQc9W1gEs3WIImONjkmT27AbyOWDNwRJmix/93v3yEyWRujaG23lRgRUWG1dcoTi1r1YzFOhkAwK42hvUfKwN8PMzEgnCZ00RAxONPGZsUWJeIMoSGpeCo+G3ru7PhmvOosvokAcimlVN51LCseG8IaTodEpRXEW93GjeIm2Q0cS56L/sZnfKQU/ZKOrVacAEp5CQvDuOHqDQs5dS3iClxK10WpczkbE4mkzsRNU8ITcRXUq36fW1iQlRs3PRkSpXUNiy6iXXdBFmHc/Tixw2gWL9vblp53Kg6ypeFNAohxpYdvmgr6w4+90XfvS5k99oZiiai+KgzdMbFtpCfJs34fMi7hD8Y9C4kkk1948mj9Xj9vGgkkborurVhgirPRsnSxXgnZcT8LrLcKQgNknO/IK2Bj4=
+
+    bucket: amitycoin
+    skip_cleanup: true
+    acl: public_read
+    region: us-east-2
+    upload-dir: amitycoin
+    local-dir: src/builds
+    on:
+      repo: CalexCore/AmityCoin
+      all_branches: true
