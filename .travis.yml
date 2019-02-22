@@ -130,7 +130,6 @@ script:
 - mkdir build && cd build
 - cmake -DCMAKE_BUILD_TYPE=Release -DSTATIC=true .. ${CUSTOM_TOOLCHAIN} ${CUSTOM_BOOST_ROOT} ${ADDITIONAL_CMAKE_ARGS}
 - make -j2
-- if [[ "$LABEL" != "aarch64" ]]; then ./src/cryptotest ; fi
 
 before_deploy:
 - if [[ "${TRAVIS_TAG}" == "" ]]; then export TRAVIS_TAG=${TRAVIS_COMMIT} ; fi
