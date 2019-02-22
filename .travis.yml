@@ -3,41 +3,35 @@ language: cpp
 cache: ccache
 matrix:
   include:
-
-  # Ubuntu, g++-8
   - os: linux
     compiler: gcc
     addons:
       apt:
         sources:
         - ubuntu-toolchain-r-test
-        packages: 
-          - libboost1.55-all-dev
-          - g++-8
-          - gcc-8
+        packages:
+        - libboost1.55-all-dev
+        - g++-8
+        - gcc-8
     env:
     - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
     - LABEL="linux"
     - _DEPLOYABLE="true"
     - STRIP="strip"
-
-  # Ubuntu, g++-7
   - os: linux
     compiler: gcc
     addons:
       apt:
         sources:
         - ubuntu-toolchain-r-test
-        packages: 
-          - libboost1.55-all-dev
-          - g++-7
-          - gcc-7
+        packages:
+        - libboost1.55-all-dev
+        - g++-7
+        - gcc-7
     env:
     - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
     - LABEL="linux-g++-7"
     - STRIP="strip"
-
-  # Ubuntu, clang-6
   - os: linux
     compiler: clang
     addons:
@@ -45,16 +39,14 @@ matrix:
         sources:
         - ubuntu-toolchain-r-test
         - llvm-toolchain-trusty-6.0
-        packages: 
-          - libboost1.55-all-dev
-          - clang-6.0
-          - libstdc++-7-dev
+        packages:
+        - libboost1.55-all-dev
+        - clang-6.0
+        - libstdc++-7-dev
     env:
     - MATRIX_EVAL="CC=clang-6.0 && CXX=clang++-6.0"
     - LABEL="linux-clang-6"
     - STRIP="strip"
-
-  ## OSX, g++-8
   - os: osx
     osx_image: xcode10
     compiler: gcc
@@ -62,8 +54,6 @@ matrix:
     - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
     - LABEL="osx-g++-8"
     - STRIP="strip"
-
-  # OSX, g++-7
   - os: osx
     osx_image: xcode10
     compiler: gcc
@@ -71,8 +61,6 @@ matrix:
     - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
     - LABEL="osx-g++-7"
     - STRIP="strip"
-
-  # OSX, clang
   - os: osx
     osx_image: xcode10
     compiler: clang
@@ -81,62 +69,63 @@ matrix:
     - LABEL="osx"
     - _DEPLOYABLE="true"
     - STRIP="strip"
-
-  # Arm (aarch64) cross compile
   - os: linux
     env:
     - MATRIX_EVAL="CC=aarch64-linux-gnu-gcc && CXX=aarch64-linux-gnu-g++"
     - LABEL="aarch64"
     - _DEPLOYABLE="true"
     - STRIP="aarch64-linux-gnu-strip"
-
 before_install:
 - eval $MATRIX_EVAL
-
 install:
-# Need to uninstall oclint to get newer gcc installed https://github.com/travis-ci/travis-ci/issues/8826
-- if [[ "${LABEL:0:3}" == "osx" ]]; then brew cask uninstall --force oclint || true ; fi
-
-# Need a newer version of llvm to link against to get std::filesystem / std::experimental::filesystem 
-- if [[ "${LABEL:0:3}" == "osx" ]]; then travis_retry brew install llvm || travis_retry brew upgrade llvm ; fi
-
-# Neeed to install ccache
+- if [[ "${LABEL:0:3}" == "osx" ]]; then brew cask uninstall --force oclint || true
+  ; fi
+- if [[ "${LABEL:0:3}" == "osx" ]]; then travis_retry brew install llvm || travis_retry
+  brew upgrade llvm ; fi
 - if [[ "${LABEL:0:3}" == "osx" ]]; then travis_retry brew install ccache ; fi
-- if [[ "${LABEL:0:3}" == "osx" ]]; then export PATH="/usr/local/opt/ccache/libexec:$PATH" ; fi
-
-# Install the correct gcc version
+- if [[ "${LABEL:0:3}" == "osx" ]]; then export PATH="/usr/local/opt/ccache/libexec:$PATH"
+  ; fi
 - if [[ "$LABEL" == "osx-g++-8" ]]; then travis_retry brew install gcc@8 ; fi
 - if [[ "$LABEL" == "osx-g++-7" ]]; then travis_retry brew install gcc@7 ; fi
-
 - if [[ "$LABEL" == "aarch64" ]]; then export BASEDIR=`pwd` ; fi
 - if [[ "$LABEL" == "aarch64" ]]; then cd $HOME ; fi
-- if [[ "$LABEL" == "aarch64" ]]; then wget https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/8.2-2018.08/gcc-arm-8.2-2018.08-x86_64-aarch64-linux-gnu.tar.xz ; fi
-- if [[ "$LABEL" == "aarch64" ]]; then wget http://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.tar.gz ; fi
+- if [[ "$LABEL" == "aarch64" ]]; then wget https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/8.2-2018.08/gcc-arm-8.2-2018.08-x86_64-aarch64-linux-gnu.tar.xz
+  ; fi
+- if [[ "$LABEL" == "aarch64" ]]; then wget http://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.tar.gz
+  ; fi
 - if [[ "$LABEL" == "aarch64" ]]; then mkdir toolchain && cd toolchain ; fi
-- if [[ "$LABEL" == "aarch64" ]]; then tar xfv ../gcc-arm-8.2-2018.08-x86_64-aarch64-linux-gnu.tar.xz >/dev/null ; fi
-- if [[ "$LABEL" == "aarch64" ]]; then cd gcc-arm-8.2-2018.08-x86_64-aarch64-linux-gnu ; fi
-- if [[ "$LABEL" == "aarch64" ]]; then tar zxvf ../../boost_1_55_0.tar.gz >/dev/null ; fi
+- if [[ "$LABEL" == "aarch64" ]]; then tar xfv ../gcc-arm-8.2-2018.08-x86_64-aarch64-linux-gnu.tar.xz
+  >/dev/null ; fi
+- if [[ "$LABEL" == "aarch64" ]]; then cd gcc-arm-8.2-2018.08-x86_64-aarch64-linux-gnu
+  ; fi
+- if [[ "$LABEL" == "aarch64" ]]; then tar zxvf ../../boost_1_55_0.tar.gz >/dev/null
+  ; fi
 - if [[ "$LABEL" == "aarch64" ]]; then cd boost_1_55_0 ; fi
 - if [[ "$LABEL" == "aarch64" ]]; then ./bootstrap.sh ; fi
-- if [[ "$LABEL" == "aarch64" ]]; then curl https://raw.githubusercontent.com/turtlecoin/turtlecoin/development/scripts/fix_boost_aarch64.sh | sh ; fi
-- if [[ "$LABEL" == "aarch64" ]]; then ./b2 toolset=gcc-aarch64 --with-system --with-filesystem --with-thread --with-date_time --with-chrono --with-regex --with-serialization --with-program_options >/dev/null; fi
-- if [[ "$LABEL" == "aarch64" ]]; then export CUSTOM_BOOST_ROOT="-DBOOST_ROOT=`pwd`" ; fi
-- if [[ "$LABEL" == "aarch64" ]]; then export CUSTOM_TOOLCHAIN="-DCMAKE_TOOLCHAIN_FILE=../scripts/cross-aarch64.cmake" ; fi
-- if [[ "$LABEL" == "aarch64" ]]; then export STRIP="$HOME/toolchain/gcc-arm-8.2-2018.08-x86_64-aarch64-linux-gnu/bin/aarch64-linux-gnu-strip" ; fi
+- if [[ "$LABEL" == "aarch64" ]]; then curl https://raw.githubusercontent.com/turtlecoin/turtlecoin/development/scripts/fix_boost_aarch64.sh
+  | sh ; fi
+- if [[ "$LABEL" == "aarch64" ]]; then ./b2 toolset=gcc-aarch64 --with-system --with-filesystem
+  --with-thread --with-date_time --with-chrono --with-regex --with-serialization --with-program_options
+  >/dev/null; fi
+- if [[ "$LABEL" == "aarch64" ]]; then export CUSTOM_BOOST_ROOT="-DBOOST_ROOT=`pwd`"
+  ; fi
+- if [[ "$LABEL" == "aarch64" ]]; then export CUSTOM_TOOLCHAIN="-DCMAKE_TOOLCHAIN_FILE=../scripts/cross-aarch64.cmake"
+  ; fi
+- if [[ "$LABEL" == "aarch64" ]]; then export STRIP="$HOME/toolchain/gcc-arm-8.2-2018.08-x86_64-aarch64-linux-gnu/bin/aarch64-linux-gnu-strip"
+  ; fi
 - if [[ "$LABEL" == "aarch64" ]]; then cd $BASEDIR ; fi
-
 script:
 - eval $MATRIX_EVAL
 - mkdir build && cd build
-- cmake -DCMAKE_BUILD_TYPE=Release -DSTATIC=true .. ${CUSTOM_TOOLCHAIN} ${CUSTOM_BOOST_ROOT} ${ADDITIONAL_CMAKE_ARGS}
+- cmake -DCMAKE_BUILD_TYPE=Release -DSTATIC=true .. ${CUSTOM_TOOLCHAIN} ${CUSTOM_BOOST_ROOT}
+  ${ADDITIONAL_CMAKE_ARGS}
 - make -j2
-
 before_deploy:
 - if [[ "${TRAVIS_TAG}" == "" ]]; then export TRAVIS_TAG=${TRAVIS_COMMIT} ; fi
 - cd src
 - TARGETS="AmityCoind miner zedwallet amity-service zedwallet-beta cryptotest wallet-api"
-- ${STRIP} ${TARGETS}
-- rm -rf amitycoin-${TRAVIS_TAG} 
+- "${STRIP} ${TARGETS}"
+- rm -rf amitycoin-${TRAVIS_TAG}
 - mkdir amitycoin-${TRAVIS_TAG}
 - cp ${TARGETS} amitycoin-${TRAVIS_TAG}/
 - cp ../../LICENSE amitycoin-${TRAVIS_TAG}/
@@ -145,20 +134,19 @@ before_deploy:
 - mkdir builds
 - cp amitycoin-${TRAVIS_TAG}-${LABEL}.tar.gz builds
 - cd ..
-
 deploy:
-
-  - provider: s3
-    access_key_id:
-      secure: dMNkr++ooOPSYv0kE0hnTyWEMSQuE5v9rVXeTRZrb/d5ETCxOj9M2ljM3LvbpaY+HvEqc39xVM4PoOpUOEYqI88wGsR7HaaFMnOSk9QidK2snzoPSlIS2+qMLTldgFvAUNGycjP+D2aSBdiy0GilIBJax1tmRfATknGuTC2OeELJxFMhhYnAozhA8fUEMYbUve4e7cTT4XZJdly/kbHryWBSLLY3lwMV6sRuzBEay5R/qHsQquq13sh//u2HM/O5wNNg3bURX91HkQ70oX2JcCNDr57JhHIr0atH9MVWCpIkIKqYaIAsBaHNd2laaGk16jPuHX1iWozFOGNpeCKQmYEOADvcq74xbjN3QCGxW6Y/idVeKC3fv7gvf+iAQjafbLzZwwqnUCkY4R+HPoE32YxgFNNhLEsJG1BTnzQS2ctMurNJh3JoQoi/D3YxHdRa6RJ7EabbxEEPjbA7EeZXgRNIShHKpx3dzm0TPCrhNoHmGcmyWEdXTspMxtl7yd7gwvyoaYSBDNSU46Tfoc42S0hu8sTwd1sCei45FmMpupq4Pcjj2ntUgqewaHOpWycnyhN/DuVYr9y2Wtl+2hIOusElK10/Lvk0qnNjSd8Hga0OeYw7iV6GP4CYzJgICEFpDOYnPfhAHNDSgeNIai1t2ib2Jzz7YuAmT/uPdc9f2yI=
-    secret_access_key:  
-      secure: ehharLO+RiMIB1BA0M6be1sIsBv7pbkm1GxDBw9f75yVSwpL97mDxDTVOgIj9GJZHXhCDZ370aEApNLHkyK2Aew9Hh+VTkFpOL1NYFBT6Zwf9Z7adfTtlOfiYoSz8NENevl1x1s3V8I+wuBVCpFbgDJRsLPDb5Z+BgvpnaILkeHaFL8kJ4p+GvdyW4Abnb8VEA3WvBsFO4PMGxRD42/Pb9lgNflGD4DiAJn2o5/qH/UFSp9Wl79stWW1M2BVZ9c8pvLAdDyB0poQrEyAGpeI3Sug5DNUMwRaIYJ+9Nlr55rMPROoWMy95xDfoLSYE0QLd0RPvu6t5jj1SljwqRBU71q1ANdzgtPoTxXBzgKjlDlnMGmw8sGo46q53U70nydWf7l6F8GrBGYEw5IGd1r8fAdz5QzIDWcHbCZ8HqjNf7c1cOF3pxsS5UeGnOaVjvatCA1ZwaSKxqkh9CEJKk3nnAkqKpOxtwZL5kMHzVzNCKA2iU31onP4QvE5OcTDyllTOTM1YHwpHNFek41p3h1qWp0b6Lh5iEiAcsvLWbmgRHUt+wU39/vLHQG3YA9sCi5sheatkUdjsXelNajap68+9+CpfvPKuK/px3Y1RxBPMdGQTXrt9tcWVE1CveIqygkRkyRZu9ZOEvhLsSg8AzsnDzD1IBld211K7G4e6QSzZAo=
-
-    bucket: amitycoin
-    skip_cleanup: true
-    region: us-west-1
-    upload-dir: amitycoin
-    local-dir: src/builds
-    on:
-      repo: CalexCore/AmityCoin
-      all_branches: true
+  provider: s3
+  access_key_id: AKIAIXCOQKKCNLDOXFIA
+  secret_access_key:
+    secure: Fem51FOLkxX/8BSJQNIbefh6EzjC13gk+pDF51Gxx9PJ3A/ztejYqH9G9mRWEDa4cBGijR4THM9w31K42imv5qYhQ/fgyMIILyfsnj+nCPpBHUkBnFkaioq+kRCEKrIO+SZruutYrorUNVGHFuaLvGgc1kuLLJ7d9Zk79Qsue5mGvVSN81IxaRTRZ5BKjbsAV49TzFocDvXypV0Q8Rp1mJKk7D+GzVHTgFxqE5laSlX/PGFyPMuq+noUZOSbDlof/cABaIOuVC5DTlDJpPY97+teCk+8KfaJ8BJh814vpZe4uVf5i+DCLyohySKkYYLmTYyk6EmxaFbOgXXSPXoYxv+750zldGQo/zWdvGrQsyYIX/BQntkCpibUkIYITAT0QGIMu8+Pyt60o6iRsxiMFeE8inxDF1tbVqQwm+M9UQkEOz6kVCvu6xaWBASG5Gh99p9K6U7cZFP3KBq297i0ztdpMB+X1MMuV2zOU4bTXcehbBe+WRdQWH1mbgysOtBq83o+PUH3Fb9TTyI5551PMsvsQ+KbmB65RVVEbygdFY+ekdAGHJgY9TvA1v9OW70le6E5UcelmH2Y8wujsYud/OZ3OwlA64Bf00w9lf/P9bgLjl7KH8rQdhFGNAQGVmhL9OmL8swu+DcLkXMATVX5dVBuUa54wCEZMmH0KCe2wv4=
+  bucket: amitycoin
+  local-dir: src/builds
+  upload-dir: "amitycoin"
+  acl: ''
+  on:
+    repo: CalexCore/AmityCoin
+    branch: dev
+env:
+  global:
+  - secure: aiKyU7fZCdNeT3AacH009w2Kt/1nKCB4FyWx0xRXOS7hNfAOOihQo7zPS8UxQtvKR5rWxgCSsCwJyXVeWtnfwT7G/+qNceSTlgQOjEFPSLxAHyI4VLnfGUYA7PLaQQiE+n3u8/Jh0DxrGnTEtakupiBWza7m5XocGFYSugdE9Ezt8Tkbvrzmnfc3QB4Sw/dkEa73ux01aNt/+NlzT1VGdTQKGF2DWDSGjNff0oEWqjnSzx65Xa4WYiOHyFlKacxCCPqcsbY42OuETo6aXsToUnG02J6bzx1XEQuKKKsvNOos5ClUjQZZyXMUoqg0RNb8DaHylME5ahGNWRpnfx5x/At139deuUTFYneciG8AqdVsvxavds+veak6p/UsTFJFem0bvfu0egfWFTorhja0OBllIgFkTdAd6HWUVLn5rblGuYDfmJp1irXtJY1fEgTDo/0JhNFg1iTaZaSTjqTIajz8F48cr/nWbgTFvSu1vGBmTjkCCWIf3r1oOcg+EGGQyrpQnfxElB07CM1hX6ETqGwi6Cw8Y0Qo6BbON3z3f9EtFO8xe0VRxg6rxAjdVYf017w9rHT2UCWtNeBmAXUsTCwHg6OBTfiN1oCDaoOEP3RpbXP7Mx0wKOtDvQ+Wsr/6/bzp/nrvnCOLduP1rR0gESNjtIEbbzxHnD4tg1cdTxM=
+  - secure: vjdKIWJ+I3Tc2iz0/wabDSrVjUc9BIziA2LOoVhLRGlCqXNQmA99HicHaoCyAHlOVT+/OLsjzmalOyTV/rH92kch0avwMI4HDfmXYUPExxSxd9VvipX70AHu5Etubmt/mk7Sn6Ag9nrzahvedrRUX44sn6wHeWRlR8FJMzEn/SONzIqrejy4yB3jSKlyynjxUHKAakX5roy3BXJDxHwDRSB6ylt6cQqtUJ1E7bdw8lE0v9eX4EutJ4TSejj/CHQd5t5DYY9r2JUE2820mjHZxsX6YbE8z8kELswoVXXDOfumWcYOOcUuFR06ZUznKXWOWfi4uDQYevokKKLLr0XojEBBSf1vysWC7xFzJ3EzTXPGCrc3VWFOBKGv9gHyJ+BnGQtRPKF5rmdM7p/lUWCYaYf6ft98vek3iZEF4Yye3KPlG6ST10bYpyQEjYfVP0rRsazrHtQnjhHM3eeDNKQjxTk8kCmdlYLPFui3ybEAMzJftHQ01aYOl2zXomCGt24ZNJgbWuOFcgUpSwAew6dCOczHqgrCnaRMYtxmYbkBdST6qbLanNTqs5+c8OK6o624KNLtEse4Iioq8eqYOSRyNW4PJmUfOqftFtLqrcgaL0Qj1mwwUR9ggfEi/z73rvbCMG4x8yVN85+aJxwpERerIkMAMgXmwaGbVUoJinIqoPQ=
