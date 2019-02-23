@@ -1,4 +1,4 @@
-[![](https://img.shields.io/badge/%20-dockerhub-blue.svg?logo=docker&style=flat)](https://hub.docker.com/r/calexcore/amitycoin/) [![](https://img.shields.io/badge/%20-discord-blue.svg?logo=discord&style=flat)](https://discord.gg/Nywqwtm)
+[![](https://img.shields.io/badge/%20-dockerhub-blue.svg?logo=docker&style=flat)](https://hub.docker.com/r/chrischaos/amitycoin/) [![](https://img.shields.io/badge/%20-discord-blue.svg?logo=discord&style=flat)](https://discord.gg/Nywqwtm)
 
 
 # AmityCoin
