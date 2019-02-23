@@ -167,7 +167,7 @@ void testHashFunction(
     }
 
     /* Verify the hash is as expected */
-    assert(CompareHashes(hash, expectedOutput));
+   assert(CompareHashes(hash, expectedOutput)); 
 }
 
 /* Bit of hackery so we can get the variable name of the passed in function.

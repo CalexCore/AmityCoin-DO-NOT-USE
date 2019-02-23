@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   daemon:
-    image: calexcore/amitycoin
+    image: chrischaos/amitycoin
     container_name: amity_daemon
     restart: always
     expose:
@@ -13,7 +13,7 @@ services:
     entrypoint: AmityCoind --data-dir /data --rpc-bind-ip 0.0.0.0 --fee-address amitWnmgfgYG4XerZGPLNFd5AM87rUkb3X2q4FcELpPsB4DXtT8YE3mETzAjrYLdDH39pJoCxSUHPU2yqZeY1RsJ1h5DgikVAz --fee-amount 2
 
   miner:
-    image: calexcore/amitycoin
+    image: chrischaos/amitycoin
     container_name: amity_miner
     restart: always
     depends_on: 
