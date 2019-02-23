@@ -94,16 +94,19 @@ install:
 - if [[ "$LABEL" == "aarch64" ]]; then wget http://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.tar.gz
   ; fi
 - if [[ "$LABEL" == "aarch64" ]]; then mkdir toolchain && cd toolchain ; fi
-- if [[ "$LABEL" == "aarch64" ]]; then tar xfv ../gcc-arm-8.2-2018.08-x86_64-aarch64-linux-gnu.tar.xz >/dev/null ; fi
+- if [[ "$LABEL" == "aarch64" ]]; then tar xfv ../gcc-arm-8.2-2018.08-x86_64-aarch64-linux-gnu.tar.xz
+  >/dev/null ; fi
 - if [[ "$LABEL" == "aarch64" ]]; then cd gcc-arm-8.2-2018.08-x86_64-aarch64-linux-gnu
   ; fi
 - if [[ "$LABEL" == "aarch64" ]]; then tar zxvf ../../boost_1_55_0.tar.gz >/dev/null
   ; fi
 - if [[ "$LABEL" == "aarch64" ]]; then cd boost_1_55_0 ; fi
 - if [[ "$LABEL" == "aarch64" ]]; then ./bootstrap.sh ; fi
-- if [[ "$LABEL" == "aarch64" ]]; then curl https://raw.githubusercontent.com/turtlecoin/turtlecoin/development/scripts/fix_boost_aarch64.sh | sh ; fi
+- if [[ "$LABEL" == "aarch64" ]]; then curl https://raw.githubusercontent.com/turtlecoin/turtlecoin/development/scripts/fix_boost_aarch64.sh
+  | sh ; fi
 - if [[ "$LABEL" == "aarch64" ]]; then ./b2 toolset=gcc-aarch64 --with-system --with-filesystem
-  --with-thread --with-date_time --with-chrono --with-regex --with-serialization --with-program_options >/dev/null; fi
+  --with-thread --with-date_time --with-chrono --with-regex --with-serialization --with-program_options
+  >/dev/null; fi
 - if [[ "$LABEL" == "aarch64" ]]; then export CUSTOM_BOOST_ROOT="-DBOOST_ROOT=`pwd`"
   ; fi
 - if [[ "$LABEL" == "aarch64" ]]; then export CUSTOM_TOOLCHAIN="-DCMAKE_TOOLCHAIN_FILE=../scripts/cross-aarch64.cmake"
@@ -135,16 +138,12 @@ deploy:
   provider: s3
   access_key_id: AKIAIXCOQKKCNLDOXFIA
   secret_access_key:
-    secure: Fem51FOLkxX/8BSJQNIbefh6EzjC13gk+pDF51Gxx9PJ3A/ztejYqH9G9mRWEDa4cBGijR4THM9w31K42imv5qYhQ/fgyMIILyfsnj+nCPpBHUkBnFkaioq+kRCEKrIO+SZruutYrorUNVGHFuaLvGgc1kuLLJ7d9Zk79Qsue5mGvVSN81IxaRTRZ5BKjbsAV49TzFocDvXypV0Q8Rp1mJKk7D+GzVHTgFxqE5laSlX/PGFyPMuq+noUZOSbDlof/cABaIOuVC5DTlDJpPY97+teCk+8KfaJ8BJh814vpZe4uVf5i+DCLyohySKkYYLmTYyk6EmxaFbOgXXSPXoYxv+750zldGQo/zWdvGrQsyYIX/BQntkCpibUkIYITAT0QGIMu8+Pyt60o6iRsxiMFeE8inxDF1tbVqQwm+M9UQkEOz6kVCvu6xaWBASG5Gh99p9K6U7cZFP3KBq297i0ztdpMB+X1MMuV2zOU4bTXcehbBe+WRdQWH1mbgysOtBq83o+PUH3Fb9TTyI5551PMsvsQ+KbmB65RVVEbygdFY+ekdAGHJgY9TvA1v9OW70le6E5UcelmH2Y8wujsYud/OZ3OwlA64Bf00w9lf/P9bgLjl7KH8rQdhFGNAQGVmhL9OmL8swu+DcLkXMATVX5dVBuUa54wCEZMmH0KCe2wv4=
+    secure: AUjeFblFU6jrpfU0yZRtL7PvCJ4ZQhZOnnjDSQbM0VnfzGgM11UZ0Q615mmGF9Vu2DRq6fz1O8RkVl6zUeJK2xkSdnaB1fmr0GKzUa5JAvZFH/UNuljaXKA6mJWSCZuXGFlFuEysff1VQlGL24BkTtviBia457FfakcttiH4yqt9mr5glTuyKQMia67VNM+M1eZt/UtkpG/L/gJFOsdK56u3vbtwg++jsPfFK30Nf6yKxgcXPgToMSj7K5252cT5q+oG6zH9YyToi5x/g1DQ9BRDOmPuTlVQxVlXClWsbFeozP+DllQQOLZX1EicJxgf2wgxvihzom/O4rZwyelTN+ITcXBXaENYQ+liSzkriVFFoC3j5/wFNK5wclhu5h30x4/nzbSZI0Eg/8LRYZCxpFGl0Gh6AqU9EivAE/plSG3lL+oDH6yhpIBhyFJzFfZFE6Ed3urTOhm4pctv3djxklI7DFxDGMLAGx+kOSRrN5ge0xciWsgF563L8GxmrF8a3JDbAjDaP9kVin5QQGp4a7q2I8qeQS+c5uSIgRXgsxAKM+MTpbgU/3ypGeW7HcLyE1On+aPffLlzFY+PIOTRoBJCrhH1WDuWFGB4ptGnILOQ0oCswIH7aBeH4Y4kQ94NraKV1VJySW3SjOk7LvsN2SiqqwlXiiIu+TfggFscZCc=
   bucket: amitycoin
   skip_cleanup: true
   region: us-west-1
   local-dir: src/builds
-  upload-dir: "amitycoin"
+  upload-dir: amitycoin
   on:
     repo: CalexCore/AmityCoin
     branch: dev
-env:
-  global:
-  - secure: aiKyU7fZCdNeT3AacH009w2Kt/1nKCB4FyWx0xRXOS7hNfAOOihQo7zPS8UxQtvKR5rWxgCSsCwJyXVeWtnfwT7G/+qNceSTlgQOjEFPSLxAHyI4VLnfGUYA7PLaQQiE+n3u8/Jh0DxrGnTEtakupiBWza7m5XocGFYSugdE9Ezt8Tkbvrzmnfc3QB4Sw/dkEa73ux01aNt/+NlzT1VGdTQKGF2DWDSGjNff0oEWqjnSzx65Xa4WYiOHyFlKacxCCPqcsbY42OuETo6aXsToUnG02J6bzx1XEQuKKKsvNOos5ClUjQZZyXMUoqg0RNb8DaHylME5ahGNWRpnfx5x/At139deuUTFYneciG8AqdVsvxavds+veak6p/UsTFJFem0bvfu0egfWFTorhja0OBllIgFkTdAd6HWUVLn5rblGuYDfmJp1irXtJY1fEgTDo/0JhNFg1iTaZaSTjqTIajz8F48cr/nWbgTFvSu1vGBmTjkCCWIf3r1oOcg+EGGQyrpQnfxElB07CM1hX6ETqGwi6Cw8Y0Qo6BbON3z3f9EtFO8xe0VRxg6rxAjdVYf017w9rHT2UCWtNeBmAXUsTCwHg6OBTfiN1oCDaoOEP3RpbXP7Mx0wKOtDvQ+Wsr/6/bzp/nrvnCOLduP1rR0gESNjtIEbbzxHnD4tg1cdTxM=
-  - secure: vjdKIWJ+I3Tc2iz0/wabDSrVjUc9BIziA2LOoVhLRGlCqXNQmA99HicHaoCyAHlOVT+/OLsjzmalOyTV/rH92kch0avwMI4HDfmXYUPExxSxd9VvipX70AHu5Etubmt/mk7Sn6Ag9nrzahvedrRUX44sn6wHeWRlR8FJMzEn/SONzIqrejy4yB3jSKlyynjxUHKAakX5roy3BXJDxHwDRSB6ylt6cQqtUJ1E7bdw8lE0v9eX4EutJ4TSejj/CHQd5t5DYY9r2JUE2820mjHZxsX6YbE8z8kELswoVXXDOfumWcYOOcUuFR06ZUznKXWOWfi4uDQYevokKKLLr0XojEBBSf1vysWC7xFzJ3EzTXPGCrc3VWFOBKGv9gHyJ+BnGQtRPKF5rmdM7p/lUWCYaYf6ft98vek3iZEF4Yye3KPlG6ST10bYpyQEjYfVP0rRsazrHtQnjhHM3eeDNKQjxTk8kCmdlYLPFui3ybEAMzJftHQ01aYOl2zXomCGt24ZNJgbWuOFcgUpSwAew6dCOczHqgrCnaRMYtxmYbkBdST6qbLanNTqs5+c8OK6o624KNLtEse4Iioq8eqYOSRyNW4PJmUfOqftFtLqrcgaL0Qj1mwwUR9ggfEi/z73rvbCMG4x8yVN85+aJxwpERerIkMAMgXmwaGbVUoJinIqoPQ=
