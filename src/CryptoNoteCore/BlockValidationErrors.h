@@ -63,6 +63,7 @@ public:
       case BlockValidationError::TIMESTAMP_TOO_FAR_IN_PAST: return "Timestamp is too far in past";
       case BlockValidationError::CUMULATIVE_BLOCK_SIZE_TOO_BIG: return "Cumulative block size is too big";
       case BlockValidationError::DIFFICULTY_OVERHEAD: return "Block difficulty overhead occurred";
+      case BlockValidationError::BLOCK_REWARD_MISMATCH: return "Block reward doesn't match expected reward";
       case BlockValidationError::CHECKPOINT_BLOCK_HASH_MISMATCH: return "Checkpoint block hash mismatch";
       case BlockValidationError::PROOF_OF_WORK_TOO_WEAK: return "Proof of work is too weak";
       case BlockValidationError::TRANSACTION_ABSENT_IN_POOL: return "Block's transaction is absent in transaction pool";
