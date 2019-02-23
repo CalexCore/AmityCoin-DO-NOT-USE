@@ -135,10 +135,13 @@ before_deploy:
 - cp amitycoin-${TRAVIS_TAG}-${LABEL}.tar.gz builds
 - cd ..
 deploy:
-  provider: releases
-  api_key:
-    secure: t/Ru9L4i5wFP9K/6Fdbzfm55/EijTI0Zk/C4jFssMsvwyBUlUxiX7Iu7zJV4/q0/pVFOvbafOdAXLppaGY5/+3M/KzQ+pTMlHh1iNkUOZH6IeJ+GeAqe5vnkLjd5xNyOaq9x27BAcHC+5jVDrlUEwd2o8LXU9vWc4lerP4eaG2IPkeNigHMklMn3hS7/Ry4kBNnx1C3jvczLHUzEfv6Gw8u5/+svOdOmtIgXnuMYNzs8OLyrWTtkZgGZWm6t3gbuJyDbWxXBbcAZ+fczNrg/RubmaLY3c8rDdj4kUtX8AAxp3lYSvwEa4zrQbUhtR9egOYUm8t7VqSpZUq4yrPcEbHcBkN+vF3ZvrlXp3K5QmVtHZQm4RKR5G5M80BEhvnLp5jJhdIswLgTr8cngjzNUBA5Vvfq+2Pj9d7qxpUuBekItOWYCCVmYOaUnMs2zn2PiYQ1b7mvxZKsdXkcRqG0chrD6MPP9+/Y7Q8/IYtSpUqS3lZZc2kGXQ5IKOUM/QH6Rr3/XDTlwiajSlyxV1SHUxIAp3K+tulTnSXmPe2/0nPJnMnbOQEnRM7qfSqQ9pY6cMfsvyPM51mk0bLFpP8h2g4iZa4MZ0Dt3rmqPNIpLY613ty+RKbQnzVZw9YlSF4pndR85CrKJOz8GRJKMzJn69HRHfce2EE9U2r1qxiwRr6I=
-  file: amitycoin-${TRAVIS_TAG}-${LABEL}.tar.gz
+  provider: s3
+  access_key_id: AKIAIMFO6PKKH2XO2OFA
+  secret_access_key:
+    secure: nmDmfXnuVUMBNs+RM0nA/J5OMKGVP+Q3vcHRXlPoV+dYAeyrA+ELGy2DAoBmEBXXOU7NKjc8oDhy6XulNtlCnWjwtVlkwyZU27ZOEUe/NF3DXX39a2ExMA18qpUKK1hBGoSzEDL6SCsuJFc7WqSOKkN0nD/3Fc1uL+EXdGLwK2d3uzgNr9eInm62e8j5JVnQW/oPhzfe509fM9GTOni/SXo/7dFTyXLWNMAlcqkGKRGpHCDmTxcRZdcUgfC/MYmQdvthRtsQhKEaI00sUC3bjwrXLPXxmZ3YqbY5pwdCX7BYVXoSbq15lVb5UDiiDdxiEPY3Qfk+0mgVRaR653zJ594pF7CITOCVUBLx/VgvK6EmRomDOvl/7wdA3EPwahTPFBDs4/4/jRuNC5JUg1u13WGakaI/LQxPVNfiBlP3MX1ymFvg+8Tf/F//UTSPG9/GlPuIDBmBXYCNZbAvQ6xHevIk2wM2hWUh71WgvYj3AtQjMDperkiHX5SuWdjJ3BvZCUkjVVCOxAlhoGIfT5gHLbMJAnLpCbqRDzLLdf5c+NBwRR45F6POinP4CHMPrglSkSCFO40qSFItYv2Ur7yfR10SSYZKU4qhmH3CN38tAha2n47BSxzU7WSC1LGw2mi2JkGifrys7Re5Zq2KG+c2j4sdSEuBsEBqsXG/vu4enwI=
+  bucket: amitycoin1
+  skip_cleanup: true
+  local-dir: src/builds
   on:
     repo: CalexCore/AmityCoin
     branch: dev
