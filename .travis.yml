@@ -17,7 +17,7 @@ script:
     docker push chrischaos/amitycoin:$TRAVIS_BRANCH-$VERSION
     docker push chrischaos/amitycoin:$TRAVIS_BRANCH-latest
   - |
-    if [ "$TRAVIS_BRANCH" == "master" ]
+    if [ "$TRAVIS_BRANCH" == "docker-hub" ]
     then
       docker tag chrischaos/amitycoin:$TRAVIS_BRANCH-$VERSION chrischaos/amitycoin:latest
       docker push chrischaos/amitycoin:latest
