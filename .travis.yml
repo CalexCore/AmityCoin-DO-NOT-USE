@@ -1,34 +1,131 @@
-sudo: required
-
+sudo: false
 language: cpp
+cache: ccache
+matrix:
+  include:
+  - os: linux
+    compiler: gcc
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - libboost1.55-all-dev
+        - g++-8
+        - gcc-8
+    env:
+    - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
+    - LABEL="linux"
+    - _DEPLOYABLE="true"
+    - STRIP="strip"
+  - os: linux
+    compiler: gcc
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - libboost1.55-all-dev
+        - g++-7
+        - gcc-7
+    env:
+    - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+    - LABEL="linux-g++-7"
+    - STRIP="strip"
+  - os: linux
+    compiler: clang
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        - llvm-toolchain-trusty-6.0
+        packages:
+        - libboost1.55-all-dev
+        - clang-6.0
+        - libstdc++-7-dev
+    env:
+    - MATRIX_EVAL="CC=clang-6.0 && CXX=clang++-6.0"
+    - LABEL="linux-clang-6"
+    - STRIP="strip"
+  - os: osx
+    osx_image: xcode10
+    compiler: gcc
+    env:
+    - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
+    - LABEL="osx-g++-8"
+    - STRIP="strip"
+  - os: osx
+    osx_image: xcode10
+    compiler: gcc
+    env:
+    - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+    - LABEL="osx-g++-7"
+    - STRIP="strip"
+  - os: osx
+    osx_image: xcode10
+    compiler: clang
+    env:
+    - MATRIX_EVAL="CC=/usr/local/opt/llvm/bin/clang && CXX=/usr/local/opt/llvm/bin/clang++"
+    - LABEL="osx"
+    - _DEPLOYABLE="true"
+    - STRIP="strip"
+  - os: linux
+    env:
+    - MATRIX_EVAL="CC=aarch64-linux-gnu-gcc && CXX=aarch64-linux-gnu-g++"
+    - LABEL="aarch64"
+    - _DEPLOYABLE="true"
+    - STRIP="aarch64-linux-gnu-strip"
+before_install:
+- eval $MATRIX_EVAL
+install:
+# Need to uninstall oclint to get newer gcc installed https://github.com/travis-ci/travis-ci/issues/8826
+- if [[ "${LABEL:0:3}" == "osx" ]]; then brew cask uninstall --force oclint || true ; fi
 
-services:
-  - docker
+# Need a newer version of llvm to link against to get std::filesystem / std::experimental::filesystem 
+- if [[ "${LABEL:0:3}" == "osx" ]]; then travis_retry brew install llvm || travis_retry brew upgrade llvm ; fi
+
+# Neeed to install ccache
+- if [[ "${LABEL:0:3}" == "osx" ]]; then travis_retry brew install ccache ; fi
+- if [[ "${LABEL:0:3}" == "osx" ]]; then export PATH="/usr/local/opt/ccache/libexec:$PATH" ; fi
+
+# Install the correct gcc version
+- if [[ "$LABEL" == "osx-g++-8" ]]; then travis_retry brew install gcc@8 ; fi
+- if [[ "$LABEL" == "osx-g++-7" ]]; then travis_retry brew install gcc@7 ; fi
+
+- if [[ "$LABEL" == "aarch64" ]]; then export BASEDIR=`pwd` ; fi
+- if [[ "$LABEL" == "aarch64" ]]; then cd $HOME ; fi
+- if [[ "$LABEL" == "aarch64" ]]; then wget https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/8.2-2018.08/gcc-arm-8.2-2018.08-x86_64-aarch64-linux-gnu.tar.xz ; fi
+- if [[ "$LABEL" == "aarch64" ]]; then wget http://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.tar.gz ; fi
+- if [[ "$LABEL" == "aarch64" ]]; then mkdir toolchain && cd toolchain ; fi
+- if [[ "$LABEL" == "aarch64" ]]; then tar xfv ../gcc-arm-8.2-2018.08-x86_64-aarch64-linux-gnu.tar.xz >/dev/null ; fi
+- if [[ "$LABEL" == "aarch64" ]]; then cd gcc-arm-8.2-2018.08-x86_64-aarch64-linux-gnu ; fi
+- if [[ "$LABEL" == "aarch64" ]]; then tar zxvf ../../boost_1_55_0.tar.gz >/dev/null ; fi
+- if [[ "$LABEL" == "aarch64" ]]; then cd boost_1_55_0 ; fi
+- if [[ "$LABEL" == "aarch64" ]]; then ./bootstrap.sh ; fi
+- if [[ "$LABEL" == "aarch64" ]]; then curl https://raw.githubusercontent.com/CalexCore/AmityCoin/dev/scripts/fix_boost_aarch64.sh | sh ; fi
+- if [[ "$LABEL" == "aarch64" ]]; then ./b2 toolset=gcc-aarch64 --with-system --with-filesystem --with-thread --with-date_time --with-chrono --with-regex --with-serialization --with-program_options >/dev/null; fi
+- if [[ "$LABEL" == "aarch64" ]]; then export CUSTOM_BOOST_ROOT="-DBOOST_ROOT=`pwd`" ; fi
+- if [[ "$LABEL" == "aarch64" ]]; then export CUSTOM_TOOLCHAIN="-DCMAKE_TOOLCHAIN_FILE=../scripts/cross-aarch64.cmake" ; fi
+- if [[ "$LABEL" == "aarch64" ]]; then export STRIP="$HOME/toolchain/gcc-arm-8.2-2018.08-x86_64-aarch64-linux-gnu/bin/aarch64-linux-gnu-strip" ; fi
+- if [[ "$LABEL" == "aarch64" ]]; then cd $BASEDIR ; fi
 
 script:
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - VERSION=`cat VERSION`
-  - echo "Building v$VERSION on branch $TRAVIS_BRANCH"
-  - |
-    docker build \
-      -t calexcore/amitycoin:$TRAVIS_BRANCH-$VERSION \
-      -t calexcore/amitycoin:$TRAVIS_BRANCH-latest \
-      .
-    docker push calexcore/amitycoin:$TRAVIS_BRANCH-$VERSION
-    docker push calexcore/amitycoin:$TRAVIS_BRANCH-latest
-  - |
-    if [ "$TRAVIS_BRANCH" == "master" ]
-    then
-      docker tag calexcore/amitycoin:$TRAVIS_BRANCH-$VERSION calexcore/amitycoin:latest
-      docker push calexcore/amitycoin:latest
-    fi
-
-branches:
-  only:
-    - master
-    - dev
-
-after_success:
-  - /bin/bash ./scripts/ci/SendDiscordNotification.sh success $WEBHOOK_URL
-after_failure:
-  - /bin/bash ./scripts/ci/SendDiscordNotification.sh failure $WEBHOOK_URL
+- eval $MATRIX_EVAL
+- mkdir build && cd build
+- cmake -DCMAKE_BUILD_TYPE=Release -DSTATIC=true .. ${CUSTOM_TOOLCHAIN} ${CUSTOM_BOOST_ROOT}
+  ${ADDITIONAL_CMAKE_ARGS}
+- make -j2
+before_deploy:
+- if [[ "${TRAVIS_TAG}" == "" ]]; then export TRAVIS_TAG=${TRAVIS_COMMIT} ; fi
+- cd src
+- TARGETS="AmityCoind miner zedwallet amity-service zedwallet-beta cryptotest wallet-api"
+- "${STRIP} ${TARGETS}"
+- rm -rf amitycoin-${TRAVIS_TAG}
+- mkdir amitycoin-${TRAVIS_TAG}
+- cp ${TARGETS} amitycoin-${TRAVIS_TAG}/
+- cp ../../LICENSE amitycoin-${TRAVIS_TAG}/
+- tar cvfz amitycoin-${TRAVIS_TAG}-${LABEL}.tar.gz amitycoin-${TRAVIS_TAG}/
+- rm -rf builds
+- mkdir builds
+- cp amitycoin-${TRAVIS_TAG}-${LABEL}.tar.gz builds
+- cd ..

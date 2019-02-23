@@ -161,7 +161,7 @@ const uint32_t UPGRADE_HEIGHT_V3                             = 2;
 const uint32_t UPGRADE_HEIGHT_V4                             = 3; // Upgrade height for CN-Lite Variant 1 switch.
 const uint32_t UPGRADE_HEIGHT_V5                             = 4; // Upgrade height for CN-Soft Shell Variant 1 switch.
 const uint32_t UPGRADE_HEIGHT_V6                             = 30000; // Upgrade height for CN-Soft Shell Amity Variant switch.
-const uint32_t UPGRADE_HEIGHT_V7                             = 90000; // 
+const uint32_t UPGRADE_HEIGHT_V7                             = 71500; // 
 const uint32_t UPGRADE_HEIGHT_CURRENT                        = UPGRADE_HEIGHT_V7;
 
 const unsigned UPGRADE_VOTING_THRESHOLD                      = 90;               // percent
@@ -181,7 +181,7 @@ const uint64_t FORK_HEIGHTS[] =
     2000,    // 5
     3000,    // 6
     30000,   // 7
-    90000    // 8
+    71500    // 8
 };
 
 /* MAKE SURE TO UPDATE THIS VALUE WITH EVERY MAJOR RELEASE BEFORE A FORK */
@@ -208,7 +208,7 @@ const char     P2P_NET_DATA_FILENAME[]                       = "p2pstate.bin";
 const char     MINER_CONFIG_FILE_NAME[]                      = "miner_conf.json";
 } // parameters
 
-const char     CRYPTONOTE_NAME[]                             = "AmityCoin";
+const char     CRYPTONOTE_NAME[]                             = "ac-test";
 
 const uint8_t  TRANSACTION_VERSION_1                         =  1;
 const uint8_t  TRANSACTION_VERSION_2                         =  2;
@@ -273,14 +273,12 @@ const std::string LICENSE_URL                                = "https://github.c
 const char     LATEST_VERSION_URL[]                          = "http://latest.getamitycoin.org";
 const static   boost::uuids::uuid CRYPTONOTE_NETWORK         =
 {
-    {  0x28, 0x63, 0x29, 0x43, 0x61, 0x6c, 0x65, 0x78, 0x73, 0x32, 0x30, 0x31, 0x38, 0x44, 0x65, 0x76  }
+    {  0x28, 0x63, 0x29, 0x43, 0x61, 0x6c, 0x65, 0x78, 0x73, 0x31, 0x38, 0x44, 0x65, 0x76, 0x32, 0x30  }
 };
 
 const char* const SEED_NODES[] = {
-  "51.75.168.212:21018", //GERMANY
-  "54.39.178.95:21018",	//CANADA
-  "54.169.246.203:21018", //SINGAPORE
-  "3.17.204.129:21018" //USA
+  "18.217.91.5:21018", //TESTNET 1
+  "18.191.175.121:21018" //TESTNET 2
  
 //add more seeds here
 };
