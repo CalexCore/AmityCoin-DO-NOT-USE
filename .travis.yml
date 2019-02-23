@@ -24,5 +24,4 @@ script:
     fi
 branches:
   only:
-    - master
-    - dev
+    - docker-hub
