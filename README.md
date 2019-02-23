@@ -1,3 +1,8 @@
+
+#### Dev Build Status
+[![Build Status](https://travis-ci.com/CalexCore/AmityCoin.svg?branch=dev)](https://travis-ci.com/CalexCore/AmityCoin)
+
+
 # AmityCoin
 
 
