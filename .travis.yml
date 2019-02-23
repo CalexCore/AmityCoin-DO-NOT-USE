@@ -134,4 +134,11 @@ before_deploy:
 - mkdir builds
 - cp amitycoin-${TRAVIS_TAG}-${LABEL}.tar.gz builds
 - cd ..
-
+deploy:
+  provider: releases
+  api_key:
+    secure: t/Ru9L4i5wFP9K/6Fdbzfm55/EijTI0Zk/C4jFssMsvwyBUlUxiX7Iu7zJV4/q0/pVFOvbafOdAXLppaGY5/+3M/KzQ+pTMlHh1iNkUOZH6IeJ+GeAqe5vnkLjd5xNyOaq9x27BAcHC+5jVDrlUEwd2o8LXU9vWc4lerP4eaG2IPkeNigHMklMn3hS7/Ry4kBNnx1C3jvczLHUzEfv6Gw8u5/+svOdOmtIgXnuMYNzs8OLyrWTtkZgGZWm6t3gbuJyDbWxXBbcAZ+fczNrg/RubmaLY3c8rDdj4kUtX8AAxp3lYSvwEa4zrQbUhtR9egOYUm8t7VqSpZUq4yrPcEbHcBkN+vF3ZvrlXp3K5QmVtHZQm4RKR5G5M80BEhvnLp5jJhdIswLgTr8cngjzNUBA5Vvfq+2Pj9d7qxpUuBekItOWYCCVmYOaUnMs2zn2PiYQ1b7mvxZKsdXkcRqG0chrD6MPP9+/Y7Q8/IYtSpUqS3lZZc2kGXQ5IKOUM/QH6Rr3/XDTlwiajSlyxV1SHUxIAp3K+tulTnSXmPe2/0nPJnMnbOQEnRM7qfSqQ9pY6cMfsvyPM51mk0bLFpP8h2g4iZa4MZ0Dt3rmqPNIpLY613ty+RKbQnzVZw9YlSF4pndR85CrKJOz8GRJKMzJn69HRHfce2EE9U2r1qxiwRr6I=
+  file: amitycoin-${TRAVIS_TAG}-${LABEL}.tar.gz
+  on:
+    repo: CalexCore/AmityCoin
+    branch: dev
