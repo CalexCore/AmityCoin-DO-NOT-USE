@@ -134,16 +134,4 @@ before_deploy:
 - mkdir builds
 - cp amitycoin-${TRAVIS_TAG}-${LABEL}.tar.gz builds
 - cd ..
-deploy:
-  provider: s3
-  access_key_id: AKIAIMFO6PKKH2XO2OFA
-  secret_access_key:
-    secure: o4HIsQg/O4mrRGbF0gzELLSTTrKKEnsLtD3LFemCah9fvz9t+gA+jhmFR0c6cph9N/j/B5VDLhaFimqs1+jGTO9JsMvUGDUj6nZGM50/AG4JBt+kLgHVySa1CQy6dXahZY3oHcXoByW/G/czl9WGMHur+gZzToXq75QYOPwZL02zlVSGZ7He9moXVLYtQ0sWkQs6C6Ar1uNbaIK2SR3aXOi+4AwG7H3u3GFnBS6qKEFM9r6hegHnrGLGi5CFfMM/nL976GdFPqW4E7tFuPnV/JTj7LOD/7RAJon/blYdOMAqBCvFWf9zV1DopxHiSDozadjH2iN3ssbpf90hd0Te+uq8yNwKYwxnnlC1uBzcIRy8k282ecdY1CPj8dbBDIXh3Wu2agDgbv3HTFGAjX8gbnR0LtEBBULESusEGLAfYPM6duy3bQGMjRvFRy6k0nG/TMx7jMk0II27DIuk/n/zIvNTM16Aix6ThQArhD0B3jHNyHVdzMHqZj+6GPpV+8KdKj5tXbSx9NwWlwrNT1HB1c6HyxdhAM+3vOXaPZU0CuEopZMdUYfyKNwp1ruRMu4vRpUvN4LRdBRlFZPWc94jG3iNT2gKl7gNIIQL4zJR6UdZjCAz3EsCGm+VVQX4V2kVhqkezw4OtheOOL92CzbpLnXyzLqrZZ0a65kTxn1xMWI=
-  bucket: amitycoin
-  skip_cleanup: true
-  region: us-west-1
-  local-dir: src/builds
-  upload-dir: amitycoin
-  on:
-    repo: CalexCore/AmityCoin
-    branch: dev
+
