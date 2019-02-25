@@ -148,7 +148,7 @@ const uint64_t MAX_BLOCK_SIZE_GROWTH_SPEED_NUMERATOR         = 100 * 1024;
 const uint64_t MAX_BLOCK_SIZE_GROWTH_SPEED_DENOMINATOR       = 365 * 24 * 60 * 60 / DIFFICULTY_TARGET;
 const uint64_t MAX_EXTRA_SIZE                                = 140000;
 const uint64_t MAX_EXTRA_SIZE_V2                             = 1024;
-const uint64_t MAX_EXTRA_SIZE_V2_HEIGHT                      = 1300000;
+const uint64_t MAX_EXTRA_SIZE_V2_HEIGHT                      = 100000;
 
 const uint64_t CRYPTONOTE_LOCKED_TX_ALLOWED_DELTA_BLOCKS     = 1;
 const uint64_t CRYPTONOTE_LOCKED_TX_ALLOWED_DELTA_SECONDS    = DIFFICULTY_TARGET * CRYPTONOTE_LOCKED_TX_ALLOWED_DELTA_BLOCKS;
@@ -168,7 +168,7 @@ const uint32_t UPGRADE_HEIGHT_V3                             = 2;
 const uint32_t UPGRADE_HEIGHT_V4                             = 3; // Upgrade height for CN-Lite Variant 1 switch.
 const uint32_t UPGRADE_HEIGHT_V5                             = 4; // Upgrade height for CN-Soft Shell Variant 1 switch.
 const uint32_t UPGRADE_HEIGHT_V6                             = 30000; // Upgrade height for CN-Soft Shell Amity Variant switch.
-const uint32_t UPGRADE_HEIGHT_V7                             = 90000; // 
+const uint32_t UPGRADE_HEIGHT_V7                             = 100000; // 
 const uint32_t UPGRADE_HEIGHT_CURRENT                        = UPGRADE_HEIGHT_V7;
 
 const unsigned UPGRADE_VOTING_THRESHOLD                      = 90;               // percent
@@ -188,7 +188,7 @@ const uint64_t FORK_HEIGHTS[] =
     2000,    // 5
     3000,    // 6
     30000,   // 7
-    90000    // 8
+    100000    // 8
 };
 
 /* MAKE SURE TO UPDATE THIS VALUE WITH EVERY MAJOR RELEASE BEFORE A FORK */
