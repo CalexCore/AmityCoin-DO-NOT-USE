@@ -1,5 +1,6 @@
 // Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2014-2018, The Monero Project
+// Copyright (c) 2014-2018, The Galaxia Project Developers
 // Copyright (c) 2018, The TurtleCoin Developers
 //
 // Please see the included LICENSE file for more information.
@@ -1804,6 +1805,12 @@ auto error = validateSemantic(transaction, fee, blockIndex);
           return error::TransactionValidationError::INPUT_SPEND_LOCKED_OUT;
         }
 
+        if (blockIndex >= CryptoNote::parameters::TRANSACTION_SIGNATURE_COUNT_VALIDATION_HEIGHT
+            && outputKeys.size() != cachedTransaction.getTransaction().signatures[inputIndex].size())
+        {
+          return error::TransactionValidationError::INPUT_INVALID_SIGNATURES_COUNT;
+        }
+
         std::vector<const Crypto::PublicKey*> outputKeyPointers;
         outputKeyPointers.reserve(outputKeys.size());
         std::for_each(outputKeys.begin(), outputKeys.end(), [&outputKeyPointers] (const Crypto::PublicKey& key) { outputKeyPointers.push_back(&key); });
@@ -1986,6 +1993,13 @@ std::error_code Core::validateBlock(const CachedBlock& cachedBlock, IBlockchainC
   if (!(block.baseTransaction.unlockTime == previousBlockIndex + 1 + currency.minedMoneyUnlockWindow())) {
     return error::TransactionValidationError::WRONG_TRANSACTION_UNLOCK_TIME;
   }
+
+  if (cachedBlock.getBlockIndex() >= CryptoNote::parameters::TRANSACTION_SIGNATURE_COUNT_VALIDATION_HEIGHT
+      && !block.baseTransaction.signatures.empty())
+  {
+    return error::TransactionValidationError::BASE_INVALID_SIGNATURES_COUNT;
+  }
+
 
   for (const auto& output : block.baseTransaction.outputs) {
     if (output.amount == 0) {
