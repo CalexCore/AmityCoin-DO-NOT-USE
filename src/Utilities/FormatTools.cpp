@@ -111,7 +111,7 @@ ForkStatus get_fork_status(
         }
     }
 
-    const float days = (next_fork - height) / CryptoNote::parameters::EXPECTED_NUMBER_OF_BLOCKS_PER_DAY;
+    const float days = (static_cast<float>(next_fork - height) / CryptoNote::parameters::EXPECTED_NUMBER_OF_BLOCKS_PER_DAY);
 
     /* Next fork in < 30 days away */
     if (days < 30)
