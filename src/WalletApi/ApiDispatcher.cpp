@@ -10,6 +10,8 @@
 
 #include <CryptoNoteCore/Mixins.h>
 
+#include <crypto/random.h>
+
 #include <cryptopp/modes.h>
 #include <cryptopp/sha.h>
 #include <cryptopp/pwdbased.h>
@@ -39,7 +41,7 @@ ApiDispatcher::ApiDispatcher(
     m_rpcPassword(rpcPassword)
 {
     /* Generate the salt used for pbkdf2 api authentication */
-    Crypto::generate_random_bytes(16, m_salt);
+    Random::randomBytes(16, m_salt);
 
     /* Make sure to do this after initializing the salt above! */
     m_hashedPassword = hashPassword(rpcPassword);
@@ -205,7 +207,12 @@ ApiDispatcher::ApiDispatcher(
 
 void ApiDispatcher::start()
 {
-    m_server.listen(m_host, m_port);
+     if (!m_server.listen(m_host, m_port))
+    {
+      std::cout << "Could not bind service to " << m_host << ":" << m_port 
+                << "\nIs another service using this address and port?\n";
+      exit(1);
+    }
 }
 
 void ApiDispatcher::stop()

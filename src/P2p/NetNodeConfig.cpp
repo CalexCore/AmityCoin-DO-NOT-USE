@@ -7,8 +7,8 @@
 
 #include <Common/Util.h>
 #include "Common/StringTools.h"
-#include "crypto/crypto.h"
 #include <config/CryptoNoteConfig.h>
+#include <crypto/random.h>
 
 namespace CryptoNote {
 namespace {
@@ -37,7 +37,7 @@ bool parsePeersAndAddToPeerListContainer(const std::vector<std::string> peerList
   for (const std::string& peer : peerList)
   {
     PeerlistEntry peerListEntry = PeerlistEntry();
-    peerListEntry.id = Crypto::rand<uint64_t>();
+    peerListEntry.id = Random::randomValue<uint64_t>();
     if (!parsePeerFromString(peerListEntry.adr, peer))
     {
       return false;
