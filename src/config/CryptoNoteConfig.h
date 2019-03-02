@@ -101,8 +101,8 @@ const uint64_t MAXIMUM_MIXIN_V3                              = 3;
 const uint64_t MINIMUM_MIXIN_V4                              = 0;
 const uint64_t MAXIMUM_MIXIN_V4                              = 50;
 
-const uint64_t MINIMUM_MIXIN_V5                              = 3;
-const uint64_t MAXIMUM_MIXIN_V5                              = 3;
+const uint64_t MINIMUM_MIXIN_V5                              = 0;
+const uint64_t MAXIMUM_MIXIN_V5                              = 7;
 
 /* The heights to activate the mixin limits at */
 const uint32_t MIXIN_LIMITS_V1_HEIGHT                        = 1000;
