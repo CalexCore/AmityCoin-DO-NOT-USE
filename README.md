@@ -1,4 +1,4 @@
-
+[![Build Status](https://travis-ci.com/CalexCore/AmityCoin.svg?branch=master)](https://travis-ci.com/CalexCore/AmityCoin) [![Build status](https://ci.appveyor.com/api/projects/status/jrt4pxjr52sh9rf5?svg=true)](https://ci.appveyor.com/project/Chris-Chaos/amitycoin)
 
 
 ###### We want a decentralized future, we want a decentralized currency, we want a decentralized life.  We want to be different.  We are Amity
