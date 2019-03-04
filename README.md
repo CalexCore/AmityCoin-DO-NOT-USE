@@ -1,4 +1,4 @@
-# AmityCoin 
+
 
 
 ###### We want a decentralized future, we want a decentralized currency, we want a decentralized life.  We want to be different.  We are Amity
@@ -41,12 +41,13 @@ GitHub — https://github.com/CalexCore
 
 Discord OTC — https://discord.gg/RHkdzAp
 
-GitLab - https://gitlab.com/Mitoshi/AmityCoin
-
-Medium - https://medium.com/@Mitoshi/
 
 #### Donations
 
 AMIT: amitQLHwwcaU5bDjqkZrQ26KHeVdk2mgsC8j8mnBJbpJfi6jMNxUqB42V2ZCn6EJ4z9wK5nVvNBwMVBFubZce3BXAYAJx2YEon 
 
 TRTL: TRTLv1GJbzV1ginJEWCwAk2mnuPykhSwcF1694Z6TsDy8ohHPFSNbPggHMdq5GpM74NW8DDG7n6NN3Zb9TZ4nw4CjiQvfY6NkhX
+
+AmityCoin is now with a new team.
+
+Thanks to those before us who got us here...

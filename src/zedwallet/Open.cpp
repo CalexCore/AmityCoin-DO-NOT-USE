@@ -13,7 +13,7 @@
 
 #include <Wallet/WalletErrors.h>
 
-#include <zedwallet/ColouredMsg.h>
+#include <Utilities/ColouredMsg.h>
 #include <zedwallet/CommandImplementations.h>
 #include <zedwallet/Tools.h>
 #include <zedwallet/Transfer.h>
@@ -91,40 +91,36 @@ std::shared_ptr<WalletInfo> importWallet(CryptoNote::WalletGreen &wallet)
 std::shared_ptr<WalletInfo> mnemonicImportWallet(CryptoNote::WalletGreen
                                                  &wallet)
 {
-    std::string mnemonicPhrase;
-
-    Crypto::SecretKey privateSpendKey;
-    Crypto::SecretKey privateViewKey;
-
     while (true)
     {
         std::cout << InformationMsg("Enter your mnemonic phrase (25 words): ");
+
+        std::string mnemonicPhrase;
 
         std::getline(std::cin, mnemonicPhrase);
 
         trim(mnemonicPhrase);
         
-        std::string error;
-
-        std::tie(error, privateSpendKey)
+        auto [error, privateSpendKey]
             = Mnemonics::MnemonicToPrivateKey(mnemonicPhrase);
 
-        if (!error.empty())
+        if (error)
         {
             std::cout << std::endl
-                      << WarningMsg(error)
+                      << WarningMsg(error.getErrorMessage())
                       << std::endl << std::endl;
         }
         else
         {
-            break;
+            Crypto::SecretKey privateViewKey;
+
+            CryptoNote::AccountBase::generateViewFromSpend(
+                privateSpendKey, privateViewKey
+            );
+
+            return importFromKeys(wallet, privateSpendKey, privateViewKey);
         }
     }
-
-    CryptoNote::AccountBase::generateViewFromSpend(privateSpendKey, 
-                                                   privateViewKey);
-
-    return importFromKeys(wallet, privateSpendKey, privateViewKey);
 }
 
 std::shared_ptr<WalletInfo> importFromKeys(CryptoNote::WalletGreen &wallet,
@@ -329,6 +325,7 @@ std::shared_ptr<WalletInfo> openWallet(CryptoNote::WalletGreen &wallet,
                 std::cout << "Please report this error message and what "
                           << "you did to cause it." << std::endl << std::endl;
 
+                wallet.shutdown();
                 return nullptr;
             }
         }
@@ -337,8 +334,8 @@ std::shared_ptr<WalletInfo> openWallet(CryptoNote::WalletGreen &wallet,
 
 Crypto::SecretKey getPrivateKey(std::string msg)
 {
-    const size_t privateKeyLen = 64;
-    size_t size;
+    const uint64_t privateKeyLen = 64;
+    uint64_t size;
 
     std::string privateKeyString;
     Crypto::Hash privateKeyHash;

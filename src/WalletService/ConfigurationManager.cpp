@@ -1,6 +1,5 @@
-﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2018, The TurtleCoin Developers
-// Copyright (c) 2018, The Calex Developers
 //
 // Please see the included LICENSE file for more information.
 
@@ -10,11 +9,10 @@
 #include <fstream>
 
 #include <CryptoTypes.h>
+#include <config/CliHeader.h>
 #include <config/CryptoNoteConfig.h>
 
-#include "Common/CommandLine.h"
 #include "Common/Util.h"
-#include "CommonCLI/CommonCLI.h"
 #include "crypto/hash.h"
 #include "Logging/ILogger.h"
 
@@ -26,21 +24,40 @@ ConfigurationManager::ConfigurationManager() {
 
 bool ConfigurationManager::init(int argc, char** argv)
 {
-  serviceConfig = initConfiguration();
-
   // Load in the initial CLI options
   handleSettings(argc, argv, serviceConfig);
 
   // If the user passed in the --config-file option, we need to handle that first
   if (!serviceConfig.configFile.empty())
   {
+
+    // check if it's old config format & try converting into new format
+    try
+    {
+      if(updateConfigFormat(serviceConfig.configFile, serviceConfig))
+      {
+        std::cout << std::endl << "Updating configuration file format..." << std::endl;
+        asFile(serviceConfig, serviceConfig.configFile);
+      }
+    }
+    catch(std::runtime_error& e)
+    {
+      std::cout << std::endl << "There was an error parsing the specified configuration file. Please check the file and try again:"
+        << std::endl << e.what() << std::endl;
+      exit(1);
+    }
+    catch(std::exception& e)
+    {
+      // pass
+    }
+
     try
     {
       handleSettings(serviceConfig.configFile, serviceConfig);
     }
     catch (std::exception& e)
     {
-      std::cout << std::endl << "There was an error parsing the specified configuration file. Please check the file and try again"
+      std::cout << std::endl << "There was an error parsing the specified configuration file. Please check the file and try again: "
         << std::endl << e.what() << std::endl;
       exit(1);
     }
@@ -51,19 +68,20 @@ bool ConfigurationManager::init(int argc, char** argv)
 
   if (serviceConfig.dumpConfig)
   {
-    std::cout << CommonCLI::header() << asString(serviceConfig) << std::endl;
+    std::cout << CryptoNote::getProjectCLIHeader() << asString(serviceConfig) << std::endl;
     exit(0);
   }
   else if (!serviceConfig.outputFile.empty())
   {
-    try {
+    try 
+    {
       asFile(serviceConfig, serviceConfig.outputFile);
-      std::cout << CommonCLI::header() << "Configuration saved to: " << serviceConfig.outputFile << std::endl;
+      std::cout << CryptoNote::getProjectCLIHeader() << "Configuration saved to: " << serviceConfig.outputFile << std::endl;
       exit(0);
     }
     catch (std::exception& e)
     {
-      std::cout << CommonCLI::header() << "Could not save configuration to: " << serviceConfig.outputFile
+      std::cout << CryptoNote::getProjectCLIHeader() << "Could not save configuration to: " << serviceConfig.outputFile
         << std::endl << e.what() << std::endl;
       exit(1);
     }
@@ -137,6 +155,6 @@ bool ConfigurationManager::init(int argc, char** argv)
   }
 
   return true;
-}
+  }
 
 }

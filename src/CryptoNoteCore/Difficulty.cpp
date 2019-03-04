@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018, The TurtleCoin Developers
+// Copyright (c) 2018, The TurtleCoin Developers
 // Copyright (c) 2018, The Calex Developers
 // 
 // Please see the included LICENSE file for more information.
@@ -217,3 +217,4 @@ uint64_t nextDifficultyV3(std::vector<uint64_t> timestamps, std::vector<uint64_t
 
     return static_cast<uint64_t>(next_D);
 }
+

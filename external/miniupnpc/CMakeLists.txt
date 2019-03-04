@@ -1,5 +1,11 @@
 cmake_minimum_required (VERSION 2.6)
 
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+  message(STATUS "Found ccache package... Activating...")
+  set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+endif()
+
 project (miniupnpc C)
 set (MINIUPNPC_VERSION 1.9)
 set (MINIUPNPC_API_VERSION 10)
@@ -16,9 +22,9 @@ if (NOT CMAKE_BUILD_TYPE)
 endif()
 
 option (UPNPC_BUILD_STATIC "Build static library" TRUE)
-option (UPNPC_BUILD_SHARED "Build shared library" TRUE)
+option (UPNPC_BUILD_SHARED "Build shared library" FALSE)
 if (NOT WIN32)
-  option (UPNPC_BUILD_TESTS "Build test executables" TRUE)
+  option (UPNPC_BUILD_TESTS "Build test executables" FALSE)
 endif (NOT WIN32)
 option (NO_GETADDRINFO "Define NO_GETADDRINFO" FALSE)
 
@@ -155,21 +161,21 @@ if (UPNPC_BUILD_TESTS)
 endif (UPNPC_BUILD_TESTS)
 
 
-# install (TARGETS ${UPNPC_INSTALL_TARGETS}
-#   RUNTIME DESTINATION bin
-#   LIBRARY DESTINATION lib${LIB_SUFFIX}
-#   ARCHIVE DESTINATION lib${LIB_SUFFIX}
-# )
-# install (FILES
-# 	miniupnpc.h
-#   miniwget.h
-#   upnpcommands.h
-#   igd_desc_parse.h
-#   upnpreplyparse.h
-#   upnperrors.h
-#   declspec.h
-#   DESTINATION include/miniupnpc
-# )
+install (TARGETS ${UPNPC_INSTALL_TARGETS}
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib${LIB_SUFFIX}
+  ARCHIVE DESTINATION lib${LIB_SUFFIX}
+)
+install (FILES
+	miniupnpc.h
+  miniwget.h
+  upnpcommands.h
+  igd_desc_parse.h
+  upnpreplyparse.h
+  upnperrors.h
+  declspec.h
+  DESTINATION include/miniupnpc
+)
 
 set (CONFIGURED YES CACHE INTERNAL "")
 

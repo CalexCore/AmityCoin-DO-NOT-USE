@@ -21,7 +21,7 @@ namespace CryptoNote {
 
 const uint32_t TRANSFERS_STORAGE_ARCHIVE_VERSION = 0;
 
-TransfersSyncronizer::TransfersSyncronizer(const CryptoNote::Currency& currency, Logging::ILogger& logger, IBlockchainSynchronizer& sync, INode& node) :
+TransfersSyncronizer::TransfersSyncronizer(const CryptoNote::Currency& currency, std::shared_ptr<Logging::ILogger> logger, IBlockchainSynchronizer& sync, INode& node) :
   m_currency(currency), m_logger(logger, "TransfersSyncronizer"), m_sync(sync), m_node(node) {
 }
 
@@ -154,7 +154,7 @@ void TransfersSyncronizer::save(std::ostream& os) {
   CryptoNote::BinaryOutputStreamSerializer s(stream);
   s(const_cast<uint32_t&>(TRANSFERS_STORAGE_ARCHIVE_VERSION), "version");
 
-  size_t subscriptionCount = m_consumers.size();
+  uint64_t subscriptionCount = m_consumers.size();
 
   s.beginArray(subscriptionCount, "consumers");
 
@@ -171,7 +171,7 @@ void TransfersSyncronizer::save(std::ostream& os) {
 
     std::vector<AccountPublicAddress> subscriptions;
     consumer.second->getSubscriptions(subscriptions);
-    size_t subCount = subscriptions.size();
+    uint64_t subCount = subscriptions.size();
 
     s.beginArray(subCount, "subscriptions");
 
@@ -234,7 +234,7 @@ void TransfersSyncronizer::load(std::istream& is) {
   std::vector<ConsumerState> updatedStates;
 
   try {
-    size_t subscriptionCount = 0;
+    uint64_t subscriptionCount = 0;
     s.beginArray(subscriptionCount, "consumers");
 
     while (subscriptionCount--) {
@@ -259,7 +259,7 @@ void TransfersSyncronizer::load(std::istream& is) {
         }
 
         // load subscriptions
-        size_t subCount = 0;
+        uint64_t subCount = 0;
         s.beginArray(subCount, "subscriptions");
 
         while (subCount--) {

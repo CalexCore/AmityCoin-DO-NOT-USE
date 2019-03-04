@@ -8,7 +8,7 @@
 
 #include <Common/StringTools.h>
 
-#include <zedwallet/ColouredMsg.h>
+#include <Utilities/ColouredMsg.h>
 #include <zedwallet/CommandImplementations.h>
 #include <zedwallet/GetInput.h>
 #include <zedwallet/Tools.h>
@@ -30,7 +30,7 @@ void checkForNewTransactions(std::shared_ptr<WalletInfo> walletInfo)
                 = walletInfo->wallet.getTransaction(i);
 
             /* Don't print outgoing or fusion transfers */
-            if (t.totalAmount > 0)
+            if (t.totalAmount > 0 && t.fee != 0)
             {
                 std::cout << std::endl
                           << InformationMsg("New transaction found!")

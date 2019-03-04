@@ -1,20 +1,19 @@
-﻿// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2018, The TurtleCoin Developers
 // Copyright (c) 2018, The Karai Developers
-// Copyright (c) 2018, The Calex Developers
-// 
+//
 // Please see the included LICENSE file for more information.
+
+#include <config/CliHeader.h>
 
 #include "DaemonConfiguration.h"
 #include "DaemonCommandsHandler.h"
-
 #include "Common/ScopeExit.h"
 #include "Common/SignalHandler.h"
 #include "Common/StdOutputStream.h"
 #include "Common/StdInputStream.h"
 #include "Common/PathTools.h"
 #include "Common/Util.h"
-#include "CommonCLI/CommonCLI.h"
 #include "crypto/hash.h"
 #include "CryptoNoteCore/CryptoNoteTools.h"
 #include "CryptoNoteCore/Core.h"
@@ -31,7 +30,6 @@
 #include "Serialization/BinaryOutputStreamSerializer.h"
 
 #include <config/CryptoNoteCheckpoints.h>
-
 #include <Logging/LoggerManager.h>
 
 #if defined(WIN32)
@@ -44,10 +42,12 @@
 using Common::JsonValue;
 using namespace CryptoNote;
 using namespace Logging;
+using namespace DaemonConfig;
 
-void print_genesis_tx_hex(const std::vector<std::string> rewardAddresses, const bool blockExplorerMode, LoggerManager& logManager)
+void print_genesis_tx_hex(const std::vector<std::string> rewardAddresses, const bool blockExplorerMode, std::shared_ptr<LoggerManager> logManager)
 {
   std::vector<CryptoNote::AccountPublicAddress> rewardTargets;
+
   CryptoNote::CurrencyBuilder currencyBuilder(logManager);
   currencyBuilder.isBlockexplorer(blockExplorerMode);
 
@@ -63,7 +63,9 @@ void print_genesis_tx_hex(const std::vector<std::string> rewardAddresses, const 
     }
     rewardTargets.emplace_back(std::move(address));
   }
-   CryptoNote::Transaction transaction;
+
+  CryptoNote::Transaction transaction;
+
   if (rewardTargets.empty())
   {
     if (CryptoNote::parameters::GENESIS_BLOCK_REWARD > 0)
@@ -75,10 +77,11 @@ void print_genesis_tx_hex(const std::vector<std::string> rewardAddresses, const 
   }
   else
   {
-    transaction = CryptoNote::CurrencyBuilder(logManager).generateGenesisTransaction();
+    transaction = CryptoNote::CurrencyBuilder(logManager).generateGenesisTransaction(rewardTargets);
   }
+
   std::string transactionHex = Common::toHex(CryptoNote::toBinaryArray(transaction));
-  std::cout << CommonCLI::header() << std::endl << std::endl
+  std::cout << getProjectCLIHeader() << std::endl << std::endl
     << "Replace the current GENESIS_COINBASE_TX_HEX line in src/config/CryptoNoteConfig.h with this one:" << std::endl
     << "const char GENESIS_COINBASE_TX_HEX[] = \"" << transactionHex << "\";" << std::endl;
 
@@ -104,37 +107,20 @@ JsonValue buildLoggerConfiguration(Level level, const std::string& logfile) {
   return loggerConfiguration;
 }
 
-/* Wait for input so users can read errors before the window closes if they
-   launch from a GUI rather than a terminal */
-void pause_for_input(int argc) {
-  /* if they passed arguments they're probably in a terminal so the errors will
-     stay visible */
-  if (argc == 1) {
-    #if defined(WIN32)
-    if (_isatty(_fileno(stdout)) && _isatty(_fileno(stdin))) {
-    #else
-    if(isatty(fileno(stdout)) && isatty(fileno(stdin))) {
-    #endif
-      std::cout << "Press any key to close the program: ";
-      getchar();
-    }
-  }
-}
-
 int main(int argc, char* argv[])
 {
-  CommonCLI::verifyDevExecution(argc, argv);
-	DaemonConfiguration config = initConfiguration(argv[0]);
+  DaemonConfiguration config = initConfiguration(argv[0]);
 
 #ifdef WIN32
   _CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
 
-  LoggerManager logManager;
+  const auto logManager = std::make_shared<LoggerManager>();
   LoggerRef logger(logManager, "daemon");
 
   // Initial loading of CLI parameters
   handleSettings(argc, argv, config);
+
   if (config.printGenesisTx) // Do we weant to generate the Genesis Tx?
   {
     print_genesis_tx_hex(config.genesisAwardAddresses, false, logManager);
@@ -146,6 +132,25 @@ int main(int argc, char* argv[])
   {
     try
     {
+      if(updateConfigFormat(config.configFile, config))
+      {
+          std::cout << std::endl << "Updating daemon configuration format..." << std::endl;
+          asFile(config, config.configFile);
+      }
+    }
+    catch(std::runtime_error& e)
+    {
+      std::cout << std::endl << "There was an error parsing the specified configuration file. Please check the file and try again:"
+        << std::endl << e.what() << std::endl;
+      exit(1);
+    }
+    catch(std::exception& e)
+    {
+      // pass
+    }
+
+    try
+    {
       handleSettings(config.configFile, config);
     }
     catch (std::exception& e)
@@ -155,24 +160,25 @@ int main(int argc, char* argv[])
       exit(1);
     }
   }
- // Load in the CLI specified parameters again to overwrite anything from the config file
+
+  // Load in the CLI specified parameters again to overwrite anything from the config file
   handleSettings(argc, argv, config);
 
-    if (config.dumpConfig)
+  if (config.dumpConfig)
   {
-    std::cout << CommonCLI::header() << asString(config) << std::endl;
+    std::cout << getProjectCLIHeader() << asString(config) << std::endl;
     exit(0);
   }
   else if (!config.outputFile.empty())
   {
     try {
       asFile(config, config.outputFile);
-      std::cout << CommonCLI::header() << "Configuration saved to: " << config.outputFile << std::endl;
+      std::cout << getProjectCLIHeader() << "Configuration saved to: " << config.outputFile << std::endl;
       exit(0);
     }
     catch (std::exception& e)
     {
-      std::cout << CommonCLI::header() << "Could not save configuration to: " << config.outputFile
+      std::cout << getProjectCLIHeader() << "Could not save configuration to: " << config.outputFile
         << std::endl << e.what() << std::endl;
       exit(1);
     }
@@ -187,20 +193,23 @@ int main(int argc, char* argv[])
       cfgLogFile = Common::ReplaceExtenstion(modulePath, ".log");
     } else {
       if (!Common::HasParentPath(cfgLogFile)) {
-      cfgLogFile = Common::CombinePath(Common::GetPathDirectory(modulePath), cfgLogFile);
+  cfgLogFile = Common::CombinePath(Common::GetPathDirectory(modulePath), cfgLogFile);
       }
     }
 
-		Level cfgLogLevel = static_cast<Level>(static_cast<int>(Logging::ERROR) + config.logLevel);
+    Level cfgLogLevel = static_cast<Level>(static_cast<int>(Logging::ERROR) + config.logLevel);
 
     // configure logging
-    logManager.configure(buildLoggerConfiguration(cfgLogLevel, cfgLogFile));
-                logger(INFO, BRIGHT_BLUE) << CommonCLI::header() << std::endl;
-		logger(INFO) << "Program Working Directory: " << argv[0];
-		
+    logManager->configure(buildLoggerConfiguration(cfgLogLevel, cfgLogFile));
+
+    logger(INFO, BRIGHT_BLUE) << getProjectCLIHeader() << std::endl;
+
+    logger(INFO) << "Program Working Directory: " << argv[0];
+
     //create objects and link them
     CryptoNote::CurrencyBuilder currencyBuilder(logManager);
     currencyBuilder.isBlockexplorer(config.enableBlockExplorer);
+
     try {
       currencyBuilder.currency();
     } catch (std::exception&) {
@@ -210,8 +219,8 @@ int main(int argc, char* argv[])
     CryptoNote::Currency currency = currencyBuilder.currency();
 
     bool use_checkpoints = !config.checkPoints.empty();
-
     CryptoNote::Checkpoints checkpoints(logManager);
+
     if (use_checkpoints) {
       logger(INFO) << "Loading Checkpoints for faster initial sync...";
       if (config.checkPoints == "default")
@@ -220,7 +229,7 @@ int main(int argc, char* argv[])
         {
           checkpoints.addCheckpoint(cp.index, cp.blockId);
         }
-        logger(INFO) << "Loaded " << CryptoNote::CHECKPOINTS.size() << " default checkpoints";
+          logger(INFO) << "Loaded " << CryptoNote::CHECKPOINTS.size() << " default checkpoints";
       }
       else
       {
@@ -238,13 +247,13 @@ int main(int argc, char* argv[])
       config.seedNodes);
 
     DataBaseConfig dbConfig;
-    dbConfig.init(config.dataDirectory, config.dbThreads, config.dbMaxOpenFiles, config.dbWriteBufferSize, config.dbReadCacheSize);
+    dbConfig.init(config.dataDirectory, config.dbThreads, config.dbMaxOpenFiles, config.dbWriteBufferSizeMB, config.dbReadCacheSizeMB);
 
     if (dbConfig.isConfigFolderDefaulted())
     {
       if (!Tools::create_directories_if_necessary(dbConfig.getDataDir()))
       {
-				throw std::runtime_error("Can't create directory: " + dbConfig.getDataDir());
+        throw std::runtime_error("Can't create directory: " + dbConfig.getDataDir());
       }
     }
     else
@@ -290,7 +299,7 @@ int main(int argc, char* argv[])
     cprotocol.set_p2p_endpoint(&p2psrv);
     DaemonCommandsHandler dch(ccore, p2psrv, logManager, &rpcServer);
     logger(INFO) << "Initializing p2p server...";
-		if (!p2psrv.init(netNodeConfig))
+    if (!p2psrv.init(netNodeConfig))
     {
       logger(ERROR, BRIGHT_RED) << "Failed to initialize p2p server.";
       return 1;
@@ -305,15 +314,15 @@ int main(int argc, char* argv[])
 
     // Fire up the RPC Server
     logger(INFO) << "Starting core rpc server on address " << config.rpcInterface << ":" << config.rpcPort;
-    rpcServer.start(config.rpcInterface, config.rpcPort);
     rpcServer.setFeeAddress(config.feeAddress);
     rpcServer.setFeeAmount(config.feeAmount);
     rpcServer.enableCors(config.enableCors);
+    rpcServer.start(config.rpcInterface, config.rpcPort);
     logger(INFO) << "Core rpc server started ok";
 
-    Tools::SignalHandler::install([&dch, &p2psrv] {
-      dch.stop_handling();
-      p2psrv.sendStopSignal();
+    Tools::SignalHandler::install([&dch] {
+       dch.exit({});
+       dch.stop_handling();
     });
 
     logger(INFO) << "Starting p2p net loop...";

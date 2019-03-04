@@ -1,6 +1,5 @@
 // Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2018, The TurtleCoin Developers
-// Copyright (c) 2018, The Calex Developers
 //
 // Please see the included LICENSE file for more information.
 
@@ -27,9 +26,8 @@
 
 namespace CryptoNote {
 
-JsonRpcServer::JsonRpcServer(System::Dispatcher& sys, System::Event& stopEvent, Logging::ILogger& loggerGroup, PaymentService::ConfigurationManager& config) :
-  HttpServer(sys, loggerGroup), 
-  system(sys),
+JsonRpcServer::JsonRpcServer(System::Dispatcher& sys, System::Event& stopEvent, std::shared_ptr<Logging::ILogger> loggerGroup, PaymentService::ConfigurationManager& config) :
+  HttpServer(sys, loggerGroup),
   stopEvent(stopEvent),
   logger(loggerGroup, "JsonRpcServer"),
   config(config)
@@ -90,7 +88,7 @@ void JsonRpcServer::prepareJsonResponse(const Common::JsonValue& req, Common::Js
   if (req.contains("id")) {
     resp.insert("id", req("id"));
   }
-  
+
   resp.insert("jsonrpc", "2.0");
 }
 

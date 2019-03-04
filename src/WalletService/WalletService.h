@@ -1,7 +1,6 @@
 // Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2014-2018, The Monero Project
 // Copyright (c) 2018, The TurtleCoin Developers
-// Copyright (c) 2018, The Calex Developers
 //
 // Please see the included LICENSE file for more information.
 
@@ -39,14 +38,14 @@ struct WalletConfiguration {
   uint64_t scanHeight;
 };
 
-void generateNewWallet(const CryptoNote::Currency& currency, const WalletConfiguration& conf, Logging::ILogger& logger, System::Dispatcher& dispatcher);
+void generateNewWallet(const CryptoNote::Currency& currency, const WalletConfiguration& conf, std::shared_ptr<Logging::ILogger> logger, System::Dispatcher& dispatcher);
 
 struct TransactionsInBlockInfoFilter;
 
 class WalletService {
 public:
   WalletService(const CryptoNote::Currency& currency, System::Dispatcher& sys, CryptoNote::INode& node, CryptoNote::IWallet& wallet,
-    CryptoNote::IFusionManager& fusionManager, const WalletConfiguration& conf, Logging::ILogger& logger);
+    CryptoNote::IFusionManager& fusionManager, const WalletConfiguration& conf, std::shared_ptr<Logging::ILogger> logger);
   virtual ~WalletService();
 
   void init();
@@ -55,7 +54,6 @@ public:
   std::error_code saveWalletNoThrow();
   std::error_code exportWallet(const std::string& fileName);
   std::error_code resetWallet(const uint64_t scanHeight);
-  std::error_code replaceWithNewWallet(const std::string& viewSecretKey, const uint64_t scanHeight, const bool newAddress);
   std::error_code createAddress(const std::string& spendSecretKeyText, const uint64_t scanHeight, const bool newAddress, std::string& address);
   std::error_code createAddressList(const std::vector<std::string>& spendSecretKeysText, const uint64_t scanHeight, const bool newAddress, std::vector<std::string>& addresses);
   std::error_code createAddress(std::string& address);
@@ -99,8 +97,6 @@ private:
   void loadWallet();
   void loadTransactionIdIndex();
   void getNodeFee();
-
-  void replaceWithNewWallet(const Crypto::SecretKey& viewSecretKey, const uint64_t scanHeight, const bool newAddress);
 
   std::vector<CryptoNote::TransactionsInBlockInfo> getTransactions(const Crypto::Hash& blockHash, size_t blockCount) const;
   std::vector<CryptoNote::TransactionsInBlockInfo> getTransactions(uint32_t firstBlockIndex, size_t blockCount) const;

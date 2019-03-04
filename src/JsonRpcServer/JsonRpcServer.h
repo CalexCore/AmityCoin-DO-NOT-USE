@@ -1,6 +1,5 @@
 // Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2018, The TurtleCoin Developers
-// Copyright (c) 2018, The Calex Developers
 //
 // Please see the included LICENSE file for more information.
 
@@ -13,7 +12,6 @@
 #include "Logging/ILogger.h"
 #include "Logging/LoggerRef.h"
 #include "Rpc/HttpServer.h"
-
 #include "WalletService/ConfigurationManager.h"
 
 namespace CryptoNote {
@@ -33,9 +31,9 @@ namespace CryptoNote {
 
 class JsonRpcServer : HttpServer {
 public:
-  JsonRpcServer(System::Dispatcher& sys, System::Event& stopEvent, Logging::ILogger& loggerGroup, PaymentService::ConfigurationManager& config);
+  JsonRpcServer(System::Dispatcher& sys, System::Event& stopEvent, std::shared_ptr<Logging::ILogger> loggerGroup, PaymentService::ConfigurationManager& config);
   JsonRpcServer(const JsonRpcServer&) = delete;
-  
+
   void start(const std::string& bindAddress, uint16_t bindPort);
 
 protected:
@@ -49,12 +47,11 @@ protected:
 
   virtual void processJsonRpcRequest(const Common::JsonValue& req, Common::JsonValue& resp) = 0;
   PaymentService::ConfigurationManager& config;
-  
+
 private:
   // HttpServer
   virtual void processRequest(const CryptoNote::HttpRequest& request, CryptoNote::HttpResponse& response) override;
 
-  System::Dispatcher& system;
   System::Event& stopEvent;
   Logging::LoggerRef logger;
 };
