@@ -60,7 +60,7 @@ public:
                               uint64_t& startIndex, uint64_t& currentIndex, uint64_t& fullOffset,
                               std::vector<BlockDetails>& entries, uint32_t blockCount) const = 0;
 
-   virtual bool getWalletSyncData(
+  virtual bool getWalletSyncData(
     const std::vector<Crypto::Hash> &knownBlockHashes,
     const uint64_t startHeight,
     const uint64_t startTimestamp,
