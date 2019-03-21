@@ -608,7 +608,6 @@ socket_t create_socket(const char* host, int port, Fn fn, int socket_flags = 0)
           continue;
        }
 
-
        // bind or connect
        if (fn(sock, *rp)) {
           freeaddrinfo(result);
