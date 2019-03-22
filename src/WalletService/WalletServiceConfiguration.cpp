@@ -104,7 +104,7 @@ namespace PaymentService {
       {
         config.daemonPort = cli["daemon-port"].as<int>();
       }
-
+      
       if (cli.count("init-timeout") > 0)
       {
         config.initTimeout = cli["init-timeout"].as<int>();
@@ -411,8 +411,8 @@ namespace PaymentService {
     {
       config.daemonPort = j["daemon-port"].get<int>();
     }
-
-     if (j.find("init-timeout") != j.end())
+    
+    if (j.find("init-timeout") != j.end())
     {
       config.initTimeout = j["init-timeout"].get<int>();
     }

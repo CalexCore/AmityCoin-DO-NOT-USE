@@ -1,14 +1,15 @@
 // Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2014-2018, The Monero Project
-// Copyright (c) 2018, The TurtleCoin Developers
+// Copyright (c) 2018-2019, The TurtleCoin Developers
 // 
 // Please see the included LICENSE file for more information.#pragma once
 
 #pragma once
-#include <string.h>
+
+#include <string>
+
 #include <crypto/hash.h>
 #include <crypto/random.h>
-
 
 constexpr inline int CHACHA8_KEY_SIZE = 32;
 constexpr inline int CHACHA8_IV_SIZE = 8;
@@ -17,7 +18,7 @@ namespace Crypto
 {
     void chacha8(const void* data, size_t length, const uint8_t* key, const uint8_t* iv, char* cipher);
 
-#pragma pack(push, 1)
+    #pragma pack(push, 1)
     struct chacha8_key
     {
         uint8_t data[CHACHA8_KEY_SIZE];

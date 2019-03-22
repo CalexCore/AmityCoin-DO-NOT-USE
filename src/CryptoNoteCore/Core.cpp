@@ -102,20 +102,10 @@ inline IBlockchainCache* findIndexInChain(IBlockchainCache* blockSegment, uint32
   return nullptr;
 }
 
-size_t getMaximumTransactionAllowedSize(size_t blockSizeMedian, const Currency& currency, uint32_t height) {
-  size_t medianBasedMaxSize = blockSizeMedian * 2;
-  assert(medianBasedMaxSize > currency.minerTxBlobReservedSize());
+size_t getMaximumTransactionAllowedSize(size_t blockSizeMedian, const Currency& currency) {
+  assert(blockSizeMedian * 2 > currency.minerTxBlobReservedSize());
 
-  uint32_t maxPopulatedHeight = height + 5;
-  const size_t heightBasedMaxSize = currency.maxBlockCumulativeSize(maxPopulatedHeight)
-      - currency.minerTxBlobReservedSize();
-
-  if(medianBasedMaxSize < currency.minerTxBlobReservedSize())
-    medianBasedMaxSize = heightBasedMaxSize;
-  else
-    medianBasedMaxSize = medianBasedMaxSize - currency.minerTxBlobReservedSize();
-
-  return std::min(medianBasedMaxSize, heightBasedMaxSize);
+  return blockSizeMedian * 2 - currency.minerTxBlobReservedSize();
 }
 
 BlockTemplate extractBlockTemplate(const RawBlock& block) {
@@ -602,7 +592,7 @@ bool Core::getWalletSyncData(
         /* Current height */
         uint64_t currentIndex = mainChain->getTopBlockIndex();
 
-         uint64_t actualBlockCount = std::min(BLOCKS_SYNCHRONIZING_DEFAULT_COUNT, blockCount);
+        uint64_t actualBlockCount = std::min(BLOCKS_SYNCHRONIZING_DEFAULT_COUNT, blockCount);
 
         if (actualBlockCount == 0) {
             actualBlockCount = BLOCKS_SYNCHRONIZING_DEFAULT_COUNT;
@@ -645,11 +635,10 @@ bool Core::getWalletSyncData(
         /* Difference between the start and end */
         uint64_t blockDifference = currentIndex - startIndex;
 
-        /* Sync actualBlockCO=ount or the amount of blocks between
+        /* Sync actualBlockCount or the amount of blocks between
            start and end, whichever is smaller */
-         uint64_t endIndex = std::min(actualBlockCount, blockDifference + 1) + startIndex;
+        uint64_t endIndex = std::min(actualBlockCount, blockDifference + 1) + startIndex;
 
-        /* MAYBE THE DAMN THING CAN WORK */
         logger(Logging::DEBUGGING)
             << "\n\n"
             << "\n============================================="
@@ -1226,7 +1215,7 @@ void Core::actualizePoolTransactionsLite(const TransactionValidatorState& valida
 
     auto txState = extractSpentOutputs(tx);
 
-    if (hasIntersections(validatorState, txState) || tx.getTransactionBinaryArray().size() > getMaximumTransactionAllowedSize(blockMedianSize, currency, getTopBlockIndex())) {
+    if (hasIntersections(validatorState, txState) || tx.getTransactionBinaryArray().size() > getMaximumTransactionAllowedSize(blockMedianSize, currency)) {
       pool.removeTransaction(hash);
       notifyObservers(makeDelTransactionMessage({ hash }, Messages::DeleteTransaction::Reason::NotActual));
     }
@@ -1405,7 +1394,7 @@ bool Core::getGlobalIndexesForRange(
                 getBinaryArrayHash(toBinaryArray(block.baseTransaction))
             );
         }
-        
+
         indexes = mainChain->getGlobalIndexes(transactionHashes);
 
         return true;
@@ -1463,6 +1452,15 @@ bool Core::isTransactionValidForPool(const CachedTransaction& cachedTransaction,
       return false;
   }
 
+  if (cachedTransaction.getTransaction().extra.size() >= CryptoNote::parameters::MAX_EXTRA_SIZE_V2)
+  {
+      logger(Logging::TRACE) << "Not adding transaction "
+                             << cachedTransaction.getTransactionHash()
+                             << " to pool, extra too large.";
+
+      return false;
+  }
+
   uint64_t fee;
 
   if (auto validationResult = validateTransaction(cachedTransaction, validatorState, chainsLeaves[0], fee, getTopBlockIndex())) {
@@ -1471,7 +1469,7 @@ bool Core::isTransactionValidForPool(const CachedTransaction& cachedTransaction,
     return false;
   }
 
-  auto maxTransactionSize = getMaximumTransactionAllowedSize(blockMedianSize, currency, getTopBlockIndex());
+  auto maxTransactionSize = getMaximumTransactionAllowedSize(blockMedianSize, currency);
   if (cachedTransaction.getTransactionBinaryArray().size() > maxTransactionSize) {
     logger(Logging::WARNING) << "Transaction " << cachedTransaction.getTransactionHash()
       << " is not valid. Reason: transaction is too big (" << cachedTransaction.getTransactionBinaryArray().size()
@@ -1816,12 +1814,7 @@ auto error = validateSemantic(transaction, fee, blockIndex);
           return error::TransactionValidationError::INPUT_INVALID_SIGNATURES_COUNT;
         }
 
-        std::vector<const Crypto::PublicKey*> outputKeyPointers;
-        outputKeyPointers.reserve(outputKeys.size());
-        std::for_each(outputKeys.begin(), outputKeys.end(), [&outputKeyPointers] (const Crypto::PublicKey& key) { outputKeyPointers.push_back(&key); });
-        if (!Crypto::check_ring_signature(cachedTransaction.getTransactionPrefixHash(), in.keyImage, outputKeyPointers.data(),
-                                          outputKeyPointers.size(), transaction.signatures[inputIndex].data(),
-                                          blockIndex > parameters::KEY_IMAGE_CHECKING_BLOCK_INDEX)) {
+        if (!Crypto::crypto_ops::checkRingSignature(cachedTransaction.getTransactionPrefixHash(), in.keyImage, outputKeys, transaction.signatures[inputIndex])) {
           return error::TransactionValidationError::INPUT_INVALID_SIGNATURES;
         }
       }
@@ -1842,7 +1835,7 @@ std::error_code Core::validateSemantic(const Transaction& transaction, uint64_t&
     return error::TransactionValidationError::EMPTY_INPUTS;
   }
 
-   /* Small buffer until enforcing - helps clear out tx pool with old, previously
+  /* Small buffer until enforcing - helps clear out tx pool with old, previously
      valid transactions */
   if (blockIndex >= CryptoNote::parameters::MAX_EXTRA_SIZE_V2_HEIGHT + CryptoNote::parameters::CRYPTONOTE_MINED_MONEY_UNLOCK_WINDOW)
   {
@@ -1897,10 +1890,10 @@ std::error_code Core::validateSemantic(const Transaction& transaction, uint64_t&
 
       // outputIndexes are packed here, first is absolute, others are offsets to previous,
       // so first can be zero, others can't
-  // Fix discovered by Monero Lab and suggested by "fluffypony" (bitcointalk.org)
-  if (!(scalarmultKey(in.keyImage, L) == I) && blockIndex > parameters::KEY_IMAGE_CHECKING_BLOCK_INDEX) {
-    return error::TransactionValidationError::INPUT_INVALID_DOMAIN_KEYIMAGES;
-  }
+      // Fix discovered by Monero Lab and suggested by "fluffypony" (bitcointalk.org)
+      if (!(scalarmultKey(in.keyImage, L) == I)) {
+        return error::TransactionValidationError::INPUT_INVALID_DOMAIN_KEYIMAGES;
+      }
 
       if (std::find(++std::begin(in.outputIndexes), std::end(in.outputIndexes), 0) != std::end(in.outputIndexes)) {
         return error::TransactionValidationError::INPUT_IDENTICAL_OUTPUT_INDEXES;
@@ -2004,7 +1997,6 @@ std::error_code Core::validateBlock(const CachedBlock& cachedBlock, IBlockchainC
   {
     return error::TransactionValidationError::BASE_INVALID_SIGNATURES_COUNT;
   }
-
 
   for (const auto& output : block.baseTransaction.outputs) {
     if (output.amount == 0) {
@@ -2451,6 +2443,7 @@ void Core::fillBlockTemplate(
     const uint64_t height,
     size_t& transactionsSize,
     uint64_t& fee) const {
+
   transactionsSize = 0;
   fee = 0;
 
@@ -2474,10 +2467,6 @@ void Core::fillBlockTemplate(
         continue;
     }
 
-    if (transactionsSize + transactionBlobSize > maxTotalSize) {
-      continue;
-    }
-    
     if (!spentInputsChecker.haveSpentInputs(transaction.getTransaction())) {
       block.transactionHashes.emplace_back(transaction.getTransactionHash());
       transactionsSize += transactionBlobSize;
@@ -2486,18 +2475,17 @@ void Core::fillBlockTemplate(
   }
 
   for (const auto& cachedTransaction : poolTransactions) {
-    size_t blockSizeLimit = maxTotalSize;
+    size_t blockSizeLimit = (cachedTransaction.getTransactionFee() == 0) ? medianSize : maxTotalSize;
 
     if (blockSizeLimit < transactionsSize + cachedTransaction.getTransactionBinaryArray().size()) {
       continue;
     }
 
-     if (!validateBlockTemplateTransaction(cachedTransaction, height))
+    if (!validateBlockTemplateTransaction(cachedTransaction, height))
     {
         transactionPool->removeTransaction(cachedTransaction.getTransactionHash());
         continue;
     }
-
 
     if (!spentInputsChecker.haveSpentInputs(cachedTransaction.getTransaction())) {
       transactionsSize += cachedTransaction.getTransactionBinaryArray().size();

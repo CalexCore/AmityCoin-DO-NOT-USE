@@ -2,7 +2,7 @@
 // Copyright (c) 2014-2018, The Monero Project
 // Copyright (c) 2018, The BBSCoin Developers
 // Copyright (c) 2018, The Karbo Developers
-// Copyright (c) 2018, The TurtleCoin Developers
+// Copyright (c) 2018-2019, The TurtleCoin Developers
 //
 // Please see the included LICENSE file for more information.
 
@@ -2297,17 +2297,14 @@ size_t WalletGreen::validateSaveAndSendTransaction(const ITransactionReader& tra
     throw std::system_error(make_error_code(error::INTERNAL_WALLET_ERROR), "Failed to deserialize created transaction");
   }
 
-  if (m_node.getLastKnownBlockHeight() > CryptoNote::parameters::MAX_EXTRA_SIZE_V2_HEIGHT)
+  if (cryptoNoteTransaction.extra.size() >= CryptoNote::parameters::MAX_EXTRA_SIZE_V2)
   {
-      if (cryptoNoteTransaction.extra.size() >= CryptoNote::parameters::MAX_EXTRA_SIZE_V2)
-      {
-          m_logger(ERROR, BRIGHT_RED) << "Transaction extra is too large. Allowed: "
-                                      << CryptoNote::parameters::MAX_EXTRA_SIZE_V2
-                                      << ", actual: " << cryptoNoteTransaction.extra.size()
-                                      << ".";
+      m_logger(ERROR, BRIGHT_RED) << "Transaction extra is too large. Allowed: "
+                                  << CryptoNote::parameters::MAX_EXTRA_SIZE_V2
+                                  << ", actual: " << cryptoNoteTransaction.extra.size()
+                                  << ".";
 
-          throw std::system_error(make_error_code(error::EXTRA_TOO_LARGE), "Transaction extra too large");
-      }
+      throw std::system_error(make_error_code(error::EXTRA_TOO_LARGE), "Transaction extra too large");
   }
 
   uint64_t fee = transaction.getInputTotalAmount() - transaction.getOutputTotalAmount();

@@ -35,8 +35,8 @@ public:
 
 class NodeRpcProxy : public CryptoNote::INode {
 public:
-NodeRpcProxy(const std::string& nodeHost, unsigned short nodePort, unsigned int initTimeout, std::shared_ptr<Logging::ILogger> logger);
-NodeRpcProxy(const std::string& nodeHost, unsigned short nodePort, unsigned int initTimeout);
+  NodeRpcProxy(const std::string& nodeHost, unsigned short nodePort, unsigned int initTimeout, std::shared_ptr<Logging::ILogger> logger);
+  NodeRpcProxy(const std::string& nodeHost, unsigned short nodePort, unsigned int initTimeout);
   virtual ~NodeRpcProxy();
 
   virtual bool addObserver(CryptoNote::INodeObserver* observer) override;

@@ -1,5 +1,4 @@
 // Copyright (c) 2018, The TurtleCoin Developers
-// Copyright (c) 2018, The Calex Developers
 // 
 // Please see the included LICENSE file for more information.
 
@@ -73,4 +72,8 @@ namespace WalletConfig
        zero is allowed */
     const uint64_t mixinZeroDisabledHeight
         = CryptoNote::parameters::MIXIN_LIMITS_V2_HEIGHT;
+
+    /* Should we process coinbase transactions? We can skip them to speed up
+       syncing, as most people don't have solo mined transactions */
+    const bool processCoinbaseTransactions = true;
 }

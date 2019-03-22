@@ -432,12 +432,13 @@ int CryptoNoteProtocolHandler::handle_notify_new_transactions(int command, NOTIF
       {
           arg.txs.erase(it, arg.txs.end());
       }
-      
+
       if (arg.txs.size() > 0) {
-      //TODO: add announce usage here
-      relay_post_notify<NOTIFY_NEW_TRANSACTIONS>(*m_p2p, arg, &context.m_connection_id);
-    }
+        //TODO: add announce usage here
+        relay_post_notify<NOTIFY_NEW_TRANSACTIONS>(*m_p2p, arg, &context.m_connection_id);
+      }
   }
+
   return true;
 }
 
