@@ -809,8 +809,13 @@ bool BlockchainCache::isTransactionSpendTimeUnlocked(uint64_t unlockTime, uint32
     return blockIndex + currency.lockedTxAllowedDeltaBlocks() >= unlockTime;
   }
 
-  // interpret as time
-  return static_cast<uint64_t>(time(nullptr)) + currency.lockedTxAllowedDeltaSeconds() >= unlockTime;
+  // Retrieve the last block timestamp
+  std::vector<uint64_t> lastBlockTimestamps = getLastTimestamps(1);
+  assert(lastBlockTimestamps.size() == 1);
+
+  /* Check to see if the unlockTime specified is less than or equal
+   to the last block timestamp plus our configured delta limit */
+  return lastBlockTimestamps[0] + currency.lockedTxAllowedDeltaSeconds() >= unlockTime;
 }
 
 ExtractOutputKeysResult BlockchainCache::extractKeyOutputKeys(uint64_t amount,
