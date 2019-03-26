@@ -554,9 +554,9 @@ void doTransfer(std::string address, uint64_t amount, uint64_t fee,
     
     //@BEGIN Modification For Coin Lock
     std::cout
-        << InformationMsg("Do you want to setup an unlock time? Transaction will be locked until the given height is reached.")
+        << InformationMsg("Do you want to set an unlock time? Transaction will be locked until the specified height is reached.")
         << std::endl
-        << "Hit enter for the default of no unlock time: ";
+        << "Hit enter for the default of no unlock height: ";
     std::string unlockTime;
     std::getline(std::cin, unlockTime);
 
